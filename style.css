@@ -1,0 +1,77 @@
+* {
+    font-family: Lato;
+}
+
+header {
+    width: 100%;
+    background-color: #493761;
+    color: #FFF;
+    font-size: 130%;
+    line-height: 2.0;
+    text-align: center;
+}
+
+main table,
+#info table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+#info th {
+    background-color: #EBEFF2;
+    color: #493761;
+    font-size: 80%;
+}
+
+tr.emergency td {
+    background-color: #FFECEC;
+}
+
+th,
+td {
+    border-bottom: solid 1px #CCC;
+}
+
+th[data-column="route"],
+td[data-column="route"] {
+    min-width: 60px;
+}
+th[data-column="led"],
+td[data-column="led"] {
+    width: 60px;
+}
+th[data-column="next"],
+td[data-column="next"] {
+    width: 20px;
+}
+td[data-column="next"]:hover {
+    background-color: #dddddd;
+}
+
+.led {
+    min-width: 50px;
+    min-height: 50px;
+    border-radius: 25px;
+    box-sizing: border-box;
+    margin: 10px;
+    text-align: center;
+    overflow: visible;
+    font-size: 80%;
+    line-height: 1.3;
+    padding-top: 0.4em;
+}
+
+.led.sU {
+    background-color: #c9c9c9;
+}
+
+.led.s0, .led.s1 {
+    background-color: #14c3a6;
+}
+.led.s2, .led.s3 {
+    background-color: #ff6f6f;
+}
+
+[v-cloak] {
+    display: none;
+}
