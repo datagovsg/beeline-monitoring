@@ -5,11 +5,9 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="map.css" />
     <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-    <script src="vue.js"></script>
     <script src="jquery.js"></script>
     <script src="bootstrap/js/bootstrap.js"></script>
-    <script src="beeline.js"></script>
-    <script src="map.js"></script>
+    <script src="bundle.js"></script>
     <meta name="viewport" content="width=device-width", initial-scale=1" />
     <meta charset="utf-8" />
     <title>Beeline Operator Tool</title>
@@ -19,84 +17,8 @@
         Service Overview
     </header>
 
-    <main v-cloak>
-        <section id="info">
-        {{date}}
-        <table>
-            <tr>
-                <th data-column="route">Route</th>
-                <th data-column="led">App is on</th>
-                <th data-column="led">ETA (1<sup>st</sup> stop)</th>
-                <th data-column="next"></th>
-            </tr>
-        </table>
-        </section>
-
-        <table>
-            <tr v-for="service in servicesByStartTime"
-                track-by='route_service_id'
-                :class="{
-                    emergency: service.status.emergency,
-                }"
-                >
-                <td data-column="route">
-                    <h4 style="float: left; margin: 0 10px 0 10px">{{service.route_service_id}}</h4>
-                    <h4 style="float: left; margin: 0 10px 0 10px">{{service.stops[0].time}}</h4>
-                    <div style="float: left">
-                        {{service.stops[0].from_name}}<br/>
-                        {{service.stops[0].to_name}}</div>
-                </td>
-                <td data-column="led">
-                    <div :class="{
-                        led: true,
-                        s0 : service.status.ping == 0,
-                        s1 : service.status.ping == 1,
-                        s2 : service.status.ping == 2,
-                        s3 : service.status.ping == 3,
-                        sU : service.status.ping == -1,
-                    }">
-                        <template v-if="service.status.arrival_time">
-                            n.a. &mdash; <br/>
-                            (arrived) 
-                        </template>
-                        <template v-else>
-                            <template v-if="service.last_ping">
-                                {{service.last_ping | minutesSince}} <br/> mins ago
-                            </template>
-                        </template>
-                    </div>
-                </td>
-                <td data-column="led">
-                    <div :class="{
-                        led: true,
-                        s0 : service.status.distance == 0,
-                        s1 : service.status.distance == 1,
-                        s2 : service.status.distance == 2,
-                        s3 : service.status.distance == 3,
-                        sU : service.status.distance == -1,
-                    }">
-                        <template v-if="service.status.arrival_time">
-                            {{service.status.arrival_time | takeTime}} (arrived)
-                        </template>
-                        <template v-else>
-                            {{service.status.eta | takeTime}} (est)
-                        </template>
-                    </div>
-                </td>
-                <td data-column="next">
-                <button @click='showService(service.route_service_id)'>
-                &gt;&gt;
-                </button>
-                </td>
-            </tr>
-        </table>
-
-        <section id="sec-map">
-            <h1>{{title}}</h1>
-            <h2>{{subtitle}}</h2>
-            <div id="map">
-            </div>
-        </section>
+    <main id='app' v-cloak>
+        <router-view></router-view>
     </main>
 
     <script async defer
