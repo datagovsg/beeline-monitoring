@@ -103,6 +103,10 @@ $(document).ready(function () {
             self.requery(5000);
         },
         methods: {
+            showService: function (svc) {
+                if (mapVue)
+                    mapVue.service = svc;
+            },
             requery: function(timeout) {
                 var self = this;
                 $.ajax('/current_status', {

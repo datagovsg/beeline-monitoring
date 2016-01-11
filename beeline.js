@@ -20,11 +20,36 @@ module.exports.getDB = function () {
         database: 'beeline',
     });
 }
+module.exports.get_pings = function (svc)  {
+    return exports.getDB()
+    .then((conn) => {
+        var req = new mssql.Request(conn);
+        var localDate = (new Date( (new Date()).getTime() -
+                           (new Date()).getTimezoneOffset()*60000 ));
+
+        req.input('svc', mssql.Int, svc);
+        req.input('current_date', mssql.DateTime, localDate);
+        return req.query(`
+SELECT
+    Locations.*
+FROM Locations
+    INNER JOIN route_service rs ON
+        rs.route_service_id = Locations.service
+WHERE
+    1 = dbo.SameDayAs(timestamp, @current_date)
+    AND rs.route_service_id = @svc
+ORDER BY
+    id ASC
+        `)
+    });
+};
 
 module.exports.lastPings = function (conn)  {
     var req = new mssql.Request(conn);
+    var localDate = (new Date( (new Date()).getTime() -
+                               (new Date()).getTimezoneOffset()*60000 ));
 
-    req.input('current_date', mssql.DateTime, new Date());
+    req.input('current_date', mssql.DateTime, localDate);
     return req.query(`
 WITH rned AS (
 SELECT
@@ -47,7 +72,10 @@ SELECT * FROM rned
 
 module.exports.services = function (conn) {
     var req = new mssql.Request(conn);
-    req.input('current_date', mssql.DateTime, new Date());
+    var localDate = (new Date( (new Date()).getTime() -
+                               (new Date()).getTimezoneOffset()*60000 ));
+
+    req.input('current_date', mssql.DateTime, localDate);
     return req.query(`
 SELECT
     route_service.route_service_id,
@@ -58,7 +86,8 @@ SELECT
     rsst.time,
     route_stop.is_boarding,
     route.from_name, route.to_name, route_service.service_name, --FIXME why u waste bandwidth?
-    ROW_NUMBER() OVER (PARTITION BY route_service.route_service_id ORDER BY rsst.time ASC) AS stop_no
+    ROW_NUMBER() OVER (PARTITION BY route_service.route_service_id ORDER BY rsst.time ASC) AS stop_no,
+    COALESCE(count_booked.num_booked, 0) as num_booked
 FROM route_service 
     INNER JOIN route ON route_service.route_id = route.route_id
     INNER JOIN route_stop ON route.route_id = route_stop.route_id
@@ -67,6 +96,21 @@ FROM route_service
             rsst.stop_id = stop.stop_id AND
             rsst.route_id = route.route_id AND
             rsst.route_service_id = route_service.route_service_id
+    LEFT JOIN (SELECT route_service_id,
+                      rsst_id_board AS rsst_id,
+                      COUNT(*) as num_booked FROM booking
+                WHERE CHARINDEX(CONVERT(varchar(8), @current_date, 112), dates) <> 0
+                    AND status = 'PAID'
+                GROUP BY route_service_id, rsst_id_board
+                UNION 
+                SELECT route_service_id, rsst_id_alight AS rsst_id, COUNT(*) as num_booked FROM booking
+                WHERE CHARINDEX(CONVERT(varchar(8), @current_date, 112), dates) <> 0
+                    AND status = 'PAID'
+                GROUP BY route_service_id, rsst_id_alight
+
+                ) AS count_booked ON
+                rsst.route_service_id = count_booked.route_service_id AND
+                rsst.rsst_id = count_booked.rsst_id
 WHERE
     route_service.start_date <= dateadd(minute, 23*60 + 59, @current_date)
     AND @current_date <= route_service.end_date
@@ -74,6 +118,37 @@ ORDER BY
     route_service.route_service_id,
     rsst.time ASC
     `);
+};
+
+module.exports.get_passengers = function(service) {
+    return exports.getDB()
+    .then((conn) => {
+        var req = new mssql.Request(conn);
+        var localDate = (new Date( (new Date()).getTime() -
+                                   (new Date()).getTimezoneOffset()*60000 ));
+
+        req.input('current_date', mssql.DateTime, localDate);
+        req.input('service', mssql.Int, service);
+
+        return req.query(`
+-- boarding passengers
+SELECT
+    booking.route_service_id,
+    booking.rsst_id_board,
+    [user].[name],
+    [user].email
+FROM
+    booking 
+    INNER JOIN [user] ON [user].email = booking.user_email
+WHERE
+    CHARINDEX(CONVERT(VARCHAR(8), @current_date, 112), booking.dates) <> 0
+    AND booking.status = 'PAID'
+    AND booking.route_service_id = @service
+ORDER BY
+    booking.route_service_id,
+    booking.rsst_id_board
+        `);
+    });
 };
 
 module.exports.poll = function () {
@@ -151,6 +226,39 @@ module.exports.poll = function () {
     });
 };
 
+module.exports.get_stops = function (service) {
+    return exports.getDB().then((conn) => {
+        var req = new mssql.Request(conn);
+
+        req.input('svc', mssql.Int, service);
+        return req.query(`
+SELECT
+    route_service.route_service_id,
+    route_service.bus_co_id,
+    stop.latitude,
+    stop.longitude,
+    stop.name,
+    rsst.time,
+    route_stop.is_boarding,
+    route.from_name, route.to_name, route_service.service_name, --FIXME why u waste bandwidth?
+    ROW_NUMBER() OVER (PARTITION BY route_service.route_service_id ORDER BY rsst.time ASC) AS stop_no
+FROM route_service 
+    INNER JOIN route ON route_service.route_id = route.route_id
+    INNER JOIN route_stop ON route.route_id = route_stop.route_id
+    INNER JOIN stop ON route_stop.stop_id = stop.stop_id
+    INNER JOIN route_service_stop_time rsst ON
+            rsst.stop_id = stop.stop_id AND
+            rsst.route_id = route.route_id AND
+            rsst.route_service_id = route_service.route_service_id
+WHERE
+    route_service.route_service_id = @svc
+ORDER BY
+    route_service.route_service_id,
+    rsst.time ASC
+`);
+    });
+};
+
 /**** Status computation ****/
 
 function scheduledStopTime(svc, i) {
@@ -204,27 +312,35 @@ module.exports.processStatus = function (svcs) {
     for (let rsid of Object.keys(svcs)) {
         var svc = svcs[rsid];
 
-        var sched = scheduledStopTime(svc, 0).getTime();
+        // Note: we are interested in the first stop with nonzero pickup
+        var first_nz = 0;
+        for ( ; first_nz < svc.stops.length; first_nz++) {
+            if (svc.stops[first_nz].num_booked != 0) {
+                break;
+            }
+        }
+        if (first_nz == svc.stops.length) {
+            console.log('Service ' + rsid + ' bo lak gu leh');
+            first_nz = 0;
+        }
+
+        var sched = scheduledStopTime(svc, first_nz).getTime();
         var lastPing = lastPingTime(svc)
         if (lastPing) lastPing = lastPing.getTime();
-        var actual = actualStopTime(svc, 0);
+        var actual = actualStopTime(svc, first_nz);
         if (actual) actual = actual.getTime();
         var now = new Date().getTime();
         var emerg = svc.last_ping && svc.last_ping.problem && svc.last_ping.problem != '0';
-
-        console.log(new Date(sched));
-        console.log(new Date(lastPing));
-        console.log(new Date(actual));
-        console.log(new Date(now));
 
         /* arrival time exists only if bus arrived earliest
             2 mins before start of trip */
         var arrival = (actual - sched > -2 * 60000) ?
                             actual : undefined;
-        var distance = svc.stops[0].last_ping ? 
-                svc.stops[0].last_ping.distance : 0;
+        var distance = svc.last_ping ? 
+                svc.last_ping.distance : 0;
+        var speed = 40; // km/h
         var ETA = distance ?
-                    now + distance / 1000 / 60 * 3600 * 1000
+                    now + distance / 1000 / 35.0 * 3600 * 1000
                     : undefined;
 
         // process the ping time...
@@ -240,6 +356,8 @@ module.exports.processStatus = function (svcs) {
                 /* If the service is more than half an hour away
                 from starting, we just ignore... */
                 (now - sched < -30 * 60000) ? -1 :
+                /* If no pings received */
+                (!lastPing) ? 3 :
                 /* Else we scale the severity by how recent the last
                     ping is:
                     15 mins - severity 3

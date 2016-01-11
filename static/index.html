@@ -3,11 +3,13 @@
 <head>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css" />
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="map.css" />
     <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <script src="vue.js"></script>
     <script src="jquery.js"></script>
     <script src="bootstrap/js/bootstrap.js"></script>
     <script src="beeline.js"></script>
+    <script src="map.js"></script>
     <meta name="viewport" content="width=device-width", initial-scale=1" />
     <meta charset="utf-8" />
     <title>Beeline Operator Tool</title>
@@ -77,17 +79,29 @@
                             {{service.status.arrival_time | takeTime}} (arrived)
                         </template>
                         <template v-else>
-                            {{service.status.eta | takeTime}}
+                            {{service.status.eta | takeTime}} (est)
                         </template>
                     </div>
                 </td>
                 <td data-column="next">
+                <button @click='showService(service.route_service_id)'>
                 &gt;&gt;
+                </button>
                 </td>
             </tr>
         </table>
 
+        <section id="sec-map">
+            <h1>{{title}}</h1>
+            <h2>{{subtitle}}</h2>
+            <div id="map">
+            </div>
+        </section>
     </main>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?client=gme-infocommunications&callback=initMap">
+    </script>
 
 </body>
 </html>
