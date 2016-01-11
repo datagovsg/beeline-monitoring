@@ -135,18 +135,21 @@ module.exports.get_passengers = function(service) {
 SELECT
     booking.route_service_id,
     booking.rsst_id_board,
+    stop.name AS stop_name,
     [user].[name],
     [user].email
 FROM
     booking 
     INNER JOIN [user] ON [user].email = booking.user_email
+    INNER JOIN route_service_stop_time rsst ON rsst.rsst_id = booking.rsst_id_board
+    INNER JOIN stop ON stop.stop_id = rsst.stop_id
 WHERE
     CHARINDEX(CONVERT(VARCHAR(8), @current_date, 112), booking.dates) <> 0
     AND booking.status = 'PAID'
     AND booking.route_service_id = @service
 ORDER BY
     booking.route_service_id,
-    booking.rsst_id_board
+    rsst.time
         `);
     });
 };
