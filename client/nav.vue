@@ -7,7 +7,7 @@
     <br clear="both">
 </template>
 
-<style>
+<style scoped>
 ul li {
     display: block;
     float: left;

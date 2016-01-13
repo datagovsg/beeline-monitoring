@@ -25,6 +25,7 @@ window.mapPromise = window.mapPromise || $.Deferred(function () {});
 window.initMap = function () {
     mapPromise.resolve(true);
 }
+var authAjax = require('./login').authAjax;
 
 module.exports = {
     data () {
@@ -71,41 +72,41 @@ module.exports = {
                 this.$map.pingMarkers[i].setMap(null);
             }
 
-            var bounds = new google.maps.LatLngBounds();
-
             /* Draw start/end markers, the polyline
                 and the intermediate pings */
             this.$map.pingMarkers = [];
             /* start */
-            this.$map.pingMarkers.push(new google.maps.Marker({
-                position: new google.maps.LatLng(
-                    parseFloat(this.pings[0].latitude),
-                    parseFloat(this.pings[0].longitude)
-                ),
-                title: 'Start',
-                map: this.$map.map,
-                icon: {
-                    url: 'img/routeStartMarker.png',
-                    size: new google.maps.Size(50, 40),
-                    origin: new google.maps.Point(0,0),
-                    anchor: new google.maps.Point(25, 40)
-                },
-            }));
-            /* end */
-            this.$map.pingMarkers.push(new google.maps.Marker({
-                position: new google.maps.LatLng(
-                    parseFloat(this.pings[this.pings.length - 1].latitude),
-                    parseFloat(this.pings[this.pings.length - 1].longitude)
-                ),
-                title: 'Start',
-                map: this.$map.map,
-                icon: {
-                    url: 'img/routeEndMarker.png',
-                    size: new google.maps.Size(50, 40),
-                    origin: new google.maps.Point(0,0),
-                    anchor: new google.maps.Point(25, 40)
-                },
-            }));
+            if (this.pings.length > 1) {
+                this.$map.pingMarkers.push(new google.maps.Marker({
+                    position: new google.maps.LatLng(
+                        parseFloat(this.pings[0].latitude),
+                        parseFloat(this.pings[0].longitude)
+                    ),
+                    title: 'Start',
+                    map: this.$map.map,
+                    icon: {
+                        url: 'img/routeStartMarker.png',
+                        size: new google.maps.Size(50, 40),
+                        origin: new google.maps.Point(0,0),
+                        anchor: new google.maps.Point(25, 40)
+                    },
+                }));
+                /* end */
+                this.$map.pingMarkers.push(new google.maps.Marker({
+                    position: new google.maps.LatLng(
+                        parseFloat(this.pings[this.pings.length - 1].latitude),
+                        parseFloat(this.pings[this.pings.length - 1].longitude)
+                    ),
+                    title: 'Start',
+                    map: this.$map.map,
+                    icon: {
+                        url: 'img/routeEndMarker.png',
+                        size: new google.maps.Size(50, 40),
+                        origin: new google.maps.Point(0,0),
+                        anchor: new google.maps.Point(25, 40)
+                    },
+                }));
+            }
 
             /* polyline */
             var busRunCoords = new google.maps.MVCArray();
@@ -117,7 +118,6 @@ module.exports = {
                           parseFloat(this.pings[i].longitude)
                         );
                 var self = this;
-                bounds.extend(latlng);
                 busRunCoords.push(latlng);
                 if (i % 10 == 0) {
                     var marker = new google.maps.Marker({
@@ -149,23 +149,24 @@ module.exports = {
                 map: this.$map.map,
                 path: busRunCoords,
             }));
-
-            this.$map.map.fitBounds(bounds);
         },
 
         stops: function () {
+            var bounds = new google.maps.LatLngBounds();
+
             for (var i=0; i<this.$map.stopMarkers.length; i++) {
                 this.$map.stopMarkers[i].setMap(null);
             }
             this.$map.stopMarkers = [];
 
             for (var i=0; i<this.stops.length; i++) {
-                console.log(this.stops[i].latitude);
-                console.log(this.stops[i].longitude);
-                this.$map.stopMarkers.push(new google.maps.Marker({
-                    position: new google.maps.LatLng(
+                var latlng = new google.maps.LatLng(
                                 parseFloat(this.stops[i].latitude),
-                                parseFloat(this.stops[i].longitude)),
+                                parseFloat(this.stops[i].longitude));
+                bounds.extend(latlng);
+
+                this.$map.stopMarkers.push(new google.maps.Marker({
+                    position: latlng,
                     title: this.stops[i].time.substr(0,2) + ':' +
                            this.stops[i].time.substr(2,4),
                     map: this.$map.map,
@@ -178,6 +179,8 @@ module.exports = {
                     }
                 }));
             }
+
+            this.$map.map.fitBounds(bounds);
         },
     },
 
@@ -186,13 +189,13 @@ module.exports = {
             var self = this;
             console.log('asking for ' + this.service);
 
-            $.ajax('/get_pings/' + this.service, {
+            authAjax('/get_pings/' + this.service, {
             })
             .done(function (pings) {
                 self.pings = pings;
             });
 
-            $.ajax('/get_stops/' + this.service, {
+            authAjax('/get_stops/' + this.service, {
             })
             .done(function (stops) {
                 self.stops = stops;

@@ -12,10 +12,17 @@ proj4.defs([
 var toSVY = proj4('epsg:3414').forward;
 var toLatLng = proj4('epsg:3414').inverse;
 
+function identity(v) {
+    return v;
+}
+function errHandler(err) {
+    console.log(err);
+}
+
 module.exports.getDB = function () {
     return mssql.connect({
-        user: 'Administrator',
-        password: 'b33lin3databas3',
+        user: 'readonly',
+        password: 'hahareadonly',
         server: 'beelinerds.ctauntrumctz.ap-southeast-1.rds.amazonaws.com',
         database: 'beeline',
     });
@@ -41,7 +48,8 @@ WHERE
 ORDER BY
     id ASC
         `)
-    });
+    })
+    .then(identity, errHandler);
 };
 
 module.exports.lastPings = function (conn)  {
@@ -68,6 +76,7 @@ WHERE
 )
 SELECT * FROM rned
     `)
+    .then(identity, errHandler);
 };
 
 module.exports.services = function (conn) {
@@ -117,7 +126,8 @@ WHERE
 ORDER BY
     route_service.route_service_id,
     rsst.time ASC
-    `);
+    `)
+    .then(identity, errHandler);
 };
 
 module.exports.get_passengers = function(service) {
@@ -136,12 +146,15 @@ SELECT
     booking.route_service_id,
     booking.rsst_id_board,
     stop.name AS stop_name,
+    rsst.time,
     [user].[name],
-    [user].email
+    [user].email,
+    route_service.bus_co_id
 FROM
     booking 
     INNER JOIN [user] ON [user].email = booking.user_email
     INNER JOIN route_service_stop_time rsst ON rsst.rsst_id = booking.rsst_id_board
+    INNER JOIN route_service ON rsst.route_service_id = route_service.route_service_id
     INNER JOIN stop ON stop.stop_id = rsst.stop_id
 WHERE
     CHARINDEX(CONVERT(VARCHAR(8), @current_date, 112), booking.dates) <> 0
@@ -150,7 +163,8 @@ WHERE
 ORDER BY
     booking.route_service_id,
     rsst.time
-        `);
+        `)
+        .then(identity, errHandler);
     });
 };
 
@@ -226,7 +240,8 @@ module.exports.poll = function () {
         console.log('another');
 
         return svcs_dict;
-    });
+    })
+    .then(identity, errHandler);
 };
 
 module.exports.get_stops = function (service) {
@@ -259,7 +274,8 @@ ORDER BY
     route_service.route_service_id,
     rsst.time ASC
 `);
-    });
+    })
+    .then(identity, errHandler);
 };
 
 /**** Status computation ****/
@@ -327,6 +343,7 @@ module.exports.processStatus = function (svcs) {
             first_nz = 0;
         }
 
+        var sched0 = scheduledStopTime(svc, 0).getTime();
         var sched = scheduledStopTime(svc, first_nz).getTime();
         var lastPing = lastPingTime(svc)
         if (lastPing) lastPing = lastPing.getTime();
@@ -358,7 +375,7 @@ module.exports.processStatus = function (svcs) {
                 arrival ? 0 :
                 /* If the service is more than half an hour away
                 from starting, we just ignore... */
-                (now - sched < -30 * 60000) ? -1 :
+                (now - sched0 < -30 * 60000) ? -1 :
                 /* If no pings received */
                 (!lastPing) ? 3 :
                 /* Else we scale the severity by how recent the last
@@ -404,15 +421,23 @@ module.exports.startPolling = function (timeout) {
     next();
 };
 
-module.exports.getBusStatusByCompany = function (company) {
-    if (!company) {
-        //FIXME require authentication
-        return latestData;
-    }
+module.exports.isAuthorized = function(companyIds, company) {
+    return (companyIds.indexOf(0) != -1 ||
+            companyIds.indexOf(company) != -1);
+}
+
+module.exports.isServiceAuthorized = function(companyIds, svc) {
+    return latestData[svc] &&
+            latestData[svc].stops &&
+            exports.isAuthorized(companyIds, latestData[svc].stops[0].bus_co_id);
+}
+
+module.exports.getBusStatusByCompany = function (busCompanies) {
     var subst = {};
 
     Object.keys(latestData).forEach((k) => {
-        if (latestData[k].bus_co_id == company) {
+//        console.log(latestData[k]);
+        if (exports.isAuthorized(busCompanies, latestData[k].stops[0].bus_co_id)) {
             subst[k] = latestData[k];
         }
     });

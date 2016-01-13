@@ -4,11 +4,14 @@ var Map = require('./route-map.vue');
 var Navi = require('./nav.vue');
 var PassengerList = require('./route-passengers.vue');
 var VueRouter = require('vue-router');
+var Login = require('./login');
 
 Vue.use(VueRouter);
 Vue.component('navi', Navi);
 
-$(document).ready( () => {
+window.Login = Login;
+
+$(document).ready( function () {
     var router = new VueRouter();
 
     router.map({

@@ -7,6 +7,7 @@
     <div>
     <template v-for="stop in stops">
         <h3>{{stop.passengers[0].stop_name}}</h3>
+        <h4>Boarding time: {{stop.passengers[0].time}}</h4>
 
         <div v-for="passenger in stop.passengers">
             {{passenger.index + 1}}.
@@ -21,6 +22,8 @@
 </style>
 
 <script>
+
+var authAjax = require('./login').authAjax;
 
 module.exports = {
     data () {
@@ -56,7 +59,7 @@ module.exports = {
             timeout = timeout || 30000;
 
             var self = this;
-            $.ajax('/get_passengers/' + this.service, {
+            authAjax('/get_passengers/' + this.service, {
             })
             .done(function (passengers) {
                 var stops = [];

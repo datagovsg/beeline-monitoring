@@ -1,18 +1,23 @@
 
 <template>
-<section>
 {{date}}
 <table>
+    <thead>
     <tr>
         <th data-column="route">Route</th>
         <th data-column="led">App is on</th>
         <th data-column="led">ETA (1<sup>st</sup> stop)</th>
         <th data-column="next"></th>
     </tr>
-</table>
-</section>
-
-<table>
+    </thead>
+    <tbody>
+    <tr v-if="servicesByStartTime.length == 0">
+        <td colspan="4">
+            You have no bus services today.
+            You might not be authorized to view the bus service status.
+            Please contact the Beeline team if this is incorrect.
+        </td>
+    </tr>
     <tr v-for="service in servicesByStartTime"
         track-by='route_service_id'
         :class="{
@@ -69,6 +74,7 @@
         </a>
         </td>
     </tr>
+    </tbody>
 </table>
 
 </template>
@@ -133,6 +139,7 @@ Vue.filter('firstStopETA', function (svc) {
 
 var months = 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec'.split(',');
 var tzo = (new Date()).getTimezoneOffset() * 60000;
+var authAjax = require('./login').authAjax;
 
 Date.prototype.localISO = function () {
     return (new Date(this.getTime() - tzo)).toISOString();
@@ -182,7 +189,7 @@ module.exports = {
         },
         requery: function(timeout) {
             var self = this;
-            $.ajax('/current_status', {
+            authAjax('/current_status', {
                 method: 'GET',
                 dataType: 'json',
                 data: {
@@ -214,6 +221,7 @@ th {
     background-color: #EBEFF2;
     color: #493761;
     font-size: 80%;
+    height: 30px;
 }
 
 tr.emergency td {
