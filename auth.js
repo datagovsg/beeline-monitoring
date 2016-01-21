@@ -1,6 +1,7 @@
 const Boom = require('boom');
 var http = require('https');
 var jwt = require('jsonwebtoken');
+var beeline = require('./beeline');
 
 var secret_key = 'this is the beeline operator tool secret key';
 
@@ -9,6 +10,8 @@ var authorizedUsers = {
     'amar190588@gmail.com': [2],
     'gizochan@gmail.com': [2],
     'kennyteo328@gmail.com': [1],
+    'k3lv1ns1dhu@gmail.com': [2],
+    'roy.busplus@gmail.com': [2],
 
     'angyixin@gmail.com': [0],
     'shenxj08@gmail.com': [0],
@@ -19,7 +22,8 @@ var authorizedUsers = {
     'shangqian@data.gov.sg': [0],
     'shen_xujing@data.gov.sg': [0],
     'yixin@data.gov.sg': [0],
-    'daniel_sim@data.gov.sg': [0],
+    'daniel_sim@data.gov.sg': [1],
+    'chua_swee_chin@data.gov.sg': [1,2],
 
     'fengyuan.liu@gmail.com': [0],
     'vincenttbk87@gmail.com': [0],
@@ -48,13 +52,12 @@ module.exports = {
                             var decoded = jwt.verify(parts[1], secret_key);
                             var timestamp = (new Date()).getTime();
 
-                            result.credentials.email = decoded.email;
-                            result.credentials.busCompanies = authorizedUsers[decoded.email] || [];
-
-                            if (timestamp - decoded.timestamp <= 24 * 60 * 60 * 1000) {
-                                /* expires after one day */
+                            return beeline.getUserCompanies(decoded.email)
+                            .then( (companies) => {
+                                result.credentials.email = decoded.email;
+                                result.credentials.busCompanies = companies;
                                 return reply.continue(result);
-                            }
+                            }, (err) => {console.log(err); reply(Boom.unauthorized(''));});
                         }
                         catch (err) {
                             console.log('Error while decoding');
@@ -88,9 +91,11 @@ module.exports = {
                             else {
                                 reply({
                                     session_token: jwt.sign({
-                                        email: obj.email,
+                                        email: obj.email.toLowerCase(),
                                         timestamp: (new Date()).getTime(),
-                                    }, secret_key)
+                                    }, secret_key, {
+                                        expiresIn: '24h',   
+                                    })
                                 });
                             }
                         });

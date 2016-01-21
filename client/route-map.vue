@@ -1,9 +1,9 @@
 <template>
 <div class="sec-map">
     <navi :service="service"></navi>
-    <h1>{{title}}</h1>
-    <h2>{{subtitle}}</h2>
-    <div class="map">
+    <div class="contents-with-nav">
+        <div class="map">
+        </div>
     </div>
 </div>
 </template>
@@ -11,11 +11,11 @@
 <style>
 div.sec-map .map {
     position: absolute;
-    top: 40px;
     left: 0px;
     width: 100%;
     bottom: 0px;
     border: solid 2px red;
+    top: 0px;
 }
 </style>
 
@@ -119,7 +119,7 @@ module.exports = {
                         );
                 var self = this;
                 busRunCoords.push(latlng);
-                if (i % 10 == 0) {
+                if (i % 3 == 0) {
                     var marker = new google.maps.Marker({
                         position: latlng,
                         title: this.pings[i].timestamp.substr(11,8),
@@ -153,6 +153,7 @@ module.exports = {
 
         stops: function () {
             var bounds = new google.maps.LatLngBounds();
+            var self = this;
 
             for (var i=0; i<this.$map.stopMarkers.length; i++) {
                 this.$map.stopMarkers[i].setMap(null);
@@ -165,10 +166,13 @@ module.exports = {
                                 parseFloat(this.stops[i].longitude));
                 bounds.extend(latlng);
 
-                this.$map.stopMarkers.push(new google.maps.Marker({
+                var marker;
+                this.$map.stopMarkers.push(marker = new google.maps.Marker({
                     position: latlng,
-                    title: this.stops[i].time.substr(0,2) + ':' +
-                           this.stops[i].time.substr(2,4),
+                    title: 'Scheduled: ' + this.stops[i].time.substr(0,2) + ':' +
+                                           this.stops[i].time.substr(2,4) + '<br/>' +
+                           ( this.stops[i].is_boarding ? 'No. of Passengers: ' + this.stops[i].passengers.length : '')
+                                           ,
                     map: this.$map.map,
                     icon: {
                         url: 'img/stop' + (this.stops[i].is_boarding ? 'Board' : 'Alight') +  (this.stops[i].stop_no) + '.png',
@@ -178,6 +182,15 @@ module.exports = {
                         scaledSize: new google.maps.Size(40,40),
                     }
                 }));
+                marker.addListener('mouseover', function () {
+                    self.$map.infowindow.setPosition(this.getPosition());
+                    self.$map.infowindow.setContent(this.title);
+                    self.$map.infowindow.open(self.$map.map, this);
+                });
+                marker.addListener('mouseout', function () {
+                    self.$map.infowindow.close();
+                });
+
             }
 
             this.$map.map.fitBounds(bounds);
@@ -195,11 +208,32 @@ module.exports = {
                 self.pings = pings;
             });
 
-            authAjax('/get_stops/' + this.service, {
-            })
-            .done(function (stops) {
+            var stopInfo = authAjax('/get_stops/' + this.service, {
+            });
+            var passengerInfo = authAjax('/get_passengers/' + this.service, {
+            });
+
+            $.when(stopInfo, passengerInfo)
+            .then(function (stopZ, passengerZ) {
+                var stops = stopZ[0];
+                var passengers = passengerZ[0];
+
+                for (var i=0; i<stops.length; i++) {
+                    stops[i].passengers = [];
+                }
+
+                // FIXME: fix this complexity thing
+
+                for (var i=0; i<passengers.length; i++) {
+                    for (var j=0; j<stops.length; j++) {
+                        if (passengers[i].name && stops[j].rsst_id == passengers[i].rsst_id_board) {
+                            stops[j].passengers.push(passengers[i]);
+                        }
+                    }
+                }
                 self.stops = stops;
             });
+
         },
     }
 }

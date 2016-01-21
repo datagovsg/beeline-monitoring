@@ -10,9 +10,12 @@ Vue.use(VueRouter);
 Vue.component('navi', Navi);
 
 window.Login = Login;
+window.ServiceData = { services: {} };
 
 $(document).ready( function () {
-    var router = new VueRouter();
+    var router = new VueRouter({
+        saveScrollPosition: true,
+    });
 
     router.map({
         '/': {
@@ -26,7 +29,23 @@ $(document).ready( function () {
         },
     });
 
-    router.start(Vue.extend({}), '#app');
+    /* Load once... */
+    Login.authAjax('/current_status', {
+        method: 'GET',
+        dataType: 'json',
+        cache: false,
+    })
+    .done(function (s) {
+        window.ServiceData.services = self.services = s;
+    })
+
+    router.start(Vue.extend({
+        data() {
+            return {
+                ServiceData: window.ServiceData,
+            };
+        }
+    }), '#app');
 });
 
 

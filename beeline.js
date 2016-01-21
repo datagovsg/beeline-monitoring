@@ -3,6 +3,7 @@
 var mssql = require('mssql');
 var Promise = require('promise');
 var proj4 = require('proj4');
+var sms = require('./sms');
 
 proj4.defs([
     ['epsg:3414',
@@ -27,6 +28,33 @@ module.exports.getDB = function () {
         database: 'beeline',
     });
 }
+
+module.exports.getUserCompanies = function (email) {
+    return exports.getDB()
+    .then( (conn) => {
+        var req = new mssql.Request(conn);
+        req.input('email', mssql.VarChar(100), email);
+        return req.query(`
+SELECT bus_co_id
+FROM supervisors
+WHERE email = @email
+        `);
+    })
+    .then( (bcids) => {
+        return bcids.map((x) => {return x.bus_co_id;});  
+    });
+}
+module.exports.getAuthorizedUsers = function () {
+    return exports.getDB()
+    .then( (conn) => {
+        var req = new mssql.Request(conn);
+        req.query(`
+SELECT *
+FROM supervisors
+        `);
+    });
+}
+
 module.exports.get_pings = function (svc)  {
     return exports.getDB()
     .then((conn) => {
@@ -143,25 +171,28 @@ module.exports.get_passengers = function(service) {
         return req.query(`
 -- boarding passengers
 SELECT
-    booking.route_service_id,
-    booking.rsst_id_board,
+    rsst.route_service_id,
+    rsst.rsst_id as rsst_id_board,
+    route_stop.is_boarding,
     stop.name AS stop_name,
     rsst.time,
     [user].[name],
     [user].email,
     route_service.bus_co_id
 FROM
-    booking 
-    INNER JOIN [user] ON [user].email = booking.user_email
-    INNER JOIN route_service_stop_time rsst ON rsst.rsst_id = booking.rsst_id_board
+    ( (SELECT * FROM booking AS b WHERE
+            route_service_id = @service AND
+            (CHARINDEX(CONVERT(VARCHAR(8), @current_date, 112), b.dates) <> 0) AND
+            b.status = 'PAID') AS booking
+    INNER JOIN [user] ON [user].email = booking.user_email)
+    RIGHT JOIN (route_service_stop_time rsst
     INNER JOIN route_service ON rsst.route_service_id = route_service.route_service_id
-    INNER JOIN stop ON stop.stop_id = rsst.stop_id
+    INNER JOIN route_stop ON route_stop.route_id = rsst.route_id AND route_stop.stop_id = rsst.stop_id
+    INNER JOIN stop ON stop.stop_id = rsst.stop_id)  ON rsst.rsst_id = booking.rsst_id_board
 WHERE
-    CHARINDEX(CONVERT(VARCHAR(8), @current_date, 112), booking.dates) <> 0
-    AND booking.status = 'PAID'
-    AND booking.route_service_id = @service
+    rsst.route_service_id = @service
 ORDER BY
-    booking.route_service_id,
+    rsst.route_service_id,
     rsst.time
         `)
         .then(identity, errHandler);
@@ -257,6 +288,7 @@ SELECT
     stop.longitude,
     stop.name,
     rsst.time,
+    rsst.rsst_id,
     route_stop.is_boarding,
     route.from_name, route.to_name, route_service.service_name, --FIXME why u waste bandwidth?
     ROW_NUMBER() OVER (PARTITION BY route_service.route_service_id ORDER BY rsst.time ASC) AS stop_no
@@ -341,6 +373,7 @@ module.exports.processStatus = function (svcs) {
         if (first_nz == svc.stops.length) {
             console.log('Service ' + rsid + ' bo lak gu leh');
             first_nz = 0;
+            svc.nobody = true;
         }
 
         var sched0 = scheduledStopTime(svc, 0).getTime();
@@ -358,10 +391,20 @@ module.exports.processStatus = function (svcs) {
                             actual : undefined;
         var distance = svc.last_ping ? 
                 svc.last_ping.distance : 0;
-        var speed = 40; // km/h
+        var speed = 35; // km/h
         var ETA = distance ?
-                    now + distance / 1000 / 35.0 * 3600 * 1000
+                    now + distance / 1000 / speed * 3600 * 1000
                     : undefined;
+
+        var lastCause = '';
+        var lastSeverity = -1;
+        var Z = function (severity, cause) {
+            if (severity > lastSeverity) {
+                lastSeverity = severity;
+                lastCause = cause;
+            }
+            return severity;
+        };
 
         // process the ping time...
         svc.status = {
@@ -371,13 +414,14 @@ module.exports.processStatus = function (svcs) {
             eta: ETA ? new Date(ETA) : undefined,
 
             ping:
-                emerg ? 3 :
-                arrival ? 0 :
+                emerg ? Z(3, 'Emergency switched on') :
+                arrival ? Z(0, 'Bus has arrived') :
                 /* If the service is more than half an hour away
                 from starting, we just ignore... */
                 (now - sched0 < -30 * 60000) ? -1 :
                 /* If no pings received */
-                (!lastPing) ? 3 :
+                (!lastPing && now - sched0 >= -25 * 60000) ? Z(3, 'Driver app not switched on 25 mins before') :
+                (!lastPing && now - sched0 >= -30 * 60000) ? Z(2, 'Driver app not switched on 30 mins before') :
                 /* Else we scale the severity by how recent the last
                     ping is:
                     15 mins - severity 3
@@ -385,9 +429,9 @@ module.exports.processStatus = function (svcs) {
                     5 mins - severity 1
                     severity 0 otherwise
                     */
-                (now - lastPing >= 15 * 60000) ? 3 :
-                (now - lastPing >= 10 * 60000) ? 2 :
-                (now - lastPing >=  5 * 60000) ? 1 :
+                // (now - lastPing >= 30 * 60000) ? Z(3, 'No more pings since 30 mins ago') :
+                // (now - lastPing >= 20 * 60000) ? Z(2, 'No more pings since 20 mins ago') :
+                // (now - lastPing >= 15 * 60000) ? Z(1, 'No more pings since 15 mins ago') :
                 0,
 
             distance:
@@ -398,12 +442,16 @@ module.exports.processStatus = function (svcs) {
 
                    If we have no idea where they are, -1
                 */
-                emerg ? 3 :
+                emerg ? Z(3, 'Emergency switched on') :
                 arrival ? ( arrival - sched >= 5 * 60000 ? 2 : 0 ) :
-                ETA ? ( ETA - sched >= 15 * 60000 ? 3 :
-                        ETA - sched >= 10 * 60000 ? 2 :
-                        ETA - sched >=  5 * 60000 ? 1 : 0) :
+                ETA ? ( ETA - sched >= 5 * 60000 ? Z(3, 'Might be late (> 5 mins)') :
+                        /*&ETA - sched >= 10 * 60000 ? Z(2, 'Might be late by 10 mins') :
+                        ETA - sched >=  5 * 60000 ? Z(1, 'Might be late by 5 mins') :*/ 0) :
                     -1
+        };
+        if (!svc.nobody) {
+            sms.processNotifications(svc.route_service_id + ':' + svc.stops[0].from_name.substr(0, 12)
+                                                          + '--' + svc.stops[0].to_name.substr(0, 12), lastSeverity, lastCause, now);
         }
             
     }
@@ -415,6 +463,10 @@ module.exports.startPolling = function (timeout) {
     var next = () => {
         exports.poll().then( (data) => {
             latestData = exports.processStatus(data);
+            setTimeout(next, timeout);
+        },
+        (err) => {
+            console.log(err);
             setTimeout(next, timeout);
         });
     };

@@ -22,10 +22,13 @@
         track-by='route_service_id'
         :class="{
             emergency: service.status.emergency,
+            nobody: service.nobody,
         }"
         >
         <td data-column="route">
-            <h4 style="float: left; margin: 0 10px 0 10px">{{service.route_service_id}}</h4>
+            <h4 style="float: left; margin: 0 10px 0 10px">{{service.route_service_id}}
+            <div class="service_name">{{service.stops[0].service_name}}</div>
+            </h4>
             <h4 style="float: left; margin: 0 10px 0 10px">{{service.stops[0].time}}</h4>
             <div style="float: left">
                 {{service.stops[0].from_name}}<br/>
@@ -192,13 +195,10 @@ module.exports = {
             authAjax('/current_status', {
                 method: 'GET',
                 dataType: 'json',
-                data: {
-                    companyId: 2,
-                },
                 cache: false,
             })
             .done(function (s) {
-                self.services = s;
+                window.ServiceData.services = self.services = s;
                 setTimeout(function () {
                     self.requery(timeout);
                 }, timeout);
@@ -228,6 +228,11 @@ tr.emergency td {
     background-color: #FFECEC;
 }
 
+tr.nobody td{
+    opacity: 0.3;
+    background-color: #ccc;
+}
+
 th,
 td {
     border-bottom: solid 1px #CCC;
@@ -250,6 +255,10 @@ td[data-column="next"]:hover {
     background-color: #dddddd;
 }
 
+.service_name {
+    color: #666;
+    font-size: 80%;
+}
 .led {
     min-width: 50px;
     min-height: 50px;
