@@ -29,6 +29,47 @@ main {
     left: 0px;
     width: 100%;
     bottom: 0px;
-    overflow-y: scroll;
+    overflow: auto;
+}
+
+h1 {
+    font-size: 20px;
+}
+h2 {
+    font-size: 18px;
+}
+h3 {
+    font-size: 16px;
+}
+h4 {
+    font-size: 14px;
+}
+
+.backButton {
+    height: 50px;
+    width: 50px;
+    font-size: 40px;
+    line-height: 1;
+    box-sizing: border-box;
+}
+.backButton, 
+.backButton a {
+    position: absolute;
+    display: block;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.contents-with-nav {
+    position: absolute;
+    top: 40px; /* must match <navi> height+ header height*/
+    bottom: 0px;
+    right: 0;
+    left: 0;
+    overflow: auto;
 }
 

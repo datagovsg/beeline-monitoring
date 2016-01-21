@@ -93,6 +93,7 @@
     }
 
     function disconnect() {
+        delete localStorage['session_token'];
         gapi.auth2.getAuthInstance().signOut()
         .then(function () {
             ProfileElem.name = '';
