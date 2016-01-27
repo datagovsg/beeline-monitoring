@@ -18,11 +18,11 @@ function pad(n) {
     }
 }
 
-module.exports.processNotifications = function (rsid, severity, cause, now) {
+module.exports.processNotifications = function (rsid, description, severity, cause, now) {
     now = new Date(now);
-    var dt = /* now.getFullYear() + '-' + */ months[now.getMonth()] + ' ' + pad(now.getDate());
-    var message = '' + rsid + ' on ' + dt + '\n' + cause /*+ '\nSeverity: ' + severity*/
-                + '\nDetails: http://busadmin.beeline.sg/';
+    var dt =  pad(now.getDate()) + '-' + months[now.getMonth()];
+    var message = cause + '.\nService #' + rsid + ' ' + description + ' on ' + dt
+                + '\nCheck details at http://busadmin.beeline.sg/';
     var theConn;
 
     if (severity < 3)
@@ -56,7 +56,9 @@ INSERT INTO supervisor_notifications
             return req.query(`
 SELECT telephone
 FROM supervisors
-WHERE (bus_co_id = 0 OR bus_co_id = @rsid)
+    INNER JOIN route_service ON 1=dbo.AdminViewIsAuthorized2(route_service.bus_co_id, supervisors.bus_co_id)
+WHERE
+    route_service.route_service_id = @rsid
     AND telephone IS NOT NULL
     `);
         }
@@ -69,7 +71,7 @@ WHERE (bus_co_id = 0 OR bus_co_id = @rsid)
                     client.messages.create({
                         body: message,
                         to: tels[t].telephone,
-                        from: '+17472013021',
+                        from: 'BeelineOps',
                     }, (err, msg) => {
                         console.log(err);
                         console.log(msg);
@@ -80,6 +82,13 @@ WHERE (bus_co_id = 0 OR bus_co_id = @rsid)
         }
     })
     .then(null, (err) => {console.log(err);});
+};
 
+module.exports.sendTestMessage = function() {
+    client.messages.create({
+        body: 'Hello Beeline!',
+        to: '+6581001860',
+        from: 'BeelineOps',
+    });
 };
 

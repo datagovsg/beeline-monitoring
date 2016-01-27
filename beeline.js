@@ -414,14 +414,14 @@ module.exports.processStatus = function (svcs) {
             eta: ETA ? new Date(ETA) : undefined,
 
             ping:
-                emerg ? Z(3, 'Emergency switched on') :
+                emerg ? Z(3, 'Emergency has been switched on') :
                 arrival ? Z(0, 'Bus has arrived') :
                 /* If the service is more than half an hour away
                 from starting, we just ignore... */
                 (now - sched0 < -30 * 60000) ? -1 :
                 /* If no pings received */
-                (!lastPing && now - sched0 >= -25 * 60000) ? Z(3, 'Driver app not switched on 25 mins before') :
-                (!lastPing && now - sched0 >= -30 * 60000) ? Z(2, 'Driver app not switched on 30 mins before') :
+                (!lastPing && now - sched0 >= -25 * 60000) ? Z(3, 'Driver App not switched on 25 mins before') :
+                (!lastPing && now - sched0 >= -30 * 60000) ? Z(2, 'Driver App not switched on 30 mins before') :
                 /* Else we scale the severity by how recent the last
                     ping is:
                     15 mins - severity 3
@@ -442,16 +442,17 @@ module.exports.processStatus = function (svcs) {
 
                    If we have no idea where they are, -1
                 */
-                emerg ? Z(3, 'Emergency switched on') :
-                arrival ? ( arrival - sched >= 5 * 60000 ? 2 : 0 ) :
-                ETA ? ( ETA - sched >= 5 * 60000 ? Z(3, 'Might be late (> 5 mins)') :
+                emerg ? Z(3, 'Emergency has been switched on') :
+                arrival ? (arrival - sched >= 15*60000 ? Z(3, 'Service arrived ' + ((arrival-sched)/60000).toFixed(0) + ' mins late') :
+                           arrival - sched >= 5 *60000 ? 2 : 0 ) :
+                ETA ? ( ETA - sched >= 5 * 60000 ? Z(3, 'Service might be more than 5 mins late') :
                         /*&ETA - sched >= 10 * 60000 ? Z(2, 'Might be late by 10 mins') :
                         ETA - sched >=  5 * 60000 ? Z(1, 'Might be late by 5 mins') :*/ 0) :
                     -1
         };
         if (!svc.nobody) {
-            sms.processNotifications(svc.route_service_id + ':' + svc.stops[0].from_name.substr(0, 12)
-                                                          + '--' + svc.stops[0].to_name.substr(0, 12), lastSeverity, lastCause, now);
+            sms.processNotifications(svc.route_service_id, 'from ' + svc.stops[0].from_name.substr(0, 12)
+                                                          + ' to ' + svc.stops[0].to_name.substr(0, 12), lastSeverity, lastCause, now);
         }
             
     }
