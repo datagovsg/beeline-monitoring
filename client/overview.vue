@@ -43,8 +43,8 @@
                 s3 : service.status.ping == 3,
                 sU : service.status.ping == -1,
             }">
+                &gt; {{service.first_ping.timestamp | takeTime}}
                 <template v-if="service.status.arrival_time">
-                    n.a. &mdash; <br/>
                     (arrived) 
                 </template>
                 <template v-else>

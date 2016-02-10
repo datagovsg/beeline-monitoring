@@ -17,7 +17,7 @@ function identity(v) {
     return v;
 }
 function errHandler(err) {
-    console.log(err);
+    console.log(err.stack);
 }
 
 module.exports.getDB = function () {
@@ -77,7 +77,6 @@ ORDER BY
     id ASC
         `)
     })
-    .then(identity, errHandler);
 };
 
 module.exports.lastPings = function (conn)  {
@@ -104,7 +103,6 @@ WHERE
 )
 SELECT * FROM rned
     `)
-    .then(identity, errHandler);
 };
 
 module.exports.services = function (conn) {
@@ -150,12 +148,11 @@ FROM route_service
                 rsst.rsst_id = count_booked.rsst_id
 WHERE
     route_service.start_date <= dateadd(minute, 23*60 + 59, @current_date)
-    AND @current_date <= route_service.end_date
+    AND @current_date <= dateadd(minute, 23*60 + 59, route_service.end_date)
 ORDER BY
     route_service.route_service_id,
     rsst.time ASC
     `)
-    .then(identity, errHandler);
 };
 
 module.exports.get_passengers = function(service) {
@@ -195,7 +192,6 @@ ORDER BY
     rsst.route_service_id,
     rsst.time
         `)
-        .then(identity, errHandler);
     });
 };
 
@@ -225,6 +221,18 @@ module.exports.poll = function () {
             svc.stops.push(stop);
 
             stop.xy = toSVY([stop.longitude, stop.latitude]);
+
+            var today = new Date();
+
+            stop.windowStart = new Date(today.getTime());
+            stop.windowStart.setHours  (parseInt(stop.time.substr(0,2)));
+            stop.windowStart.setMinutes(parseInt(stop.time.substr(2,4)) - 10);
+            stop.windowStart.setSeconds(0);
+
+            stop.windowEnd = new Date(today.getTime());
+            stop.windowEnd.setHours  (parseInt(stop.time.substr(0,2)));
+            stop.windowEnd.setMinutes(parseInt(stop.time.substr(2,4)) + 30);
+            stop.windowEnd.setSeconds(0);
         }
         
         var tzo = (new Date()).getTimezoneOffset() * 60000;
@@ -245,12 +253,42 @@ module.exports.poll = function () {
                     (stop.xy[1] - xy[1])*(stop.xy[1] - xy[1])
                 );
 
-                if (distance <= 120 &&
-                    (typeof(stop.last_ping) == 'undefined' ||
-                     stop.last_ping.timestamp < pings[i].timestamp)) {
-                    /* consider bus to be already in position */
-                    stop.last_ping = pings[i];
-                    stop.last_ping.distance = distance;
+                if (distance <= 120) {
+                    if ((typeof(stop.last_ping) == 'undefined' ||
+                         stop.last_ping.timestamp < pings[i].timestamp)) {
+
+                        /* consider bus to be already in position */
+                        stop.last_ping = pings[i];
+                        stop.last_ping.distance = distance;
+                    }
+
+                    if ((typeof(stop.first_ping) == 'undefined' ||
+                         stop.first_ping.timestamp > pings[i].timestamp)) {
+
+                        /* consider bus to be already in position */
+                        stop.first_ping = pings[i];
+                        stop.first_ping.distance = distance;
+                    }
+
+                    var inWindow = stop.windowStart <= pings[i].timestamp && pings[i].timestamp <= stop.windowEnd;
+
+                    if (inWindow) {
+                        if ((typeof(stop.last_ping_window) == 'undefined' ||
+                             stop.last_ping_window.timestamp < pings[i].timestamp)) {
+
+                            /* consider bus to be already in position */
+                            stop.last_ping_window = pings[i];
+                            stop.last_ping_window.distance = distance;
+                        }
+
+                        if ((typeof(stop.first_ping_window) == 'undefined' ||
+                             stop.first_ping_window.timestamp > pings[i].timestamp)) {
+
+                            /* consider bus to be already in position */
+                            stop.first_ping_window = pings[i];
+                            stop.first_ping_window.distance = distance;
+                        }
+                    }
                 }
 
                 if (j == 0) {
@@ -272,7 +310,6 @@ module.exports.poll = function () {
 
         return svcs_dict;
     })
-    .then(identity, errHandler);
 };
 
 module.exports.get_stops = function (service) {
@@ -307,7 +344,6 @@ ORDER BY
     rsst.time ASC
 `);
     })
-    .then(identity, errHandler);
 };
 
 /**** Status computation ****/
@@ -316,13 +352,6 @@ function scheduledStopTime(svc, i) {
     var d = svc.last_ping ? new Date(svc.last_ping.timestamp)
                           : new Date();
 
-    /**
-        N.B. Our server operates in SGT,
-        but our timestamps are stored as UTC.
-
-        Hence to do timestamp comparison...
-        FIXME
-    **/
     d.setHours(parseInt(svc.stops[i].time.substr(0,2)));
     d.setMinutes(parseInt(svc.stops[i].time.substr(2,4)));
     d.setSeconds(0);
@@ -330,17 +359,33 @@ function scheduledStopTime(svc, i) {
     return d;
 }
 
-function actualStopTime(svc, i) {
+function actualStopArrivalTime(svc, i) {
     i = i || 0;
 
-    if (svc.stops[i].last_ping) {
-        return new Date(svc.stops[i].last_ping.timestamp);
+    if (svc.stops[i].first_ping_window) {
+        return new Date(svc.stops[i].first_ping_window.timestamp);
+    }
+    else {
+        return undefined;
+    }
+}
+function actualStopDepartureTime(svc, i) {
+    i = i || 0;
+
+    if (svc.stops[i].last_ping_window) {
+        return new Date(svc.stops[i].last_ping_window.timestamp);
     }
     else {
         return undefined;
     }
 }
 
+function firstPingTime(svc) {
+    if (svc.first_ping)
+        return new Date(svc.first_ping.timestamp);
+    else
+        return undefined;
+}
 function lastPingTime(svc) {
     if (svc.last_ping)
         return new Date(svc.last_ping.timestamp);
@@ -378,17 +423,30 @@ module.exports.processStatus = function (svcs) {
 
         var sched0 = scheduledStopTime(svc, 0).getTime();
         var sched = scheduledStopTime(svc, first_nz).getTime();
+
+        var firstPing = firstPingTime(svc);
+
         var lastPing = lastPingTime(svc)
         if (lastPing) lastPing = lastPing.getTime();
-        var actual = actualStopTime(svc, first_nz);
-        if (actual) actual = actual.getTime();
+
+        var actualDeparture = actualStopDepartureTime(svc, first_nz);
+        if (actualDeparture) actualDeparture = actualDeparture.getTime();
+
+        var actualArrival = actualStopArrivalTime(svc, first_nz);
+        if (actualArrival) actualArrival = actualArrival.getTime();
+
         var now = new Date().getTime();
         var emerg = svc.last_ping && svc.last_ping.problem && svc.last_ping.problem != '0';
 
-        /* arrival time exists only if bus arrived earliest
-            2 mins before start of trip */
-        var arrival = (actual - sched > -2 * 60000) ?
-                            actual : undefined;
+        /* An arrival only counts if the bus driver does not leave the stop
+            too early.
+
+            */
+        var departure = (actualDeparture - sched > -2 * 60000) ?
+                            actualDeparture : undefined;
+        var arrival = (actualDeparture - sched > -2 * 60000) ?
+                            actualArrival : undefined;
+
         var distance = svc.last_ping ? 
                 svc.last_ping.distance : 0;
         var speed = 35; // km/h
@@ -412,9 +470,10 @@ module.exports.processStatus = function (svcs) {
             arrival_time: arrival ? new Date(arrival) : undefined,
             emergency: emerg,
             eta: ETA ? new Date(ETA) : undefined,
+            first_ping: firstPing,
 
             ping:
-                emerg ? Z(3, 'Emergency has been switched on') :
+                emerg ? Z(4, 'Emergency has been switched on') :
                 arrival ? Z(0, 'Bus has arrived') :
                 /* If the service is more than half an hour away
                 from starting, we just ignore... */
@@ -429,9 +488,9 @@ module.exports.processStatus = function (svcs) {
                     5 mins - severity 1
                     severity 0 otherwise
                     */
-                // (now - lastPing >= 30 * 60000) ? Z(3, 'No more pings since 30 mins ago') :
-                // (now - lastPing >= 20 * 60000) ? Z(2, 'No more pings since 20 mins ago') :
-                // (now - lastPing >= 15 * 60000) ? Z(1, 'No more pings since 15 mins ago') :
+                (now - lastPing >= 30 * 60000) ? Z(2, 'No more pings since 30 mins ago') :
+                (now - lastPing >= 20 * 60000) ? Z(2, 'No more pings since 20 mins ago') :
+                (now - lastPing >= 15 * 60000) ? Z(1, 'No more pings since 15 mins ago') :
                 0,
 
             distance:
@@ -442,10 +501,10 @@ module.exports.processStatus = function (svcs) {
 
                    If we have no idea where they are, -1
                 */
-                emerg ? Z(3, 'Emergency has been switched on') :
+                emerg ? Z(4, 'Emergency has been switched on') :
                 arrival ? (arrival - sched >= 15*60000 ? Z(3, 'Service arrived ' + ((arrival-sched)/60000).toFixed(0) + ' mins late') :
                            arrival - sched >= 5 *60000 ? 2 : 0 ) :
-                ETA ? ( ETA - sched >= 5 * 60000 ? Z(3, 'Service might be more than 5 mins late') :
+                ETA ? ( ETA - sched >= 10 * 60000 ? Z(3, 'Service might be more than 5 mins late') :
                         /*&ETA - sched >= 10 * 60000 ? Z(2, 'Might be late by 10 mins') :
                         ETA - sched >=  5 * 60000 ? Z(1, 'Might be late by 5 mins') :*/ 0) :
                     -1
@@ -468,6 +527,7 @@ module.exports.startPolling = function (timeout) {
         },
         (err) => {
             console.log(err);
+            console.log(err.stack);
             setTimeout(next, timeout);
         });
     };

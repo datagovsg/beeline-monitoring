@@ -2,7 +2,7 @@
   "name": "beeline_operator",
   "version": "1.0.0",
   "scripts": {
-    "serve": "nodejs node_modules/nodemon/bin/nodemon.js -i 'static/' -i webpack.config.js -i 'client/' operator_tool.js",
+    "serve": "nodemon -i 'static/' -i webpack.config.js -i 'client/' operator_tool.js",
     "build": "webpack"
   },
   "dependencies": {

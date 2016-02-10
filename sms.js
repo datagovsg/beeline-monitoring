@@ -24,10 +24,15 @@ module.exports.processNotifications = function (rsid, description, severity, cau
     var message = cause + '.\nService #' + rsid + ' ' + description + ' on ' + dt
                 + '\nCheck details at http://busadmin.beeline.sg/';
     var theConn;
+    var from = severity <= 3 ? 'BeelineOps' :
+               severity == 4 ? 'BeeEmrgency' :
+                               'BeeEmrgency';
 
     if (severity < 3)
         return;
 
+
+    console.log('processing...' + message);
     beeline.getDB()
     .then( (conn) => {
         theConn = conn;
@@ -56,7 +61,8 @@ INSERT INTO supervisor_notifications
             return req.query(`
 SELECT telephone
 FROM supervisors
-    INNER JOIN route_service ON 1=dbo.AdminViewIsAuthorized2(route_service.bus_co_id, supervisors.bus_co_id)
+    INNER JOIN route_service
+        ON 1=dbo.AdminViewIsAuthorized2(route_service.bus_co_id, supervisors.bus_co_id)
 WHERE
     route_service.route_service_id = @rsid
     AND telephone IS NOT NULL
@@ -71,7 +77,7 @@ WHERE
                     client.messages.create({
                         body: message,
                         to: tels[t].telephone,
-                        from: 'BeelineOps',
+                        from: from,
                     }, (err, msg) => {
                         console.log(err);
                         console.log(msg);
