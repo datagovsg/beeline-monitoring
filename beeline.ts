@@ -1,7 +1,7 @@
 'use strict';
+declare var require, module, exports;
 
 var mssql = require('mssql');
-var Promise = require('promise');
 var proj4 = require('proj4');
 var sms = require('./sms');
 
@@ -20,8 +20,8 @@ function errHandler(err) {
     console.log(err.stack);
 }
 
-module.exports.getDB = function () {
-    return mssql.connect({
+module.exports.getDB = async function () {
+    return await mssql.connect({
         user: 'readonly',
         password: 'hahareadonly',
         server: 'beelinerds.ctauntrumctz.ap-southeast-1.rds.amazonaws.com',
@@ -29,38 +29,38 @@ module.exports.getDB = function () {
     });
 }
 
-module.exports.getUserCompanies = function (email) {
-    return exports.getDB()
-    .then( (conn) => {
-        var req = new mssql.Request(conn);
-        req.input('email', mssql.VarChar(100), email);
-        return req.query(`
+module.exports.getUserCompanies = async function (email) {
+    var conn = await exports.getDB();
+
+    var req = new mssql.Request(conn);
+    req.input('email', mssql.VarChar(100), email);
+    
+    var bcids = await req.query(`
 SELECT bus_co_id
 FROM supervisors
 WHERE email = @email
-        `);
-    })
-    .then( (bcids) => {
-        return bcids.map((x) => {return x.bus_co_id;});  
-    });
+    `);
+
+    return bcids.map((x) => {return x.bus_co_id;});
 }
-module.exports.getAuthorizedUsers = function () {
-    return exports.getDB()
-    .then( (conn) => {
-        var req = new mssql.Request(conn);
-        req.query(`
+module.exports.getAuthorizedUsers = async function () {
+    var conn = await exports.getDB();
+
+    var req = new mssql.Request(conn);
+
+    return await req.query(`
 SELECT *
 FROM supervisors
-        `);
-    });
+    `);
 }
 
-module.exports.get_pings = function (svc)  {
+module.exports.get_pings = function (svc, date? : Date)  {
+    date = date || new Date();
     return exports.getDB()
     .then((conn) => {
         var req = new mssql.Request(conn);
-        var localDate = (new Date( (new Date()).getTime() -
-                           (new Date()).getTimezoneOffset()*60000 ));
+        var localDate = (new Date( date.getTime() -
+                                   date.getTimezoneOffset()*60000 ));
 
         req.input('svc', mssql.Int, svc);
         req.input('current_date', mssql.DateTime, localDate);
@@ -79,10 +79,11 @@ ORDER BY
     })
 };
 
-module.exports.lastPings = function (conn)  {
+module.exports.lastPings = function (conn, today? : Date)  {
+    today = today || new Date();
     var req = new mssql.Request(conn);
-    var localDate = (new Date( (new Date()).getTime() -
-                               (new Date()).getTimezoneOffset()*60000 ));
+    var localDate = (new Date( today.getTime() -
+                               today.getTimezoneOffset()*60000 ));
 
     req.input('current_date', mssql.DateTime, localDate);
     return req.query(`
@@ -105,10 +106,11 @@ SELECT * FROM rned
     `)
 };
 
-module.exports.services = function (conn) {
+module.exports.services = function (conn, today? : Date) {
+    today = today || new Date();
     var req = new mssql.Request(conn);
-    var localDate = (new Date( (new Date()).getTime() -
-                               (new Date()).getTimezoneOffset()*60000 ));
+    var localDate = (new Date( today.getTime() -
+                               today.getTimezoneOffset()*60000 ));
 
     req.input('current_date', mssql.DateTime, localDate);
     return req.query(`
@@ -195,121 +197,125 @@ ORDER BY
     });
 };
 
-module.exports.poll = function () {
-    return module.exports.getDB()
-    .then((db) => {
-        return Promise.all([
-                module.exports.lastPings(db),
-                module.exports.services(db)])
-    })
-    .then((res) => {
-        var pings = res[0];
-        var svcs = res[1];
-        var svcs_dict = {};
+interface IPollReturn {
+    serviceData: any,
+    date: Date,
+};
+export async function poll() : Promise<IPollReturn> {
+    var db = await module.exports.getDB();
+    var today = new Date();
 
-        for (var i=0; i<svcs.length; i++) {
-            var stop = svcs[i];
-            svcs_dict[svcs[i].route_service_id] =
-                svcs_dict[svcs[i].route_service_id] || {
-                    stops: [],
-                    route_service_id: svcs[i].route_service_id,
-                    last_ping: undefined,
-                    first_ping: undefined,
-                };
+    var res = await Promise.all([
+                module.exports.lastPings(db, today),
+                module.exports.services(db, today)]);
+    var pings = res[0];
+    var svcs = res[1];
 
-            var svc = svcs_dict[svcs[i].route_service_id];
-            svc.stops.push(stop);
+    var svcs_dict = {};
 
-            stop.xy = toSVY([stop.longitude, stop.latitude]);
+    for (var i=0; i<svcs.length; i++) {
+        var stop = svcs[i];
+        svcs_dict[svcs[i].route_service_id] =
+            svcs_dict[svcs[i].route_service_id] || {
+                stops: [],
+                route_service_id: svcs[i].route_service_id,
+                last_ping: undefined,
+                first_ping: undefined,
+            };
 
-            var today = new Date();
+        var svc = svcs_dict[svcs[i].route_service_id];
+        svc.stops.push(stop);
 
-            stop.windowStart = new Date(today.getTime());
-            stop.windowStart.setHours  (parseInt(stop.time.substr(0,2)));
-            stop.windowStart.setMinutes(parseInt(stop.time.substr(2,4)) - 10);
-            stop.windowStart.setSeconds(0);
+        stop.xy = toSVY([stop.longitude, stop.latitude]);
 
-            stop.windowEnd = new Date(today.getTime());
-            stop.windowEnd.setHours  (parseInt(stop.time.substr(0,2)));
-            stop.windowEnd.setMinutes(parseInt(stop.time.substr(2,4)) + 30);
-            stop.windowEnd.setSeconds(0);
-        }
-        
-        var tzo = (new Date()).getTimezoneOffset() * 60000;
-        
-        for (var i=0; i<pings.length; i++) {
-            // FIX all the pings
-            // Since they have been saved with the timezone offset =(
-            pings[i].timestamp = new Date(pings[i].timestamp.getTime() + tzo);
+        stop.windowStart = new Date(today.getTime());
+        stop.windowStart.setHours  (parseInt(stop.time.substr(0,2)));
+        stop.windowStart.setMinutes(parseInt(stop.time.substr(2,4)) - 10);
+        stop.windowStart.setSeconds(0);
 
-            // find distance to stops in SVC
-            var rsid = pings[i].service;
-            var xy = toSVY([pings[i].longitude, pings[i].latitude]);
+        stop.windowEnd = new Date(today.getTime());
+        stop.windowEnd.setHours  (parseInt(stop.time.substr(0,2)));
+        stop.windowEnd.setMinutes(parseInt(stop.time.substr(2,4)) + 30);
+        stop.windowEnd.setSeconds(0);
+    }
+    
+    var tzo = today.getTimezoneOffset() * 60000;
+    
+    for (var i=0; i<pings.length; i++) {
+        // FIX all the pings
+        // Since they have been saved with the timezone offset =(
+        pings[i].timestamp = new Date(pings[i].timestamp.getTime() + tzo);
 
-            for (var j=0; j<svcs_dict[rsid].stops.length; j++) {
-                var stop = svcs_dict[rsid].stops[j];
-                var distance = Math.sqrt(
-                    (stop.xy[0] - xy[0])*(stop.xy[0] - xy[0]) +
-                    (stop.xy[1] - xy[1])*(stop.xy[1] - xy[1])
-                );
+        // find distance to stops in SVC
+        var rsid = pings[i].service;
+        var xy = toSVY([pings[i].longitude, pings[i].latitude]);
 
-                if (distance <= 120) {
-                    if ((typeof(stop.last_ping) == 'undefined' ||
-                         stop.last_ping.timestamp < pings[i].timestamp)) {
+        for (var j=0; j<svcs_dict[rsid].stops.length; j++) {
+            var stop = svcs_dict[rsid].stops[j];
+            var distance = Math.sqrt(
+                (stop.xy[0] - xy[0])*(stop.xy[0] - xy[0]) +
+                (stop.xy[1] - xy[1])*(stop.xy[1] - xy[1])
+            );
 
-                        /* consider bus to be already in position */
-                        stop.last_ping = pings[i];
-                        stop.last_ping.distance = distance;
-                    }
+            if (distance <= 120) {
+                if ((typeof(stop.last_ping) == 'undefined' ||
+                     stop.last_ping.timestamp < pings[i].timestamp)) {
 
-                    if ((typeof(stop.first_ping) == 'undefined' ||
-                         stop.first_ping.timestamp > pings[i].timestamp)) {
-
-                        /* consider bus to be already in position */
-                        stop.first_ping = pings[i];
-                        stop.first_ping.distance = distance;
-                    }
-
-                    var inWindow = stop.windowStart <= pings[i].timestamp && pings[i].timestamp <= stop.windowEnd;
-
-                    if (inWindow) {
-                        if ((typeof(stop.last_ping_window) == 'undefined' ||
-                             stop.last_ping_window.timestamp < pings[i].timestamp)) {
-
-                            /* consider bus to be already in position */
-                            stop.last_ping_window = pings[i];
-                            stop.last_ping_window.distance = distance;
-                        }
-
-                        if ((typeof(stop.first_ping_window) == 'undefined' ||
-                             stop.first_ping_window.timestamp > pings[i].timestamp)) {
-
-                            /* consider bus to be already in position */
-                            stop.first_ping_window = pings[i];
-                            stop.first_ping_window.distance = distance;
-                        }
-                    }
+                    /* consider bus to be already in position */
+                    stop.last_ping = pings[i];
+                    stop.last_ping.distance = distance;
                 }
 
-                if (j == 0) {
-                    if (typeof(svcs_dict[rsid].last_ping) == 'undefined' ||
-                        svcs_dict[rsid].last_ping.timestamp < pings[i].timestamp) {
-                        svcs_dict[rsid].last_ping = pings[i];
-                        svcs_dict[rsid].last_ping.distance = distance;
+                if ((typeof(stop.first_ping) == 'undefined' ||
+                     stop.first_ping.timestamp > pings[i].timestamp)) {
+
+                    /* consider bus to be already in position */
+                    stop.first_ping = pings[i];
+                    stop.first_ping.distance = distance;
+                }
+
+                var inWindow = stop.windowStart <= pings[i].timestamp && pings[i].timestamp <= stop.windowEnd;
+
+                if (inWindow) {
+                    if ((typeof(stop.last_ping_window) == 'undefined' ||
+                         stop.last_ping_window.timestamp < pings[i].timestamp)) {
+
+                        /* consider bus to be already in position */
+                        stop.last_ping_window = pings[i];
+                        stop.last_ping_window.distance = distance;
                     }
-                    if (typeof(svcs_dict[rsid].first_ping) == 'undefined' ||
-                        svcs_dict[rsid].first_ping.timestamp > pings[i].timestamp) {
-                        svcs_dict[rsid].first_ping = pings[i];
-                        svcs_dict[rsid].first_ping.distance = distance;
+
+                    if ((typeof(stop.first_ping_window) == 'undefined' ||
+                         stop.first_ping_window.timestamp > pings[i].timestamp)) {
+
+                        /* consider bus to be already in position */
+                        stop.first_ping_window = pings[i];
+                        stop.first_ping_window.distance = distance;
                     }
                 }
             }
 
+            if (j == 0) {
+                if (typeof(svcs_dict[rsid].last_ping) == 'undefined' ||
+                    svcs_dict[rsid].last_ping.timestamp < pings[i].timestamp) {
+                    svcs_dict[rsid].last_ping = pings[i];
+                    svcs_dict[rsid].last_ping.distance = distance;
+                }
+                if (typeof(svcs_dict[rsid].first_ping) == 'undefined' ||
+                    svcs_dict[rsid].first_ping.timestamp > pings[i].timestamp) {
+                    svcs_dict[rsid].first_ping = pings[i];
+                    svcs_dict[rsid].first_ping.distance = distance;
+                }
+            }
         }
-        console.log('another');
 
-        return svcs_dict;
-    })
+    }
+    console.log('another');
+
+    return <IPollReturn> {
+        serviceData: svcs_dict,
+        date: today,
+    };
 };
 
 module.exports.get_stops = function (service) {
@@ -348,15 +354,20 @@ ORDER BY
 
 /**** Status computation ****/
 
-function scheduledStopTime(svc, i) {
-    var d = svc.last_ping ? new Date(svc.last_ping.timestamp)
-                          : new Date();
+function scheduledStopTime(svc, i, date : Date) {
+    if (date) {
+        date = new Date(date.getTime());
+    }
+    else {
+        date = svc.last_ping ? new Date(svc.last_ping.timestamp)
+                                : new Date();
+    }
 
-    d.setHours(parseInt(svc.stops[i].time.substr(0,2)));
-    d.setMinutes(parseInt(svc.stops[i].time.substr(2,4)));
-    d.setSeconds(0);
+    date.setHours(parseInt(svc.stops[i].time.substr(0,2)));
+    date.setMinutes(parseInt(svc.stops[i].time.substr(2,4)));
+    date.setSeconds(0);
 
-    return d;
+    return date;
 }
 
 function actualStopArrivalTime(svc, i) {
@@ -404,7 +415,10 @@ svcs.status = {
 
 
 **/
-module.exports.processStatus = function (svcs) {
+module.exports.processStatus = function (pollData : IPollReturn) {
+    var svcs = pollData.serviceData;
+    var date = pollData.date;
+
     for (let rsid of Object.keys(svcs)) {
         var svc = svcs[rsid];
 
@@ -421,21 +435,28 @@ module.exports.processStatus = function (svcs) {
             svc.nobody = true;
         }
 
-        var sched0 = scheduledStopTime(svc, 0).getTime();
-        var sched = scheduledStopTime(svc, first_nz).getTime();
+        var sched0 = scheduledStopTime(svc, 0, date).getTime();
+        var sched = scheduledStopTime(svc, first_nz, date).getTime();
 
         var firstPing = firstPingTime(svc);
 
-        var lastPing = lastPingTime(svc)
-        if (lastPing) lastPing = lastPing.getTime();
+        var lastPingDate = lastPingTime(svc)
+        var lastPing : number;
+        if (lastPingDate) {
+            lastPing = lastPingDate.getTime();
+        }
 
-        var actualDeparture = actualStopDepartureTime(svc, first_nz);
-        if (actualDeparture) actualDeparture = actualDeparture.getTime();
+        var actualDeparture : number,
+            actualDepartureDate = actualStopDepartureTime(svc, first_nz);
+        if (actualDepartureDate) {
+            actualDeparture = actualDepartureDate.getTime();
+        }
 
-        var actualArrival = actualStopArrivalTime(svc, first_nz);
-        if (actualArrival) actualArrival = actualArrival.getTime();
+        var actualArrival : number,
+            actualArrivalDate = actualStopArrivalTime(svc, first_nz);
+        if (actualArrivalDate) actualArrival = actualArrivalDate.getTime();
 
-        var now = new Date().getTime();
+        var now = date.getTime();
         var emerg = svc.last_ping && svc.last_ping.problem && svc.last_ping.problem != '0';
 
         /* An arrival only counts if the bus driver does not leave the stop
@@ -519,19 +540,24 @@ module.exports.processStatus = function (svcs) {
 };
 
 var latestData = {};
-module.exports.startPolling = function (timeout) {
-    var next = () => {
-        exports.poll().then( (data) => {
-            latestData = exports.processStatus(data);
-            setTimeout(next, timeout);
-        },
-        (err) => {
-            console.log(err);
+
+function delay(ms) {
+    return new Promise((resolve, reject) => {
+        setTimeout(resolve, ms);
+    });
+}
+
+module.exports.startPolling = async function (timeout) {
+    while (true) {
+        try {
+            var pollData = await exports.poll();
+            latestData = exports.processStatus(pollData);
+        }
+        catch (err) {
             console.log(err.stack);
-            setTimeout(next, timeout);
-        });
-    };
-    next();
+        }
+        await delay(timeout);
+    }
 };
 
 module.exports.isAuthorized = function(companyIds, company) {
