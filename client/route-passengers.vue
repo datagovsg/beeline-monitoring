@@ -63,6 +63,8 @@
             class="passenger">
             {{passenger.index + 1}}.
             {{passenger.name}}
+            &mdash;
+            {{passenger.email}}
         </div>
     </div>
     </div>

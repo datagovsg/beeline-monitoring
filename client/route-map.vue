@@ -203,8 +203,10 @@ module.exports = {
             console.log('asking for ' + this.service);
 
             authAjax('/get_pings/' + this.service, {
+                cache: false,
             })
             .done(function (pings) {
+                console.log(pings);
                 self.pings = pings;
             });
 

@@ -420,10 +420,10 @@ module.exports.processStatus = function (pollData : IPollReturn) {
     var date = pollData.date;
 
     for (let rsid of Object.keys(svcs)) {
-        var svc = svcs[rsid];
+        let svc = svcs[rsid];
 
         // Note: we are interested in the first stop with nonzero pickup
-        var first_nz = 0;
+        let first_nz = 0;
         for ( ; first_nz < svc.stops.length; first_nz++) {
             if (svc.stops[first_nz].num_booked != 0) {
                 break;
@@ -435,29 +435,29 @@ module.exports.processStatus = function (pollData : IPollReturn) {
             svc.nobody = true;
         }
 
-        var sched0 = scheduledStopTime(svc, 0, date).getTime();
-        var sched = scheduledStopTime(svc, first_nz, date).getTime();
+        let sched0 = scheduledStopTime(svc, 0, date).getTime();
+        let sched = scheduledStopTime(svc, first_nz, date).getTime();
 
-        var firstPing = firstPingTime(svc);
+        let firstPing = firstPingTime(svc);
 
-        var lastPingDate = lastPingTime(svc)
-        var lastPing : number;
+        let lastPingDate = lastPingTime(svc)
+        let lastPing : number;
         if (lastPingDate) {
             lastPing = lastPingDate.getTime();
         }
 
-        var actualDeparture : number,
+        let actualDeparture : number,
             actualDepartureDate = actualStopDepartureTime(svc, first_nz);
         if (actualDepartureDate) {
             actualDeparture = actualDepartureDate.getTime();
         }
 
-        var actualArrival : number,
+        let actualArrival : number,
             actualArrivalDate = actualStopArrivalTime(svc, first_nz);
         if (actualArrivalDate) actualArrival = actualArrivalDate.getTime();
 
-        var now = date.getTime();
-        var emerg = svc.last_ping && svc.last_ping.problem && svc.last_ping.problem != '0';
+        let now = date.getTime();
+        let emerg = svc.last_ping && svc.last_ping.problem && svc.last_ping.problem != '0';
 
         /* An arrival only counts if the bus driver does not leave the stop
             too early.
@@ -501,7 +501,8 @@ module.exports.processStatus = function (pollData : IPollReturn) {
                 (now - sched0 < -30 * 60000) ? -1 :
                 /* If no pings received */
                 (!lastPing && now - sched0 >= -25 * 60000) ? Z(3, 'Driver App not switched on 25 mins before') :
-                (!lastPing && now - sched0 >= -30 * 60000) ? Z(2, 'Driver App not switched on 30 mins before') :
+//                (!lastPing && now - sched0 >= -30 * 60000) ? Z(2, 'Driver App not switched on 30 mins before') :
+                (!lastPing && now - sched0 >= -30 * 60000) ? Z(-1, 'Driver App not switched on 30 mins before') :
                 /* Else we scale the severity by how recent the last
                     ping is:
                     15 mins - severity 3
@@ -531,8 +532,9 @@ module.exports.processStatus = function (pollData : IPollReturn) {
                     -1
         };
         if (!svc.nobody) {
-            sms.processNotifications(svc.route_service_id, 'from ' + svc.stops[0].from_name.substr(0, 12)
-                                                          + ' to ' + svc.stops[0].to_name.substr(0, 12), lastSeverity, lastCause, now);
+            sms.processNotifications(svc.route_service_id,
+                'from ' + svc.stops[0].from_name.substr(0, 12)
+              + ' to ' + svc.stops[0].to_name.substr(0, 12), lastSeverity, lastCause, now);
         }
             
     }
