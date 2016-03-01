@@ -72,10 +72,13 @@ WHERE
     })
     .then( (tels) => {
         if (tels != null) {
+            var sendTime = new Date(new Date().getTime() -
+                                new Date().getTimezoneOffset()*60000)
+                                .toISOString().substr(11,5);
             for (var t=0; t<tels.length; t++) {
                 if (tels[t].telephone) {
                     client.messages.create({
-                        body: message,
+                        body: message + ' (Sent at ' + sendTime + ')',
                         to: tels[t].telephone,
                         from: from,
                     }, (err, msg) => {

@@ -100,7 +100,7 @@ FROM Locations
 WHERE
     1 = dbo.SameDayAs(timestamp, @current_date)
     AND rs.start_date <= dateadd(minute, 23*60 + 59, @current_date)
-    AND @current_date <= rs.end_date
+    AND @current_date <= dateadd(minute, 23*60 + 59, rs.end_date)
 )
 SELECT * FROM rned
     `)
