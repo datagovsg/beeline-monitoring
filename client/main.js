@@ -4,6 +4,7 @@ var Map = require('./route-map.vue');
 var Navi = require('./nav.vue');
 var PassengerList = require('./route-passengers.vue');
 var VueRouter = require('vue-router');
+import {load} from 'vue-google-maps'
 var Login = require('./login');
 
 Vue.use(VueRouter);
@@ -13,6 +14,10 @@ window.Login = Login;
 window.ServiceData = { services: {} };
 
 $(document).ready( function () {
+    load({
+        key: 'AIzaSyDC38zMc2TIj1-fvtLUdzNsgOQmTBb3N5M'
+    });
+
     var router = new VueRouter({
         saveScrollPosition: true,
     });
@@ -40,12 +45,12 @@ $(document).ready( function () {
     })
 
     router.start(Vue.extend({
-        data() {
+        data: function() {
             return {
                 ServiceData: window.ServiceData,
             };
         }
-    }), '#app');
+    }), 'body');
 });
 
 

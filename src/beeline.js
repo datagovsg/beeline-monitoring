@@ -1,5 +1,4 @@
-'use strict';
-declare var require, module, exports;
+// var require, module, exports;
 
 var mssql = require('mssql');
 var proj4 = require('proj4');
@@ -54,7 +53,7 @@ FROM supervisors
     `);
 }
 
-module.exports.get_pings = function (svc, date? : Date)  {
+module.exports.get_pings = function (svc, date/*? : Date*/)  {
     date = date || new Date();
     return exports.getDB()
     .then((conn) => {
@@ -79,7 +78,7 @@ ORDER BY
     })
 };
 
-module.exports.lastPings = function (conn, today? : Date)  {
+module.exports.lastPings = function (conn, today/*? : Date*/)  {
     today = today || new Date();
     var req = new mssql.Request(conn);
     var localDate = (new Date( today.getTime() -
@@ -106,7 +105,7 @@ SELECT * FROM rned
     `)
 };
 
-module.exports.services = function (conn, today? : Date) {
+module.exports.services = function (conn, today/*? : Date*/) {
     today = today || new Date();
     var req = new mssql.Request(conn);
     var localDate = (new Date( today.getTime() -
@@ -197,11 +196,12 @@ ORDER BY
     });
 };
 
+/*
 interface IPollReturn {
     serviceData: any,
     date: Date,
-};
-export async function poll() : Promise<IPollReturn> {
+};*/
+export async function poll() /* : Promise<IPollReturn> */ {
     var db = await module.exports.getDB();
     var today = new Date();
 
@@ -312,7 +312,7 @@ export async function poll() : Promise<IPollReturn> {
     }
     console.log('another');
 
-    return <IPollReturn> {
+    return /*<IPollReturn> */ {
         serviceData: svcs_dict,
         date: today,
     };
@@ -354,7 +354,7 @@ ORDER BY
 
 /**** Status computation ****/
 
-function scheduledStopTime(svc, i, date : Date) {
+function scheduledStopTime(svc, i, date /*: Date*/) {
     if (date) {
         date = new Date(date.getTime());
     }
@@ -415,7 +415,7 @@ svcs.status = {
 
 
 **/
-module.exports.processStatus = function (pollData : IPollReturn) {
+module.exports.processStatus = function (pollData /*: IPollReturn*/) {
     var svcs = pollData.serviceData;
     var date = pollData.date;
 
@@ -441,18 +441,18 @@ module.exports.processStatus = function (pollData : IPollReturn) {
         let firstPing = firstPingTime(svc);
 
         let lastPingDate = lastPingTime(svc)
-        let lastPing : number;
+        let lastPing /*: number*/;
         if (lastPingDate) {
             lastPing = lastPingDate.getTime();
         }
 
-        let actualDeparture : number,
+        let actualDeparture /*: number*/,
             actualDepartureDate = actualStopDepartureTime(svc, first_nz);
         if (actualDepartureDate) {
             actualDeparture = actualDepartureDate.getTime();
         }
 
-        let actualArrival : number,
+        let actualArrival /*: number*/,
             actualArrivalDate = actualStopArrivalTime(svc, first_nz);
         if (actualArrivalDate) actualArrival = actualArrivalDate.getTime();
 

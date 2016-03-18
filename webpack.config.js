@@ -7,21 +7,22 @@ module.exports = {
     },
     module: {
         loaders: [
-        {
-            test: /\.vue$/,
-            loader: 'vue',
-        },
-//        {
-//            test: /\.js$/,
-//            loader: 'babel!eslint',
-//            exclude: /node_modules/
-//        }
+            {
+                test: /\.vue$/,
+                loader: 'vue',
+            },
+            {
+                test: /\.js$/,
+                loader: 'babel',
+                presets: ['es2015'],
+                exclude: /node_modules/
+            }
         ]
     },
-//    vue: {
-//        loaders: {
-//            js: 'babel!eslint'
-//        }
-//    },
+    vue: {
+        loaders: {
+            js: 'babel',
+        },
+    },
 }
 
