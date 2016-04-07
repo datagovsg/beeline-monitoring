@@ -1,12 +1,13 @@
-'use strict';
-var accountId = 'ACd475fcf3d7ff94b2721d3a5ca8ace9e8';
-var authToken = '8e5a099ba0e491eece0bd56c3cecc619';
+export var accountId = 'ACd475fcf3d7ff94b2721d3a5ca8ace9e8';
+export var authToken = '8e5a099ba0e491eece0bd56c3cecc619';
 
 var client = require('twilio')(accountId, authToken);
 var beeline = require('./beeline');
 var mssql = require('mssql');
 
 var months = "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec".split(',');
+
+import fs from 'fs'
 
 function pad(n) {
     n = '' + n;
@@ -18,8 +19,8 @@ function pad(n) {
     }
 }
 
-module.exports.processNotifications = function (rsid, description, severity, cause, now) {
-    now = new Date(now);
+export function processNotifications(rsid, description, severity, cause, now) {
+    now = now ? new Date(now) : new Date();
     var dt =  pad(now.getDate()) + '-' + months[now.getMonth()];
     var message = cause + '.\nService #' + rsid + ' ' + description + ' on ' + dt
                 + '\nCheck details at http://busadmin.beeline.sg/';
@@ -77,7 +78,7 @@ WHERE
                                 .toISOString().substr(11,5);
             for (var t=0; t<tels.length; t++) {
                 if (tels[t].telephone) {
-                    client.messages.create({
+                    sendMessage({
                         body: message + ' (Sent at ' + sendTime + ')',
                         to: tels[t].telephone,
                         from: from,
@@ -93,11 +94,25 @@ WHERE
     .then(null, (err) => {console.log(err);});
 };
 
-module.exports.sendTestMessage = function() {
+export function sendTestMessage() {
     client.messages.create({
         body: 'Hello Beeline!',
         to: '+6581001860',
         from: 'BeelineOps',
     });
 };
+export function sendMessage(data) {
+    client.messages.create(data, (err, msg) => {
+        console.log(err);
+        console.log(msg);
+    });
+    try {
+        fs.appendFile(
+            'smslog.log',
+            (new Date().toISOString()) + ' ' + JSON.stringify(data) + '\n');
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 

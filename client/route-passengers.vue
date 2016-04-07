@@ -50,9 +50,9 @@
                 {{ arrv.last_ping ? arrv.last_ping.timestamp : '' | minsDiff arrv.time }}
             </td>
         </tr>
-
     </table>
 
+    
     <h1>Passenger List</h1>
     <div v-for="stop in stops"
         v-show="stop.is_boarding">
@@ -67,6 +67,28 @@
             {{passenger.email}}
         </div>
     </div>
+
+    <h1>Send message to passengers</h1>
+    <form action="/send_message"
+        method="POST"
+        onsubmit="return confirm('Send message?') && confirm('Really sure?')"
+        >
+    Use template:
+    <select v-model="sms.message">
+       <option v-for="mt in messageTemplates"
+            :value="mt[1]"
+            >
+            {{mt[0]}}
+       </option>
+    </select>
+    <input type="hidden" name="session_token" value="{{sessionToken}}" />
+    <input type="hidden" name="service" value="{{service}}" />
+    <textarea v-model="sms.message"
+        style="display: block; width: 100%; height: 100px"
+        name="message"></textarea>
+    <button type="submit">Submit</button>
+    </form>
+
     </div>
 </div>
 </template>
@@ -119,6 +141,7 @@ td.alighting {
 
 var authAjax = require('./login').authAjax;
 var Vue=require('vue');
+import MessageTemplates from './message-templates'
 
 Vue.filter('formatScheduled', (s) => {
     return s.substr(0,2) + ':' + s.substr(2,4);
@@ -171,6 +194,10 @@ module.exports = {
             ServiceData: window.ServiceData,
 
             arrival_info: [],
+            
+            sms: {
+                message: MessageTemplates[0][1]
+            }
         };
     },
 
@@ -183,6 +210,18 @@ module.exports = {
     computed: {
         services() {
             return this.ServiceData.services;
+        },
+        sessionToken() {
+            return window.localStorage.session_token;
+        },
+        messageTemplates() {
+            return MessageTemplates;
+        },
+        setMessage: {
+            set(value) {
+                this.$el.querySelector('textarea[name="message"]')
+                        
+            },
         },
     },
 
@@ -215,6 +254,7 @@ module.exports = {
             authAjax('/get_passengers/' + this.service, {
             })
             .done(function (passengers) {
+                console.log(passengers);
                 var stops = [];
                 for (var i=0; i<passengers.length; i++) {
                     passengers[i].index = i;

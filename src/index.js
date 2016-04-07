@@ -4,6 +4,9 @@ var server = new hapi.Server();
 var beeline = require('./beeline');
 var mssql = require('mssql');
 var boom = require('boom');
+var Joi = require('joi');
+var sms = require('./sms')
+var leftPad = require('left-pad')
 
 server.connection({ port: 8080 });
 
@@ -96,6 +99,68 @@ server.route({
         reply(beeline.getBusStatusByCompany(request.auth.credentials.busCompanies));
 	},
 });
+
+server.route({
+	method: 'POST',
+	path: '/send_message',
+    config: {
+        validate: {
+            payload: Joi.object({
+                service: Joi.number().integer(),
+                message: Joi.string().required(),
+            }).unknown(),
+        },
+        auth: {
+            strategy: 'payload-check',
+            mode: 'required',
+            payload: 'required',
+        },
+    },
+	handler: async function (request, reply) {
+        try {
+            if (!beeline.isServiceAuthorized(request.auth.credentials.busCompanies, request.payload.service)) {
+                return reply(boom.unauthorized(''));
+            }
+
+            var passengers = await beeline.get_passengers(request.payload.service);
+            var phone_numbers = passengers.map(p => p.contact_no)
+                .filter(x => x != null)
+                .map(x => x.replace(/ /g, ''))
+                .filter(pn => /\+65\d{8}/.test(pn));
+
+            console.log(phone_numbers);
+
+            for (let pn of phone_numbers) {
+                sms.sendMessage({
+                    from: 'Beeline',
+                    to: pn,
+                    body: request.payload.message
+                });
+            }
+
+
+            var dt = new Date();
+
+            sms.processNotifications(
+                request.payload.service,
+                `${request.auth.credentials.email}`,
+                3,
+                request.payload.message
+                    + ' (' + leftPad(dt.getDate(), 2, 0)
+                    + '-' + leftPad(dt.getMonth() + 1, 2, 0)
+                    + '-' + leftPad(dt.getFullYear(), 4, 0)
+                    + ')',
+                undefined
+                );
+
+            reply(request.payload.message);
+        }catch (err) {
+            console.log(err);
+            reply(500);
+        }
+	},
+});
+
 
 server.start( () => {
 });

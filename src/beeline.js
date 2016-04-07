@@ -30,7 +30,6 @@ module.exports.getDB = async function () {
 
 module.exports.getUserCompanies = async function (email) {
     var conn = await exports.getDB();
-
     var req = new mssql.Request(conn);
     req.input('email', mssql.VarChar(100), email);
     
@@ -176,6 +175,7 @@ SELECT
     rsst.time,
     [user].[name],
     [user].email,
+    [user].contact_no,
     route_service.bus_co_id
 FROM
     ( (SELECT * FROM booking AS b WHERE
@@ -310,7 +310,6 @@ export async function poll() /* : Promise<IPollReturn> */ {
         }
 
     }
-    console.log('another');
 
     return /*<IPollReturn> */ {
         serviceData: svcs_dict,
@@ -430,7 +429,7 @@ module.exports.processStatus = function (pollData /*: IPollReturn*/) {
             }
         }
         if (first_nz == svc.stops.length) {
-            console.log('Service ' + rsid + ' bo lak gu leh');
+            console.log('Service ' + rsid + ' has no passengers');
             first_nz = 0;
             svc.nobody = true;
         }

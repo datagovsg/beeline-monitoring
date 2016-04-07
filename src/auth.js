@@ -30,6 +30,9 @@ var authorizedUsers = {
     'juzyun@gmail.com': [0], // Ziyun
 };
 
+function verifyToken(s) {
+    return jwt.verify(s, secret_key);
+}
 
 module.exports = {
     register(server, options, next) {
@@ -37,6 +40,37 @@ module.exports = {
             return {
                 api: {
                     busCompanies: [],
+                },
+                payload(request, reply) {
+                    var sessionToken = request.payload.session_token;
+                    var result = {
+                        credentials: {
+                            name: 'Verified',
+                        },
+                    };
+
+                    try {
+                        var decoded = verifyToken(sessionToken);
+                        var timestamp = (new Date()).getTime();
+
+                        console.log("PAYLOAD AUTH");
+
+                        return beeline.getUserCompanies(decoded.email)
+                        .then( (companies) => {
+                            result.credentials.email = decoded.email;
+                            result.credentials.busCompanies = companies;
+                            return reply.continue(result);
+                        }, (err) => {
+                            console.log(err);
+                            reply(Boom.unauthorized('hello?'));
+                        });
+                    }
+                    catch (err) {
+                        console.log('Error while decoding');
+                        console.log(err);
+                    }
+                    console.log('Not authenticated');
+                    return reply(Boom.unauthorized(null, 'Custom'));
                 },
                 authenticate(request, reply) {
                     var result = {
@@ -47,27 +81,77 @@ module.exports = {
                     var auth_header = request.headers.authorization;
                     var parts = auth_header ? auth_header.split(' ') : [];
 
-                    if (auth_header && parts.length == 2 && parts[0] == "Bearer") {
-                        try {
-                            var decoded = jwt.verify(parts[1], secret_key);
-                            var timestamp = (new Date()).getTime();
+                    var token;
 
-                            return beeline.getUserCompanies(decoded.email)
-                            .then( (companies) => {
-                                result.credentials.email = decoded.email;
-                                result.credentials.busCompanies = companies;
-                                return reply.continue(result);
-                            }, (err) => {console.log(err); reply(Boom.unauthorized(''));});
-                        }
-                        catch (err) {
-                            console.log('Error while decoding');
-                            console.log(err);
-                        }
+                    if (auth_header && parts.length == 2 && parts[0] == "Bearer") {
+                        token = parts[1];
+                    }
+                    try {
+                        var decoded = verifyToken(token);
+                        var timestamp = (new Date()).getTime();
+
+                        console.log("COOKIE/AUTH AUTH");
+                        return beeline.getUserCompanies(decoded.email)
+                        .then( (companies) => {
+                            result.credentials.email = decoded.email;
+                            result.credentials.busCompanies = companies;
+                            return reply.continue(result);
+                        }, (err) => {console.log(err); reply(Boom.unauthorized(''));});
+                    }
+                    catch (err) {
+                        console.log('Error while decoding');
+                        console.log(err);
                     }
                     return reply(Boom.unauthorized(null, 'Custom'));
                 },
             };
         });
+        server.auth.scheme('payload-check', function(server, options) {
+            return {
+                api: {
+                    busCompanies: [],
+                },
+                payload(request, reply) {
+                    console.log(request.payload);
+
+                    var sessionToken = request.payload.session_token;
+                    var result = {
+                        credentials: {
+                            name: 'Verified',
+                        },
+                    };
+
+                    try {
+                        var decoded = verifyToken(sessionToken);
+                        var timestamp = (new Date()).getTime();
+
+                        return beeline.getUserCompanies(decoded.email)
+                        .then( (companies) => {
+                            request.auth.credentials.email = decoded.email;
+                            request.auth.credentials.busCompanies = companies;
+
+                            console.log(result);
+
+                            return reply.continue();
+                        }, (err) => {
+                            console.log(err);
+                            console.log('Why?');
+                            reply(Boom.unauthorized('hello?'));
+                        });
+                    }
+                    catch (err) {
+                        console.log('Error while decoding');
+                        console.log(err);
+                    }
+                    console.log('Not authenticated');
+                    return reply(Boom.unauthorized(null, 'Custom'));
+                },
+                authenticate(request, reply) {
+                    return reply.continue({credentials: {}});
+                },
+            };
+        });
+
         server.route({
             method: 'GET',
             path: '/verify_token',
@@ -89,14 +173,18 @@ module.exports = {
                                 reply(Boom.unauthorized("Invalid token"));
                             }
                             else {
-                                reply({
-                                    session_token: jwt.sign({
+                                var sessionToken = jwt.sign({
                                         email: obj.email.toLowerCase(),
                                         timestamp: (new Date()).getTime(),
                                     }, secret_key, {
                                         expiresIn: '24h',   
-                                    })
-                                });
+                                    });
+
+                                reply({
+                                    session_token: sessionToken
+                                })
+                                .state('sessionToken', sessionToken);
+                                ;
                             }
                         });
                     }
@@ -105,6 +193,7 @@ module.exports = {
         });
 
         server.auth.strategy('google-signin', 'google-signin', true);
+        server.auth.strategy('payload-check', 'payload-check', false);
 
         server.route({
             method: 'GET',
