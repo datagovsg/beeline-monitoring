@@ -40,7 +40,7 @@
                 s0 : service.status.ping == 0,
                 s1 : service.status.ping == 1,
                 s2 : service.status.ping == 2,
-                s3 : service.status.ping == 3,
+                s3 : service.status.ping >= 3,
                 sU : service.status.ping == -1,
             }">
                 &gt; {{service.first_ping.timestamp | takeTime}}
@@ -60,7 +60,7 @@
                 s0 : service.status.distance == 0,
                 s1 : service.status.distance == 1,
                 s2 : service.status.distance == 2,
-                s3 : service.status.distance == 3,
+                s3 : service.status.distance >= 3,
                 sU : service.status.distance == -1,
             }">
                 <template v-if="service.status.arrival_time">

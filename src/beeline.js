@@ -493,12 +493,13 @@ module.exports.processStatus = function (pollData /*: IPollReturn*/) {
             first_ping: firstPing,
 
             ping:
-                emerg ? Z(4, 'Emergency has been switched on') :
+                emerg ? Z(5, 'Emergency has been switched on') :
                 arrival ? Z(0, 'Bus has arrived') :
                 /* If the service is more than half an hour away
                 from starting, we just ignore... */
                 (now - sched0 < -30 * 60000) ? -1 :
                 /* If no pings received */
+                (!lastPing && now - sched0 >= -5 * 60000) ? Z(4, 'Driver App not switched on 5 mins before') :
                 (!lastPing && now - sched0 >= -25 * 60000) ? Z(3, 'Driver App not switched on 25 mins before') :
 //                (!lastPing && now - sched0 >= -30 * 60000) ? Z(2, 'Driver App not switched on 30 mins before') :
                 (!lastPing && now - sched0 >= -30 * 60000) ? Z(-1, 'Driver App not switched on 30 mins before') :
@@ -522,7 +523,7 @@ module.exports.processStatus = function (pollData /*: IPollReturn*/) {
 
                    If we have no idea where they are, -1
                 */
-                emerg ? Z(4, 'Emergency has been switched on') :
+                emerg ? Z(5, 'Emergency has been switched on') :
                 arrival ? (arrival - sched >= 15*60000 ? Z(3, 'Service arrived ' + ((arrival-sched)/60000).toFixed(0) + ' mins late') :
                            arrival - sched >= 5 *60000 ? 2 : 0 ) :
                 ETA ? ( ETA - sched >= 10 * 60000 ? Z(3, 'Service might be more than 5 mins late') :
@@ -531,9 +532,24 @@ module.exports.processStatus = function (pollData /*: IPollReturn*/) {
                     -1
         };
         if (!svc.nobody) {
+            // Send notifications to operator
             sms.processNotifications(svc.route_service_id,
                 'from ' + svc.stops[0].from_name.substr(0, 12)
               + ' to ' + svc.stops[0].to_name.substr(0, 12), lastSeverity, lastCause, now);
+
+
+            // Send notifications to users
+            if (!lastPing && now - sched0 >= 0 * 60000 && /* Cut-off is zero minutes */
+                    now - sched0 <= 4 * 3600 * 1000 /* Don't send after 1 hour -- debugging purposes? */
+                ) {
+                sms.warnUsers(
+                    svc.route_service_id,
+                    '(DO NOT REPLY) Dear passenger, this service has been cancelled because the ' +
+                    'bus driver has not started the tracking service. Please make alternate '+
+                    'transport arrangements. Sorry for the inconvenience. ' +
+                    'This is an experimental notification by Beeline'
+                    )
+            }
         }
             
     }

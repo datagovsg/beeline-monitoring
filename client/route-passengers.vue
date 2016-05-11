@@ -86,14 +86,25 @@
     <textarea v-model="sms.message"
         style="display: block; width: 100%; height: 100px"
         name="message"></textarea>
-    <button type="submit">Submit</button>
+        <button type="submit">Submit</button>
     </form>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
 
     </div>
 </div>
 </template>
 
 <style scoped>
+button {
+    margin: 0.5em;
+    padding: 0.5em;
+    display: block;
+    margin: auto;
+}
 table.arrival_info {
     border-collapse: collapse;
     border-spacing: 0px;

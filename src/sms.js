@@ -26,11 +26,13 @@ export function processNotifications(rsid, description, severity, cause, now) {
                 + '\nCheck details at http://busadmin.beeline.sg/';
     var theConn;
     var from = severity <= 3 ? 'BeelineOps' :
-               severity == 4 ? 'BeeEmrgency' :
+               severity == 4 ? 'BeeCritical' :
                                'BeeEmrgency';
 
-    if (severity < 3)
+    if (severity < 3) {
+        console.log(cause)
         return;
+    }
 
 
     console.log('processing...' + message);
@@ -114,5 +116,87 @@ export function sendMessage(data) {
         console.log(err);
     }
 };
+export function sendMessageFake(data) {
+    console.log(
+`To: ${data.to}
+From: ${data.from}
+Body: ${data.body}`)
+};
+
+export async function warnUsers(rsid, message) {
+    try {
+        var conn = await beeline.getDB()
+
+        // Get route service details
+        var req = new mssql.Request(conn);
+        req.input('rsid', mssql.Int, rsid);
+
+        var route_service_details = await req.query(`
+SELECT
+    send_warnings,
+    route_service_id
+FROM route_service
+WHERE
+    route_service_id = @rsid
+`)
+
+        // Only send warnings for routes with warnings switched on
+        if (!route_service_details[0].send_warnings) {
+            return;
+        }
+
+        // Check whether this message has been sent
+        var date = new Date(new Date().getTime() + (8*3600*1000))
+                        .toISOString().substr(0,10)
+        // construct the notification id
+        var notification_id = `${rsid} ${date} Automatic route cancellation`
+        // check
+        var req = new mssql.Request(conn);
+        req.input('message', mssql.VarChar(140), notification_id)
+        var similar_notifications = await req.query(`
+SELECT COUNT(*) AS count
+FROM supervisor_notifications
+WHERE message = @message
+    AND timestamp > dateadd(month, -11, getdate())
+`)
+        if (similar_notifications[0].count > 0) {
+            return;
+        }
+        else {
+            var req = new mssql.Request(conn);
+            req.input('message', mssql.VarChar(140), notification_id)
+            await req.query(`
+            INSERT INTO supervisor_notifications
+            (message) VALUES (@message)
+            `)
+        }
+
+        // send the message to commuters
+        var passengers = await beeline.get_passengers(rsid);
+        var phone_numbers = passengers.map(p => p.contact_no)
+            .filter(x => x != null)
+            .map(x => x.replace(/ /g, ''))
+            .filter(pn => /\+65\d{8}/.test(pn));
+        
+        for (let pn of phone_numbers) {
+            sendMessage({
+                from: 'Beeline',
+                to: pn,
+                body: message,
+            })
+        }
+        // send a message to operators for record purposes
+        processNotifications(
+            rsid,
+            `System automated message`,
+            3,
+            `${message} (${date})`,
+            undefined
+            )
+    }
+    catch (error) {
+        console.log(error.stack);
+    }
+}
 
 
