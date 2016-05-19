@@ -19,20 +19,23 @@
         </td>
     </tr>
     <tr v-for="service in servicesByStartTime"
-        track-by='route_service_id'
+        track-by='tripId'
         :class="{
             emergency: service.status.emergency,
             nobody: service.nobody,
         }"
         >
         <td data-column="route">
-            <h4 style="float: left; margin: 0 10px 0 10px">{{service.route_service_id}}
-            <div class="service_name">{{service.stops[0].service_name}}</div>
+            <h4 style="float: left; margin: 0 10px 0 10px">{{service.route.label}}
+            <div class="service_name">{{service.route.id}}</div>
             </h4>
-            <h4 style="float: left; margin: 0 10px 0 10px">{{service.stops[0].time}}</h4>
+            <h4 style="float: left; margin: 0 10px 0 10px">
+              {{service.stops[0].time | takeTime}}
+            </h4>
             <div style="float: left">
-                {{service.stops[0].from_name}}<br/>
-                {{service.stops[0].to_name}}</div>
+              {{service.route.from}}<br/>
+              {{service.route.to}}
+              </div>
         </td>
         <td data-column="led">
             <div :class="{
@@ -43,13 +46,13 @@
                 s3 : service.status.ping >= 3,
                 sU : service.status.ping == -1,
             }">
-                &gt; {{service.first_ping.timestamp | takeTime}}
+                &gt; {{service.firstPing.createdAt | takeTime}}
                 <template v-if="service.status.arrival_time">
-                    (arrived) 
+                    (arrived)
                 </template>
                 <template v-else>
-                    <template v-if="service.last_ping">
-                        {{service.last_ping | minutesSince}} <br/> mins ago
+                    <template v-if="service.lastPing">
+                        {{service.lastPing | minutesSince}} <br/> mins ago
                     </template>
                 </template>
             </div>
@@ -72,7 +75,7 @@
             </div>
         </td>
         <td data-column="next">
-        <a v-link="{path: '/map/' + service.route_service_id}" class="details_button">
+        <a v-link="{path: '/map/' + service.tripId}" class="details_button">
         &gt;&gt;
         </a>
         </td>
@@ -84,10 +87,11 @@
 
 <script>
 var Vue = require('vue');
+var _ = require('lodash')
 
 Vue.filter('minutesSince', function (dt) {
     if (dt) {
-        return Math.round(((new Date()).getTime() - (new Date(dt.timestamp)).getTime()) / 60000).toFixed(0);
+        return Math.round(((new Date()).getTime() - (new Date(dt.createdAt)).getTime()) / 60000).toFixed(0);
     }
     return '';
 });
@@ -105,13 +109,13 @@ Vue.filter('firstStopETA', function (svc) {
     var firstStop = svc.stops[0];
 
     var hasArrived = false;
-    if (firstStop.last_ping) {
-        var time_part = new Date(firstStop.last_ping.timestamp);
+    if (firstStop.lastPing) {
+        var time_part = new Date(firstStop.lastPing.createdAt);
         var scheduledTime = new Date(time_part.getTime());
         scheduledTime.setUTCHours(parseInt(firstStop.time.substr(0,2)));
         scheduledTime.setUTCMinutes(parseInt(firstStop.time.substr(2,4)));
         scheduledTime.setUTCSeconds(0);
-        
+
         if (svc.route_service_id == 77) {
             console.log(time_part);
             console.log(scheduledTime);
@@ -122,15 +126,15 @@ Vue.filter('firstStopETA', function (svc) {
                         + ' (Arrived)';
         }
     }
-    else if (svc.last_ping) {
-        var time_part = new Date(svc.last_ping.timestamp);
-        var distance = svc.last_ping.distance;
+    else if (svc.lastPing) {
+        var time_part = new Date(svc.lastPing.createdAt);
+        var distance = svc.lastPing.distance;
 
         var hours = (distance / 1000 / 60);
         var estimatedArrivalTime = new Date(time_part.getTime() + hours*60*60*1000);
 
         return estimatedArrivalTime.localISO().substr(11,5);
-        //var arrival_time = new Date(firstStop.timestamp);
+        //var arrival_time = new Date(firstStop.createdAt);
         //arrival_time.setHours(parseInt(firstStop.time.substr(0,2)));
         //arrival_time.setMinutes(parseInt(firstStop.time.substr(2,4)));
         //arrival_time.setSeconds(0);
@@ -168,22 +172,14 @@ module.exports = {
             var self = this;
             var ss = self.services;
 
-            Object.keys(ss).forEach(function (k) {
-                rv.push(ss[k]);
-            });
-            rv.sort(function (a, b) {
-                return (a.stops[0].time < b.stops[0].time) ? -1
-                : (a.stops[0].time > b.stops[0].time) ? 1
-                : (a.stops[0].route_service_id < b.stops[0].route_service_id) ? -1
-                : (a.stops[0].route_service_id > b.stops[0].route_service_id) ? 1
-                : 0;
-            });
-            return rv;
+            ss = _.values(ss)
+            ss = _.sortBy(ss, svc => [svc.stops[0].time, svc.route.label])
+            return ss;
         },
     },
     created: function() {
         var self=this;
-        self.requery(5000);
+        self.requery(10000);
     },
     methods: {
         showService: function (svc) {
@@ -192,7 +188,7 @@ module.exports = {
         },
         requery: function(timeout) {
             var self = this;
-            authAjax('/current_status', {
+            authAjax('/monitoring', {
                 method: 'GET',
                 dataType: 'json',
                 cache: false,

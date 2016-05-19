@@ -4,7 +4,7 @@ module.exports.authAjax = function (path, opts) {
 
     opts.headers.Authorization = 'Bearer ' + localStorage['session_token'];
 
-    return $.ajax(path, opts);
+    return $.ajax('http://localhost:8080' + path, opts);
 };
 
 module.exports.checkLoggedIn = function () {
@@ -19,5 +19,3 @@ module.exports.checkLoggedIn = function () {
         }
     })
 };
-
-

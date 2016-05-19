@@ -12,27 +12,19 @@ proj4.defs([
 var toSVY = proj4('epsg:3414').forward;
 var toLatLng = proj4('epsg:3414').inverse;
 
-function identity(v) {
-    return v;
-}
 function errHandler(err) {
     console.log(err.stack);
 }
 
 module.exports.getDB = async function () {
-    return await mssql.connect({
-        user: 'readonly',
-        password: 'hahareadonly',
-        server: 'beelinerds.ctauntrumctz.ap-southeast-1.rds.amazonaws.com',
-        database: 'beeline',
-    });
+    return await pg.connect(process.env.DATABASE_URL);
 }
 
 module.exports.getUserCompanies = async function (email) {
     var conn = await exports.getDB();
-    var req = new mssql.Request(conn);
-    req.input('email', mssql.VarChar(100), email);
-    
+    var req = new pg.Request(conn);
+    req.input('email', pg.VarChar(100), email);
+
     var bcids = await req.query(`
 SELECT bus_co_id
 FROM supervisors
@@ -44,7 +36,7 @@ WHERE email = @email
 module.exports.getAuthorizedUsers = async function () {
     var conn = await exports.getDB();
 
-    var req = new mssql.Request(conn);
+    var req = new pg.Request(conn);
 
     return await req.query(`
 SELECT *
@@ -56,12 +48,12 @@ module.exports.get_pings = function (svc, date/*? : Date*/)  {
     date = date || new Date();
     return exports.getDB()
     .then((conn) => {
-        var req = new mssql.Request(conn);
+        var req = new pg.Request(conn);
         var localDate = (new Date( date.getTime() -
                                    date.getTimezoneOffset()*60000 ));
 
-        req.input('svc', mssql.Int, svc);
-        req.input('current_date', mssql.DateTime, localDate);
+        req.input('svc', pg.Int, svc);
+        req.input('current_date', pg.DateTime, localDate);
         return req.query(`
 SELECT
     Locations.*
@@ -79,11 +71,11 @@ ORDER BY
 
 module.exports.lastPings = function (conn, today/*? : Date*/)  {
     today = today || new Date();
-    var req = new mssql.Request(conn);
+    var req = new pg.Request(conn);
     var localDate = (new Date( today.getTime() -
                                today.getTimezoneOffset()*60000 ));
 
-    req.input('current_date', mssql.DateTime, localDate);
+    req.input('current_date', pg.DateTime, localDate);
     return req.query(`
 WITH rned AS (
 SELECT
@@ -106,11 +98,11 @@ SELECT * FROM rned
 
 module.exports.services = function (conn, today/*? : Date*/) {
     today = today || new Date();
-    var req = new mssql.Request(conn);
+    var req = new pg.Request(conn);
     var localDate = (new Date( today.getTime() -
                                today.getTimezoneOffset()*60000 ));
 
-    req.input('current_date', mssql.DateTime, localDate);
+    req.input('current_date', pg.DateTime, localDate);
     return req.query(`
 SELECT
     route_service.route_service_id,
@@ -123,7 +115,7 @@ SELECT
     route.from_name, route.to_name, route_service.service_name, --FIXME why u waste bandwidth?
     ROW_NUMBER() OVER (PARTITION BY route_service.route_service_id ORDER BY rsst.time ASC) AS stop_no,
     COALESCE(count_booked.num_booked, 0) as num_booked
-FROM route_service 
+FROM route_service
     INNER JOIN route ON route_service.route_id = route.route_id
     INNER JOIN route_stop ON route.route_id = route_stop.route_id
     INNER JOIN stop ON route_stop.stop_id = stop.stop_id
@@ -137,7 +129,7 @@ FROM route_service
                 WHERE CHARINDEX(CONVERT(varchar(8), @current_date, 112), dates) <> 0
                     AND status = 'PAID'
                 GROUP BY route_service_id, rsst_id_board
-                UNION 
+                UNION
                 SELECT route_service_id, rsst_id_alight AS rsst_id, COUNT(*) as num_booked FROM booking
                 WHERE CHARINDEX(CONVERT(varchar(8), @current_date, 112), dates) <> 0
                     AND status = 'PAID'
@@ -158,12 +150,12 @@ ORDER BY
 module.exports.get_passengers = function(service) {
     return exports.getDB()
     .then((conn) => {
-        var req = new mssql.Request(conn);
+        var req = new pg.Request(conn);
         var localDate = (new Date( (new Date()).getTime() -
                                    (new Date()).getTimezoneOffset()*60000 ));
 
-        req.input('current_date', mssql.DateTime, localDate);
-        req.input('service', mssql.Int, service);
+        req.input('current_date', pg.DateTime, localDate);
+        req.input('service', pg.Int, service);
 
         return req.query(`
 -- boarding passengers
@@ -196,11 +188,6 @@ ORDER BY
     });
 };
 
-/*
-interface IPollReturn {
-    serviceData: any,
-    date: Date,
-};*/
 export async function poll() /* : Promise<IPollReturn> */ {
     var db = await module.exports.getDB();
     var today = new Date();
@@ -238,9 +225,9 @@ export async function poll() /* : Promise<IPollReturn> */ {
         stop.windowEnd.setMinutes(parseInt(stop.time.substr(2,4)) + 30);
         stop.windowEnd.setSeconds(0);
     }
-    
+
     var tzo = today.getTimezoneOffset() * 60000;
-    
+
     for (var i=0; i<pings.length; i++) {
         // FIX all the pings
         // Since they have been saved with the timezone offset =(
@@ -319,9 +306,9 @@ export async function poll() /* : Promise<IPollReturn> */ {
 
 module.exports.get_stops = function (service) {
     return exports.getDB().then((conn) => {
-        var req = new mssql.Request(conn);
+        var req = new pg.Request(conn);
 
-        req.input('svc', mssql.Int, service);
+        req.input('svc', pg.Int, service);
         return req.query(`
 SELECT
     route_service.route_service_id,
@@ -334,7 +321,7 @@ SELECT
     route_stop.is_boarding,
     route.from_name, route.to_name, route_service.service_name, --FIXME why u waste bandwidth?
     ROW_NUMBER() OVER (PARTITION BY route_service.route_service_id ORDER BY rsst.time ASC) AS stop_no
-FROM route_service 
+FROM route_service
     INNER JOIN route ON route_service.route_id = route.route_id
     INNER JOIN route_stop ON route.route_id = route_stop.route_id
     INNER JOIN stop ON route_stop.stop_id = stop.stop_id
@@ -467,7 +454,7 @@ module.exports.processStatus = function (pollData /*: IPollReturn*/) {
         var arrival = (actualDeparture - sched > -2 * 60000) ?
                             actualArrival : undefined;
 
-        var distance = svc.last_ping ? 
+        var distance = svc.last_ping ?
                 svc.last_ping.distance : 0;
         var speed = 35; // km/h
         var ETA = distance ?
@@ -551,7 +538,7 @@ module.exports.processStatus = function (pollData /*: IPollReturn*/) {
                     )
             }
         }
-            
+
     }
     return svcs;
 };
@@ -599,5 +586,3 @@ module.exports.getBusStatusByCompany = function (busCompanies) {
     });
     return subst;
 };
-
-

@@ -106,6 +106,7 @@ Vue.component('gmap-polyline', Polyline);
 Vue.component('gmap-infowindow', InfoWindow);
 
 var authAjax = require('./login').authAjax;
+const _ = require('lodash')
 
 module.exports = {
     data () {
@@ -202,7 +203,7 @@ module.exports = {
             // console.log(stop);
             return {
                 url: 'img/stop' +
-                    (stop.is_boarding ? 'Board' : 'Alight') +
+                    (stop.canBoard ? 'Board' : 'Alight') +
                     (stop.stop_no) + '.png',
                 size: new google.maps.Size(100,100),
                 origin: new google.maps.Point(0,0),
@@ -225,38 +226,34 @@ module.exports = {
     methods: {
         requery: function () {
             var self = this;
-            console.log('asking for ' + this.service);
 
-            authAjax('/get_pings/' + this.service, {
+            // Get the pings and other data
+            authAjax(`/trips/${this.service}/latest_info`, {
                 cache: false,
             })
-            .done(function (pings) {
-                self.pings = pings;
+            .then(function (data) {
+              var {pings, statuses} = data
+              self.pings = pings;
+              self.statuses = statuses;
             });
 
-            var stopInfo = authAjax('/get_stops/' + this.service, {
+            var stopInfo = authAjax(`/trips/${this.service}`, {
+                cache: false,
             });
-            var passengerInfo = authAjax('/get_passengers/' + this.service, {
+            var passengerInfo = authAjax(`/trips/${this.service}/get_passengers`, {
+                cache: false,
             });
 
             return $.when(stopInfo, passengerInfo)
-            .then(function (stopZ, passengerZ) {
-                var stops = stopZ[0];
-                var passengers = passengerZ[0];
+            .then(function (stopData, passengerData) {
+                var stops = stopData.tripStops;
+                var passengers = passengerData;
+                var passengersByStopId = _.groupBy(passengers, p => p.boardStopId)
 
                 for (var i=0; i<stops.length; i++) {
-                    stops[i].passengers = [];
+                    stops[i].passengers = passengersByStopId[stops[i].id] || [];
                 }
 
-                // FIXME: fix this complexity thing
-
-                for (var i=0; i<passengers.length; i++) {
-                    for (var j=0; j<stops.length; j++) {
-                        if (passengers[i].name && stops[j].rsst_id == passengers[i].rsst_id_board) {
-                            stops[j].passengers.push(passengers[i]);
-                        }
-                    }
-                }
                 self.stops = stops;
             });
 
