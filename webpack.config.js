@@ -1,6 +1,7 @@
 
 module.exports = {
     entry: './client/main.js',
+    devtool: 'sourcemap',
     output: {
         path: __dirname + '/static',
         filename: 'bundle.js',

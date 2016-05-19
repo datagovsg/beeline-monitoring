@@ -1,8 +1,6 @@
-// var require, module, exports;
-
-var mssql = require('mssql');
-var proj4 = require('proj4');
-var sms = require('./sms');
+const pg = require('pg');
+const proj4 = require('proj4');
+const sms = require('./sms');
 
 proj4.defs([
     ['epsg:3414',

@@ -1,63 +1,63 @@
 <template>
 <div>
-    <navi :service="service"></navi>
+    <navi :service="tripId"></navi>
     <div class="contents-with-nav">
 <!--    <h1>{{services[service].stops[0].route_service_id}}:
         {{services[service].stops[0].from_name}} &mdash;
         {{services[service].stops[0].to_name}}-->
     <h2>Boarding stops</h2>
-    <table class="arrival_info">
+    <table class="arrivalInfo">
         <tr>
             <th>Stop number</th>
-            <td v-for="arrv in arrival_info.stops"
-                :class="{ boarding: arrv.is_boarding,
-                          alighting: !arrv.is_boarding }"
-                v-show="arrv.is_boarding">
+            <td v-for="tripStop in arrivalInfo"
+                :class="{ boarding: tripStop.canBoard,
+                          alighting: tripStop.canAlight }"
+                v-show="tripStop.canBoard">
                 {{ $index + 1 }}
-                {{ arrv.is_boarding ? '↗' : '↙' }}
+                {{ tripStop.canBoard ? '↗' : '↙' }}
             </td>
         </tr>
         <tr>
             <th>Pax boarding</th>
-            <td v-for="arrv in stops"
-                v-show="arrv.is_boarding">
-                <span v-if="arrv.is_boarding">
-                {{ arrv.passengers.length  }}
+            <td v-for="tripStop in arrivalInfo"
+                v-show="tripStop.canBoard">
+                <span v-if="tripStop.canBoard">
+                  {{ tripStop.passengers.length  }}
                 </span>
             </td>
         </tr>
         <tr>
             <th>Scheduled</th>
-            <td v-for="arrv in arrival_info.stops"
-                v-show="arrv.is_boarding">
-                <span v-if="arrv.is_boarding">
-                {{ arrv.time | formatScheduled }}
+            <td v-for="tripStop in arrivalInfo"
+                v-show="tripStop.canBoard">
+                <span v-if="tripStop.canBoard">
+                {{ tripStop.time | takeLocalTime }}
             </td>
         </tr>
         <tr>
             <th>Actual</th>
-            <td v-for="arrv in arrival_info.stops"
-                v-show="arrv.is_boarding">
-                <span v-if="arrv.is_boarding">
-                {{ arrv.last_ping ? arrv.last_ping.timestamp : '' | takeTime }}
+            <td v-for="tripStop in arrivalInfo"
+                v-show="tripStop.canBoard">
+                <span v-if="tripStop.canBoard">
+                {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | takeLocalTime }}
             </td>
         </tr>
         <tr>
             <th>Diff (mins)</th>
-            <td v-for="arrv in arrival_info.stops"
-                v-show="arrv.is_boarding">
-                <span v-if="arrv.is_boarding">
-                {{ arrv.last_ping ? arrv.last_ping.timestamp : '' | minsDiff arrv.time }}
+            <td v-for="tripStop in arrivalInfo"
+                v-show="tripStop.canBoard">
+                <span v-if="tripStop.canBoard">
+                {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | minsDiff tripStop.time }}
             </td>
         </tr>
     </table>
 
-    
+
     <h1>Passenger List</h1>
-    <div v-for="stop in stops"
-        v-show="stop.is_boarding">
-        <h3>{{$index + 1}}. {{stop.name}}</h3>
-        <h4>Boarding time: {{stop.boarding_time}}</h4>
+    <div v-for="stop in arrivalInfo"
+        v-show="stop.canBoard">
+        <h3>{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>
+        <h4>Boarding time: {{stop.time}}</h4>
 
         <div v-for="passenger in stop.passengers"
             class="passenger">
@@ -105,16 +105,16 @@ button {
     display: block;
     margin: auto;
 }
-table.arrival_info {
+table.arrivalInfo {
     border-collapse: collapse;
     border-spacing: 0px;
 }
 
-.arrival_info th {
+.arrivalInfo th {
     background-color: #ebeff2;
 }
-.arrival_info th,
-.arrival_info td {
+.arrivalInfo th,
+.arrivalInfo td {
     min-width: 50px;
     border: solid 1px #CCCCCC;
     padding: 5px;
@@ -132,7 +132,7 @@ h3 {
 }
 h3 {
     white-space: nowrap;
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 
 h4 {
@@ -164,7 +164,7 @@ Vue.filter('takeLocalTime', (s) => {
 
     d = new Date(d.getTime() - 60000 * now.getTimezoneOffset());
 
-    return d.toISOString.substr(11,5);
+    return d.toISOString().substr(11,5);
 });
 Vue.filter('minsDiff', (s, sched) => {
     if (!s) return '';
@@ -199,13 +199,16 @@ module.exports = {
             title: '',
             subtitle: '',
 
-            service: null,
+            tripId: null,
             stops: [],
 
             ServiceData: window.ServiceData,
 
-            arrival_info: [],
-            
+            trip: {
+              tripStops: [],
+            },
+            passengers: [],
+
             sms: {
                 message: MessageTemplates[0][1]
             }
@@ -214,7 +217,7 @@ module.exports = {
 
     route: {
         activate() {
-            this.service = this.$route.params.svc;
+            this.tripId = this.$route.params.svc;
         },
     },
 
@@ -231,15 +234,32 @@ module.exports = {
         setMessage: {
             set(value) {
                 this.$el.querySelector('textarea[name="message"]')
-                        
+
             },
         },
+
+        arrivalInfo() {
+          var stops = _.sortBy(this.trip.stops, s => s.time);
+          var passengersByStops = _.groupBy(this.passengers, p => p.boardStopId)
+          var index = 0;
+
+          for (let stop of stops) {
+            Vue.set(stop, 'passengers', passengersByStops[stop.id] || [])
+
+            for (let p of stop.passengers) {
+              p.index = index++;
+            }
+          }
+
+          console.log(stops.map(s => _.assign({}, s)))
+          return stops;
+        }
     },
 
     watch: {
-        service: function () {
+        tripId: function () {
             this.requery();
-            this.requeryArrival();
+            this.requeryTrips();
         },
     },
 
@@ -248,45 +268,24 @@ module.exports = {
     },
 
     methods: {
-        requeryArrival: function (timeout) {
-            var self=this;
-            authAjax('/current_status', {
+        requeryTrips() {
+            authAjax(`/monitoring`)
+            .then((status) => {
+              console.log(status)
+              this.trip = _.values(status).find(t => t.tripId == this.tripId)
             })
-            .then( (services) => {
-                self.arrival_info = services[this.service];
-            });
         },
         requery: function (timeout) {
             clearTimeout(this.$timeout);
 
             timeout = timeout || 30000;
 
-            var self = this;
-            authAjax('/get_passengers/' + this.service, {
-            })
-            .done(function (passengers) {
-                console.log(passengers);
-                var stops = [];
-                for (var i=0; i<passengers.length; i++) {
-                    passengers[i].index = i;
-                    if (stops.length == 0 ||
-                        stops[stops.length-1].rsst_id_board != passengers[i].rsst_id_board) {
-                        
-                        stops.push({
-                            rsst_id_board: passengers[i].rsst_id_board,
-                            name: passengers[i].stop_name,
-                            boarding_time: passengers[i].time,
-                            is_boarding: passengers[i].is_boarding,
-                            passengers: []
-                        });
-                    }
+            authAjax(`/trips/${this.tripId}/get_passengers`)
+            .then((passengers) => {
+              this.passengers = passengers
 
-                    if (passengers[i].email)
-                        stops[stops.length-1].passengers.push(passengers[i]);
-                }
-                self.stops = stops;
-                self.$timeout = setTimeout(() => {self.requery(timeout);}, timeout);
-            });
+              this.$timeout = setTimeout(() => {this.requery(timeout);}, timeout);
+            })
         },
     }
 }

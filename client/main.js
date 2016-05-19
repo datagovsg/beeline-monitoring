@@ -35,7 +35,7 @@ $(document).ready( function () {
     });
 
     /* Load once... */
-    Login.authAjax('/current_status', {
+    Login.authAjax('/monitoring', {
         method: 'GET',
         dataType: 'json',
         cache: false,
@@ -52,6 +52,3 @@ $(document).ready( function () {
         }
     }), 'body');
 });
-
-
-
