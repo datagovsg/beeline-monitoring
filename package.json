@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "serve": "nodemon -i 'static/' -i webpack.config.js -i 'client/' operator_tool.js",
-    "build": "webpack"
+    "start": "node server",
+    "build": "webpack",
+    "heroku-postbuild": "webpack"
   },
   "dependencies": {
     "babel-core": "^6.4.0",

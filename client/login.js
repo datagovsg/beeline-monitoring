@@ -1,4 +1,6 @@
 
+var env = require('./env')
+
 export function authAjax(path, opts) {
     opts = opts || {}
     opts.headers = opts.headers || {};
@@ -6,7 +8,7 @@ export function authAjax(path, opts) {
     if (localStorage.session_token) {
       opts.headers.Authorization = 'Bearer ' + localStorage['session_token'];
     }
-    return $.ajax('http://localhost:8080' + path, opts);
+    return $.ajax(env.BACKEND_URL + path, opts);
 };
 
 export function checkLoggedIn() {
