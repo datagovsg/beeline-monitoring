@@ -6,8 +6,9 @@
     <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <script src="jquery.js"></script>
     <script src="bootstrap/js/bootstrap.js"></script>
+    <script src="//cdn.auth0.com/js/lock-9.1.min.js"></script>
     <script src="bundle.js"></script>
-    <meta name="viewport" content="width=device-width", initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="utf-8" />
     <title>Beeline Operator Tool</title>
 </head>
@@ -28,16 +29,16 @@
              v-if="$route.params.svc && ServiceData.services[$route.params.svc]"
         style=""
         >
-            {{ServiceData.services[$route.params.svc].stops[0].route_service_id}}: 
+            {{ServiceData.services[$route.params.svc].stops[0].route_service_id}}:
             {{ServiceData.services[$route.params.svc].stops[0].from_name
-                    }} 
+                    }}
                     &mdash;
             {{ServiceData.services[$route.params.svc].stops[0].to_name
-                    }} 
+                    }}
         </div>
         <div v-else
        style="position: absolute; left:40px; top:0px;
-                height: 40px; right: 40px; text-overflow: ellipsis;" 
+                height: 40px; right: 40px; text-overflow: ellipsis;"
         >
         Service Overview
         </div>
