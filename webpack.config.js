@@ -5,7 +5,6 @@ var env = {
 }
 fs.writeFileSync(`${__dirname}/client/env.json`, JSON.stringify(env))
 
-
 module.exports = {
     entry: './client/main.js',
     devtool: 'sourcemap',
@@ -15,6 +14,10 @@ module.exports = {
     },
     module: {
         loaders: [
+            {
+                test: /\.json$/,
+                loader: 'json',
+            },
             {
                 test: /\.vue$/,
                 loader: 'vue',

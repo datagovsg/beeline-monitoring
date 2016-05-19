@@ -1,5 +1,5 @@
 
-var env = require('./env')
+var env = require('./env.json')
 
 export function authAjax(path, opts) {
     opts = opts || {}
