@@ -43,7 +43,7 @@
         Service Overview
         </div>
         <div style="position: absolute; top: 0px; right: 0px; font-size: 50%; margin: 3px; width: 45px;">
-            <button onclick="localStorage['session_token'] = ''; window.location.href='/static/login.html'; "
+            <button @click="Login.logOut()"
                 style="color: black"
                 class="btn btn-xs"
             >Log<br/>out</button>

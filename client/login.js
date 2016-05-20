@@ -15,7 +15,6 @@ export function checkLoggedIn() {
     authAjax('/admins', {})
     .then(function (what) {
     }, function (data, status) { /* failure */
-        console.log(data);
         if (data.status == 403) {
             delete localStorage.session_token
             login()
@@ -23,8 +22,14 @@ export function checkLoggedIn() {
     })
 };
 
+export function logOut() {
+    delete localStorage.profile
+    delete localStorage.id_token
+    delete localStorage.session_token
+}
+
 function login() {
-  var lock = new Auth0Lock('TzhwfQaMFaeo350IL2NqygkNHb450fVp', 'daniel-sim.auth0.com');
+  var lock = new Auth0Lock(env.AUTH0_CID, env.AUTH0_DOMAIN);
 
   lock.show((err, profile, token) => {
 
@@ -35,14 +40,13 @@ function login() {
       method: 'POST',
     })
     .then((data) => {
-        if(err) {
-          console.log(err)
-        } else {
-          // Set the token and user profile in local storage
-          localStorage.setItem('profile', JSON.stringify(profile));
-          localStorage.setItem('id_token', token);
-          localStorage.setItem('session_token', data.sessionToken)
-        }
+      // Set the token and user profile in local storage
+      localStorage.setItem('profile', profile);
+      localStorage.setItem('id_token', token);
+      localStorage.setItem('session_token', data.sessionToken)
     })
+    .then(null, (err) => {
+        console.error(err);
+    });
   });
 }

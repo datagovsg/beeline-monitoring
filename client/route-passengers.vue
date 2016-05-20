@@ -71,7 +71,7 @@
     <h1>Send message to passengers</h1>
     <form action="/send_message"
         method="POST"
-        onsubmit="return confirm('Send message?') && confirm('Really sure?')"
+        @submit="confirmAndSend"
         >
     Use template:
     <select v-model="sms.message">
@@ -286,6 +286,30 @@ module.exports = {
 
               this.$timeout = setTimeout(() => {this.requery(timeout);}, timeout);
             })
+        },
+
+        confirmAndSend(event) {
+            event.preventDefault()
+
+            if (!confirm("Send message?"))
+                return;
+
+            if (!confirm("Really sure?"))
+                return;
+            
+            authAjax(`/trips/${this.tripId}/messagePassengers`, {
+                method: 'POST',
+                data: {
+                    message: this.sms.message,
+                }
+            })
+            .then(() => {
+                alert("Message sent!");
+            })
+            .then(null, (err) => {
+                alert("There was an error sending the message");
+            })
+            return false
         },
     }
 }

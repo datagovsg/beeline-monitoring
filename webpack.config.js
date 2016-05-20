@@ -1,7 +1,9 @@
 var fs = require('fs')
 
 var env = {
-    BACKEND_URL: process.env.BACKEND_URL || 'http://staging.beeline.sg'
+    BACKEND_URL: process.env.BACKEND_URL || 'http://staging.beeline.sg',
+    AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
+    AUTH0_CID: process.env.AUTH0_CID,
 }
 fs.writeFileSync(`${__dirname}/client/env.json`, JSON.stringify(env))
 

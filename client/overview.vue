@@ -46,13 +46,15 @@
                 s3 : service.status.ping >= 3,
                 sU : service.status.ping == -1,
             }">
-                &gt; {{service.firstPing.createdAt | takeTime}}
+                <span v-if="service.firstPing">
+                    1<sup>st</sup>: {{service.firstPing.createdAt | takeTime}}
+                </span>
                 <template v-if="service.status.arrival_time">
                     (arrived)
                 </template>
                 <template v-else>
                     <template v-if="service.lastPing">
-                        {{service.lastPing | minutesSince}} <br/> mins ago
+                        Last: {{service.lastPing | minutesSince}} <br/> mins ago
                     </template>
                 </template>
             </div>
