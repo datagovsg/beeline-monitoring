@@ -165,6 +165,7 @@ td.alighting {
 
 var authAjax = require('./login').authAjax;
 var Vue=require('vue');
+const _ = require('lodash')
 import MessageTemplates from './message-templates'
 
 Vue.filter('formatScheduled', (s) => {
@@ -278,25 +279,25 @@ module.exports = {
             authAjax('/get_passengers/' + this.service, {
             })
             .done(function (passengers) {
-                console.log(passengers);
-                var stops = [];
-                for (var i=0; i<passengers.length; i++) {
-                    passengers[i].index = i;
-                    if (stops.length == 0 ||
-                        stops[stops.length-1].rsst_id_board != passengers[i].rsst_id_board) {
-                        
-                        stops.push({
-                            rsst_id_board: passengers[i].rsst_id_board,
-                            name: passengers[i].stop_name,
-                            boarding_time: passengers[i].time,
-                            is_boarding: passengers[i].is_boarding,
-                            passengers: []
-                        });
-                    }
+                var stops = _.uniqBy(passengers, s => s.rsst_id_board)
+                    .map(s => ({
+                        rsst_id_board: s.rsst_id_board,
+                        name: s.stop_name,
+                        boarding_time: s.time,
+                        is_boarding: s.is_boarding,
+                        passengers: []
+                    }))
+                var passengersByStop = _.groupBy(passengers.filter(p => p.name != null), p => p.rsst_id_board)
+                var i = 0;
 
-                    if (passengers[i].email)
-                        stops[stops.length-1].passengers.push(passengers[i]);
+                for (let stop of stops) {
+                    stop.passengers = passengersByStop[stop.rsst_id_board] || []
+
+                    for (let p of stop.passengers) {
+                        p.index = i++;
+                    }
                 }
+
                 self.stops = stops;
                 self.$timeout = setTimeout(() => {self.requery(timeout);}, timeout);
             });
