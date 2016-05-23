@@ -1,7 +1,8 @@
 export default [
     [
     'Bus Cancellation',
-    "(DO NOT REPLY) Attention: The service for today has been cancelled. Please make alternative transport arrangement. Today's fare will be refunded and we sincerely apologies for the inconvenience caused to all our commuters."
+    "(DO NOT REPLY) Attention: The service for today has been cancelled due to unforeseen circumstances. " + 
+       "Please make alternative transport arrangements. Today's fare will be refunded and we sincerely apologies for the inconvenience caused to all our commuters."
     ],
     [
     'Bus is going to be more than 15 mins late',
