@@ -73,20 +73,22 @@
         method="POST"
         onsubmit="return confirm('Send message?') && confirm('Really sure?')"
         >
-    Use template:
-    <select v-model="sms.message">
-       <option v-for="mt in messageTemplates"
-            :value="mt[1]"
-            >
-            {{mt[0]}}
-       </option>
-    </select>
-    <input type="hidden" name="session_token" value="{{sessionToken}}" />
-    <input type="hidden" name="service" value="{{service}}" />
-    <textarea v-model="sms.message"
-        style="display: block; width: 100%; height: 100px"
-        name="message"></textarea>
-        <button type="submit">Submit</button>
+        <label>
+            Use template:
+            <select v-model="sms.message">
+               <option v-for="mt in messageTemplates"
+                    :value="mt[1]"
+                    >
+                    {{mt[0]}}
+               </option>
+            </select>
+        </label>
+        <input type="hidden" name="session_token" value="{{sessionToken}}" />
+        <input type="hidden" name="service" value="{{service}}" />
+        <textarea v-model="sms.message"
+            style="display: block; width: 100%; height: 100px"
+            name="message"></textarea>
+        <button class="message-button" type="submit">Submit</button>
     </form>
     <br/>
     <br/>
@@ -99,11 +101,22 @@
 </template>
 
 <style scoped>
-button {
-    margin: 0.5em;
-    padding: 0.5em;
+form {
+    padding: 1em;
+    width: 100%;
+    border: solid 1px #888;
+}
+label select{
+    margin: 1em;
+}
+button.message-button {
+    padding: 10px 30px;
     display: block;
-    margin: auto;
+    margin: 10px auto;
+    width: 80%;
+
+    border: solid 1px black;
+    background-color: #ccc;
 }
 table.arrival_info {
     border-collapse: collapse;
