@@ -26,6 +26,8 @@ export function logOut() {
     delete localStorage.profile
     delete localStorage.id_token
     delete localStorage.session_token
+
+    login();
 }
 
 function login() {
