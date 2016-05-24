@@ -261,6 +261,14 @@ module.exports = {
             Vue.set(stop, 'passengers', passengersByStops[stop.id] || [])
 
             for (let p of stop.passengers) {
+              if (p.name) {
+                try {
+                  var jsonData = JSON.parse(p.name)
+                  p.name = `${jsonData.name} (#${jsonData.index})`
+                }
+                catch (err) {
+                }
+              }
               p.index = index++;
             }
           }
@@ -310,7 +318,7 @@ module.exports = {
 
             if (!confirm("Really sure?"))
                 return;
-            
+
             authAjax(`/trips/${this.tripId}/messagePassengers`, {
                 method: 'POST',
                 data: {
