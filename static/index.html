@@ -1,57 +1,56 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.css" />
-    <link rel="stylesheet" href="style.css" />
-    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-    <script src="jquery.js"></script>
-    <script src="bootstrap/js/bootstrap.js"></script>
-    <script src="//cdn.auth0.com/js/lock-9.1.min.js"></script>
-    <script src="bundle.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta charset="utf-8" />
-    <title>Beeline Operator Tool</title>
+  <title>Beeline Operator Tool</title>
+  <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css" />
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.9.0/polyfill.min.js"></script>
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script src="//cdn.auth0.com/js/lock-9.1.min.js"></script>
+  <script src="bundle.js"></script>
 </head>
 <body onload="Login.checkLoggedIn()">
-    <header>
-        <div style="position: absolute; top: 0px; left: 0px;
-                width: 40px; height: 40px"
-            v-show="$route.path != '/'"
-            class="backButton"
-        >
-            <a v-link="{ path: '/' }">&#x25c0;</a>
-        </div>
+  <header>
+    <div style="position: absolute; top: 0px; left: 0px;
+        width: 40px; height: 40px"
+      v-show="$route.path != '/'"
+      class="backButton"
+    >
+      <a v-link="{ path: '/' }">&#x25c0;</a>
+    </div>
 
-        <div style="position: absolute; left:40px; top:0px;
-                height: 40px; right: 40px; text-overflow: ellipsis;
-                overflow: hidden;
-               font-size: 80%;line-height: 1.0 "
-             v-if="$route.params.svc && ServiceData.services[$route.params.svc]"
-        style=""
-        >
-            {{ServiceData.services[$route.params.svc].stops[0].route_service_id}}:
-            {{ServiceData.services[$route.params.svc].stops[0].from_name
-                    }}
-                    &mdash;
-            {{ServiceData.services[$route.params.svc].stops[0].to_name
-                    }}
-        </div>
-        <div v-else
-       style="position: absolute; left:40px; top:0px;
-                height: 40px; right: 40px; text-overflow: ellipsis;"
-        >
-        Service Overview
-        </div>
-        <div style="position: absolute; top: 0px; right: 0px; font-size: 50%; margin: 3px; width: 45px;">
-            <button onclick="Login.logOut()"
-                style="color: black"
-                class="btn btn-xs"
-            >Log<br/>out</button>
-        </div>
-    </header>
+    <div style="position: absolute; left:40px; top:0px;
+        height: 40px; right: 40px; text-overflow: ellipsis;
+        overflow: hidden;
+         font-size: 80%;line-height: 1.0 "
+       v-if="$route.params.svc && ServiceData.services[$route.params.svc]"
+    style=""
+    >
+      {{ServiceData.services[$route.params.svc].stops[0].route_service_id}}:
+      {{ServiceData.services[$route.params.svc].stops[0].from_name
+          }}
+          &mdash;
+      {{ServiceData.services[$route.params.svc].stops[0].to_name
+          }}
+    </div>
+    <div v-else
+     style="position: absolute; left:40px; top:0px;
+        height: 40px; right: 40px; text-overflow: ellipsis;"
+    >
+    Service Overview
+    </div>
+    <div style="position: absolute; top: 0px; right: 0px; font-size: 50%; margin: 3px; width: 45px;">
+      <button onclick="Login.logOut()"
+        style="color: black"
+        class="btn btn-xs"
+      >Log<br/>out</button>
+    </div>
+  </header>
 
-    <main v-cloak>
-        <router-view keep-alive></router-view>
-    </main>
+  <main v-cloak>
+    <router-view keep-alive></router-view>
+  </main>
 </body>
 </html>

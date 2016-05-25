@@ -1,15 +1,14 @@
 var fs = require('fs')
 
 var env = {
-    BACKEND_URL: process.env.BACKEND_URL || 'http://staging.beeline.sg',
-    AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
-    AUTH0_CID: process.env.AUTH0_CID,
+    BACKEND_URL: process.env.BACKEND_URL || 'https://api.beeline.sg',
+    AUTH0_DOMAIN: process.env.AUTH0_DOMAIN || 'beeline.au.auth0.com',
+    AUTH0_CID: process.env.AUTH0_CID || 'BslsfnrdKMedsmr9GYkTv7ejJPReMgcE',
 }
 fs.writeFileSync(`${__dirname}/client/env.json`, JSON.stringify(env))
 
 module.exports = {
     entry: './client/main.js',
-    devtool: 'sourcemap',
     output: {
         path: __dirname + '/static',
         filename: 'bundle.js',
@@ -27,10 +26,6 @@ module.exports = {
             {
                 test: /\.js$/,
                 loader: 'babel',
-                query: {
-                    presets: ['es2015'],
-                    plugins: ['transform-runtime'],
-                },
                 exclude: /node_modules/
             }
         ]
@@ -40,5 +35,8 @@ module.exports = {
             js: 'babel',
         },
     },
+    babel: {
+        presets: ['es2015', 'stage-3']
+    }
 }
 
