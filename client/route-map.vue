@@ -98,6 +98,7 @@ div.sec-map .map {
 <script>
 
 import {Map, load, InfoWindow, Polyline, Marker} from 'vue-google-maps'
+import leftPad from 'left-pad'
 import Vue from 'vue'
 
 Vue.component('gmap-map', Map);
@@ -173,7 +174,10 @@ module.exports = {
 
     filters: {
         formatTime(sdt) {
-            return sdt.substr(0,2) + ':' + sdt.substr(2,4);
+            if (!Date.prototype.isPrototypeOf(sdt)) {
+                sdt = new Date(sdt);
+            }
+            return leftPad(sdt.getHours(), 1, '0') + ':' + leftPad(sdt.getMinutes(), 2, '0');
         },
         everyThree(arr) {
             var copy = [];

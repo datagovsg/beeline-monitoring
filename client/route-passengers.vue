@@ -57,7 +57,7 @@
     <div v-for="stop in arrivalInfo"
         v-show="stop.canBoard">
         <h3>{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>
-        <h4>Boarding time: {{stop.time}}</h4>
+        <h4>Boarding time: {{stop.time | formatTime}}</h4>
 
         <div v-for="passenger in stop.passengers"
             class="passenger">
@@ -163,6 +163,7 @@ td.alighting {
 
 <script>
 
+const leftPad = require('left-pad')
 var authAjax = require('./login').authAjax;
 var Vue=require('vue');
 const _ = require('lodash')
@@ -336,6 +337,14 @@ module.exports = {
                 alert("There was an error sending the message");
             })
             return false
+        },
+    },
+    filters: {
+        formatTime(sdt) {
+            if (!Date.prototype.isPrototypeOf(sdt)) {
+                sdt = new Date(sdt);
+            }
+            return leftPad(sdt.getHours(), 1, '0') + ':' + leftPad(sdt.getMinutes(), 2, '0');
         },
     }
 }
