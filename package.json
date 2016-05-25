@@ -6,7 +6,7 @@
     "webpack-watch": "webpack --watch -d",
     "build": "npm run webpack",
     "prestart": "npm run build",
-    "start": "http-server static/",
+    "start": "http-server -p 5000 static/",
     "watch": "npm run start & npm run webpack-watch",
     "deploy": "npm run build && git subtree push --prefix static/ origin gh-pages"
   },

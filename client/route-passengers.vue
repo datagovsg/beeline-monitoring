@@ -305,9 +305,13 @@ module.exports = {
             authAjax(`/trips/${this.tripId}/get_passengers`)
             .then((passengers) => {
               this.passengers = passengers
-
-              this.$timeout = setTimeout(() => {this.requery(timeout);}, timeout);
             })
+            .then(null, (err) => {
+                console.error(err);
+            })
+            .always(() => {
+              this.$timeout = setTimeout(() => {this.requery(timeout);}, timeout);
+            });
         },
 
         confirmAndSend(event) {

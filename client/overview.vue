@@ -195,14 +195,16 @@ module.exports = {
                 dataType: 'json',
                 cache: false,
             })
-            .done(function (s) {
+            .then(function (s) {
                 window.ServiceData.services = self.services = s;
+            })
+            .then(null, function (err) {
+                console.log(err);
+            })
+            .always(() => {
                 setTimeout(function () {
                     self.requery(timeout);
                 }, timeout);
-            })
-            .fail(function (err) {
-                console.log(err);
             });
         },
     },
