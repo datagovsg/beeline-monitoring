@@ -4,11 +4,11 @@
   "scripts": {
     "webpack": "webpack",
     "webpack-watch": "webpack --watch -d",
-    "build": "npm run webpack",
+    "build": "sh build-wrs.sh",
     "prestart": "npm run build",
     "start": "http-server -p 5000 static/",
     "watch": "npm run start & npm run webpack-watch",
-    "deploy": "npm run build && git subtree push --prefix static/ origin gh-pages"
+    "deploy": "npm run build && git add static && git commit && git subtree push --prefix static/ origin gh-pages"
   },
   "dependencies": {
     "babel-core": "^6.4.0",
