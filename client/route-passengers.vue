@@ -64,6 +64,8 @@
             {{passenger.index + 1}}.
             {{passenger.name}}
             &mdash;
+            {{passenger.telephone}}
+            &mdash;
             {{passenger.email}}
         </div>
     </div>
@@ -265,7 +267,9 @@ module.exports = {
               if (p.name) {
                 try {
                   var jsonData = JSON.parse(p.name)
-                  p.name = `${jsonData.name} (#${jsonData.index})`
+                  p.name = `${jsonData.name} (#${jsonData.index + 1})`
+                  p.telephone = jsonData.telephone
+                  p.email = jsonData.email
                 }
                 catch (err) {
                 }
