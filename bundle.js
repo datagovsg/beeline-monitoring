@@ -29592,7 +29592,6 @@
 	            this.service = this.$route.params.svc;
 
 	            // Trigger map change
-	            // google.maps.event.trigger('resize',
 	            _vue2.default.nextTick(function () {
 	                if (!_this.$refs.gmap.mapObject) {
 	                    return;
