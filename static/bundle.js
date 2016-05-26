@@ -29587,17 +29587,28 @@
 
 	    route: {
 	        activate: function activate() {
+	            var _this = this;
+
 	            this.service = this.$route.params.svc;
+
+	            // Trigger map change
+	            // google.maps.event.trigger('resize',
+	            _vue2.default.nextTick(function () {
+	                if (!_this.$refs.gmap.mapObject) {
+	                    return;
+	                }
+	                _this.$broadcast('g-resize-map');
+	            });
 	        }
 	    },
 
 	    ready: function ready() {
-	        var _this = this;
+	        var _this2 = this;
 
 	        var self = this;
 	        this.$map = null;
 	        this.$queryInterval = setInterval(function () {
-	            return _this.requery();
+	            return _this2.requery();
 	        }, 10000);
 
 	        window.XXX = this;
@@ -29681,17 +29692,17 @@
 
 	    watch: {
 	        service: function service() {
-	            var _this2 = this;
+	            var _this3 = this;
 
 	            this.requery().then(function () {
-	                _this2.setBounds();
+	                _this3.setBounds();
 	            });
 	        }
 	    },
 
 	    methods: {
 	        requery: function requery() {
-	            var _this3 = this;
+	            var _this4 = this;
 
 	            // Get the pings and other data
 	            authAjax('/trips/' + this.service + '/latest_info', {
@@ -29700,8 +29711,8 @@
 	                var pings = data.pings;
 	                var statuses = data.statuses;
 
-	                _this3.pings = pings;
-	                _this3.statuses = statuses;
+	                _this4.pings = pings;
+	                _this4.statuses = statuses;
 
 	                console.log(pings);
 	            });
@@ -29730,7 +29741,7 @@
 	                    stops[i].passengers = passengersByStopId[stops[i].id] || [];
 	                }
 
-	                _this3.stops = stops;
+	                _this4.stops = stops;
 	            });
 	        },
 

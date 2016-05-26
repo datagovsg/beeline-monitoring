@@ -131,6 +131,14 @@ module.exports = {
     route: {
         activate() {
             this.service = this.$route.params.svc;
+
+            // Trigger map change
+            Vue.nextTick(() => {
+                if (!this.$refs.gmap.mapObject) {
+                    return;
+                }
+                this.$broadcast('g-resize-map')
+            });
         },
     },
 
