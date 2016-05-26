@@ -6,7 +6,7 @@ export default [
     ],
     [
     'Bus is going to be more than 15 mins late',
-    '(DO NOT REPLY) Attention: Service for today will be late. The bus is still on its way to your stop. Sorry for the inconvenience.'
+    '(DO NOT REPLY) Attention: Service for today will be delayed. The bus is still on its way to your stop. Sorry for the inconvenience.'
     ],
     [
     'Driver App is unavailable',
