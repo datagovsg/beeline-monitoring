@@ -34,21 +34,13 @@ function login() {
   var lock = new Auth0Lock(env.AUTH0_CID, env.AUTH0_DOMAIN);
 
   lock.show((err, profile, token) => {
+    if (err) {
+        console.log(err);
+    }
 
-    authAjax('/admins/auth/login', {
-      data: {
-        token: token,
-      },
-      method: 'POST',
-    })
-    .then((data) => {
-      // Set the token and user profile in local storage
-      localStorage.setItem('profile', profile);
-      localStorage.setItem('id_token', token);
-      localStorage.setItem('session_token', data.sessionToken)
-    })
-    .then(null, (err) => {
-        console.error(err);
-    });
+    // Set the token and user profile in local storage
+    LocalStorage.setItem('profile', profile);
+    LocalStorage.setItem('id_token', token);
+    LocalStorage.setItem('session_token', token)
   });
 }
