@@ -33,7 +33,11 @@ export function logOut() {
 function login() {
   var lock = new Auth0Lock(env.AUTH0_CID, env.AUTH0_DOMAIN);
 
-  lock.show((err, profile, token) => {
+  lock.show({
+    authParams: {
+      scope: 'openid name email app_metadata user_id'
+    }
+  }, (err, profile, token) => {
     if (err) {
       console.error(err);
       return;
