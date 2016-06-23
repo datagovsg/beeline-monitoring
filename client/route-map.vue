@@ -241,7 +241,7 @@ module.exports = {
     methods: {
         requery: function () {
             // Get the pings and other data
-            authAjax(`/trips/${this.service}/latest_info`, {
+            authAjax(`/trips/${this.service}/latestInfo`, {
                 cache: false,
             })
             .then((data) => {
