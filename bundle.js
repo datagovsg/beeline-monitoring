@@ -29298,7 +29298,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
 	exports.authAjax = authAjax;
 	exports.checkLoggedIn = checkLoggedIn;
@@ -29307,52 +29307,50 @@
 	var env = __webpack_require__(15);
 
 	function authAjax(path, opts) {
-	    opts = opts || {};
-	    opts.headers = opts.headers || {};
+	  opts = opts || {};
+	  opts.headers = opts.headers || {};
 
-	    if (localStorage.session_token) {
-	        opts.headers.Authorization = 'Bearer ' + localStorage['session_token'];
-	    }
-	    return $.ajax(env.BACKEND_URL + path, opts);
+	  if (localStorage.session_token) {
+	    opts.headers.Authorization = 'Bearer ' + localStorage['session_token'];
+	  }
+	  return $.ajax(env.BACKEND_URL + path, opts);
 	};
 
 	function checkLoggedIn() {
-	    authAjax('/admins', {}).then(function (what) {}, function (data, status) {
-	        /* failure */
-	        if (data.status == 403) {
-	            delete localStorage.session_token;
-	            login();
-	        }
-	    });
+	  authAjax('/admins', {}).then(function (what) {}, function (data, status) {
+	    /* failure */
+	    if (data.status == 403) {
+	      delete localStorage.session_token;
+	      login();
+	    }
+	  });
 	};
 
 	function logOut() {
-	    delete localStorage.profile;
-	    delete localStorage.id_token;
-	    delete localStorage.session_token;
+	  delete localStorage.profile;
+	  delete localStorage.id_token;
+	  delete localStorage.session_token;
 
-	    login();
+	  login();
 	}
 
 	function login() {
-	    var lock = new Auth0Lock(env.AUTH0_CID, env.AUTH0_DOMAIN);
+	  var lock = new Auth0Lock(env.AUTH0_CID, env.AUTH0_DOMAIN);
 
-	    lock.show(function (err, profile, token) {
+	  lock.show({
+	    authParams: {
+	      scope: 'openid name email app_metadata user_id'
+	    }
+	  }, function (err, profile, token) {
+	    if (err) {
+	      console.error(err);
+	      return;
+	    }
 
-	        authAjax('/admins/auth/login', {
-	            data: {
-	                token: token
-	            },
-	            method: 'POST'
-	        }).then(function (data) {
-	            // Set the token and user profile in local storage
-	            localStorage.setItem('profile', profile);
-	            localStorage.setItem('id_token', token);
-	            localStorage.setItem('session_token', data.sessionToken);
-	        }).then(null, function (err) {
-	            console.error(err);
-	        });
-	    });
+	    localStorage.setItem('profile', profile);
+	    localStorage.setItem('id_token', token);
+	    localStorage.setItem('session_token', token);
+	  });
 	}
 
 /***/ },
@@ -29704,7 +29702,7 @@
 	            var _this4 = this;
 
 	            // Get the pings and other data
-	            authAjax('/trips/' + this.service + '/latest_info', {
+	            authAjax('/trips/' + this.service + '/latestInfo', {
 	                cache: false
 	            }).then(function (data) {
 	                var pings = data.pings;
