@@ -33,14 +33,18 @@ export function logOut() {
 function login() {
   var lock = new Auth0Lock(env.AUTH0_CID, env.AUTH0_DOMAIN);
 
-  lock.show((err, profile, token) => {
+  lock.show({
+    authParams: {
+      scope: 'openid name email app_metadata user_id'
+    }
+  }, (err, profile, token) => {
     if (err) {
-        console.log(err);
+      console.error(err);
+      return;
     }
 
-    // Set the token and user profile in local storage
-    LocalStorage.setItem('profile', profile);
-    LocalStorage.setItem('id_token', token);
-    LocalStorage.setItem('session_token', token)
+    localStorage.setItem('profile', profile);
+    localStorage.setItem('id_token', token);
+    localStorage.setItem('session_token', token)
   });
 }
