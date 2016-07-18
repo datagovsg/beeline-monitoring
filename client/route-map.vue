@@ -229,7 +229,8 @@ module.exports = {
             // The official pings
             authAjax(`/trips/${this.service}/pings`, {
               data: {
-                startTime: startTime.getTime()
+                startTime: startTime.getTime(),
+                limit: 100000,
               }
             })
             .then((data) => {
@@ -242,6 +243,7 @@ module.exports = {
               data: {
                 startTime: startTime.getTime(),
                 byTripId: true,
+                limit: 100000,
               }
             })
             .then((data) => {
