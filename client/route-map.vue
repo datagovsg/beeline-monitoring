@@ -12,8 +12,8 @@
             <gmap-marker
                 v-if="pings.length > 0"
                 :position="{
-                    lat: pings[0].coordinates.coordinates[1],
-                    lng: pings[0].coordinates.coordinates[0],
+                    lat: pings[pings.length - 1].coordinates.coordinates[1],
+                    lng: pings[pings.length - 1].coordinates.coordinates[0],
                 }"
                 :icon="startPoint"
                 :title="Start"
@@ -22,37 +22,23 @@
             <gmap-marker
                 v-if="pings.length > 0"
                 :position="{
-                    lat: pings[pings.length-1].coordinates.coordinates[1],
-                    lng: pings[pings.length-1].coordinates.coordinates[0],
+                    lat: pings[0].coordinates.coordinates[1],
+                    lng: pings[0].coordinates.coordinates[0],
                 }"
                 :icon="endPoint"
                 :title="End"
                 >
             </gmap-marker>
-            <!-- Pings -->
+
             <gmap-marker
-                v-for='ping in pings | everyThree'
+                v-for="stop in stops"
                 track-by='$index'
-                :position="{
-                    lat: pings[0].coordinates.coordinates[1],
-                    lng: pings[0].coordinates.coordinates[0],
-                }"
-                :icon="pingPoint"
-                @g-mouseover='selectPing(ping)'
+                :position="stop | stopPosition"
+                :icon="stop | stopIcon $index"
+                @g-mouseover='selectStop(stop)'
                 @g-mouseout='closeWindow'
                 >
             </gmap-marker>
-
-            <gmap-infowindow
-                v-if="selectedPing != null"
-                :opened='selectedPing != null'
-                :position="{
-                    lat: selectedPing.coordinates.coordinates[1],
-                    lng: selectedPing.coordinates.coordinates[0],
-                }"
-            >
-            {{selectedPing.createdAt | takeLocalTime}}
-            </gmap-infowindow>
 
             <gmap-infowindow
                 v-if="selectedStop != null"
@@ -65,20 +51,19 @@
                 </div>
             </gmap-infowindow>
 
-            <gmap-polyline
-                :options="pings | polylineOptions"
+            <gmap-infowindow
+                v-if="selectedPing != null"
+                :opened="selectedPing != null"
+                :position="selectedPing.coordinates | coordinatesToLatLng"
             >
-            </gmap-polyline>
+              {{selectedPing.time | formatTime}}
+              <br/>
+              <i>Driver Id #{{selectedPing.driverId}}</i>
+            </gmap-infowindow>
 
-            <gmap-marker
-                v-for="stop in stops"
-                track-by='$index'
-                :position="stop | stopPosition"
-                :icon="stop | stopIcon $index"
-                @g-mouseover='selectStop(stop)'
-                @g-mouseout='closeWindow'
-                >
-            </gmap-marker>
+            <ping-line :pings="pings" :options="pingOptions" :sample-rate="3"></ping-line>
+            <ping-line v-for="(driverId,driverPings) in otherPings" :pings="driverPings"
+                :options="otherPingOptions" :sample-rate="3"></ping-line>
         </gmap-map>
     </div>
 </div>
@@ -98,18 +83,23 @@ div.sec-map .map {
 <script>
 
 import {Map, load, InfoWindow, Polyline, Marker} from 'vue-google-maps'
+import PingLine from './ping-line.vue'
 import leftPad from 'left-pad'
 import Vue from 'vue'
-
-Vue.component('gmap-map', Map);
-Vue.component('gmap-marker', Marker);
-Vue.component('gmap-polyline', Polyline);
-Vue.component('gmap-infowindow', InfoWindow);
+import _ from 'lodash'
+import assert from 'assert';
 
 var authAjax = require('./login').authAjax;
-const _ = require('lodash')
 
 module.exports = {
+    components: {
+      'gmap-map': Map,
+      'gmap-marker': Marker,
+      'gmap-polyline': Polyline,
+      'gmap-infowindow': InfoWindow,
+      'ping-line': PingLine,
+    },
+
     data () {
         return {
             title: '',
@@ -120,6 +110,7 @@ module.exports = {
 
             service: null,
             pings: [],
+            otherPings: {},
             stops: [],
             bounds: null,
 
@@ -145,9 +136,7 @@ module.exports = {
     ready: function () {
         var self = this;
         this.$map = null;
-        this.$queryInterval = setInterval(() => this.requery(), 10000);
-
-        window.XXX = this;
+        this.$queryInterval = setInterval(() => this.requery(), 30000);
     },
 
     destroyed() {
@@ -155,57 +144,43 @@ module.exports = {
     },
     computed: {
         startPoint() {
-            return {
-                url: 'img/routeStartMarker.png',
-                size: new google.maps.Size(50, 40),
-                origin: new google.maps.Point(0,0),
-                anchor: new google.maps.Point(25, 40)
-            };
+          return {
+            url: 'img/routeStartMarker.png',
+            size: new google.maps.Size(50, 40),
+            origin: new google.maps.Point(0,0),
+            anchor: new google.maps.Point(25, 40)
+          };
         },
         endPoint() {
-            return {
-                url: 'img/routeEndMarker.png',
-                size: new google.maps.Size(50, 40),
-                origin: new google.maps.Point(0,0),
-                anchor: new google.maps.Point(25, 40)
-            };
+          return {
+            url: 'img/routeEndMarker.png',
+            size: new google.maps.Size(50, 40),
+            origin: new google.maps.Point(0,0),
+            anchor: new google.maps.Point(25, 40)
+          };
         },
-        pingPoint() {
-            return {
-                url: 'img/routePtMarker.png',
-                size: new google.maps.Size(15,15),
-                origin: new google.maps.Point(0,0),
-                anchor: new google.maps.Point(7, 7)
-            };
+        otherPingOptions() {
+          return {
+            polyline: {
+              strokeOpacity: 0.5,
+            }
+          }
         },
+        pingOptions() {
+          return {
+            polyline: {
+              strokeOpacity: 1.0,
+            }
+          }
+        }
     },
 
     filters: {
         formatTime(sdt) {
-            if (!Date.prototype.isPrototypeOf(sdt)) {
+            if (!(sdt instanceof Date)) {
                 sdt = new Date(sdt);
             }
             return leftPad(sdt.getHours(), 1, '0') + ':' + leftPad(sdt.getMinutes(), 2, '0');
-        },
-        everyThree(arr) {
-            var copy = [];
-            for (let i=0; i<arr.length; i+=3) {
-                copy.push(arr[i]);
-            }
-            return copy;
-        },
-
-        polylineOptions(pings) {
-            var busRunCoords = pings.map(ping => ({
-                lat: ping.coordinates.coordinates[1],
-                lng: ping.coordinates.coordinates[0],
-            }));
-            return {
-                strokeColor: '#33F',
-                strokeOpacity: 1.0,
-                strokeWeight: 2,
-                path: busRunCoords,
-            }
         },
 
         stopIcon(stop, index) {
@@ -225,6 +200,13 @@ module.exports = {
             lat: ts.stop.coordinates.coordinates[1],
             lng: ts.stop.coordinates.coordinates[0],
           }
+        },
+        coordinatesToLatLng(cc) {
+          assert(typeof cc.coordinates[1] === 'number');
+          return {
+            lat: cc.coordinates[1],
+            lng: cc.coordinates[0],
+          }
         }
     },
 
@@ -240,16 +222,39 @@ module.exports = {
 
     methods: {
         requery: function () {
+            var startTime = new Date();
+
+            startTime.setHours(0,0,0,0);
+
+            // The official pings
+            authAjax(`/trips/${this.service}/pings`, {
+              data: {
+                startTime: startTime.getTime()
+              }
+            })
+            .then((data) => {
+              this.pings = data;
+            })
+
+            // Pings of other drivers who also
+            // claimed this trip id
+            authAjax(`/trips/${this.service}/pings`, {
+              data: {
+                startTime: startTime.getTime(),
+                byTripId: true,
+              }
+            })
+            .then((data) => {
+              this.otherPings = _.groupBy(data, 'driverId');
+            })
+
             // Get the pings and other data
             authAjax(`/trips/${this.service}/latestInfo`, {
                 cache: false,
             })
             .then((data) => {
-              var {pings, statuses} = data
-              this.pings = pings;
+              var {statuses} = data
               this.statuses = statuses;
-
-              console.log(pings);
             });
 
             var stopInfo = authAjax(`/trips/${this.service}`, {
@@ -276,10 +281,6 @@ module.exports = {
 
         },
 
-        selectPing(ping) {
-            this.selectedPing = ping;
-            this.selectedStop = null
-        },
         selectStop(stop) {
             this.selectedPing = null;
             this.selectedStop = stop;
@@ -301,6 +302,13 @@ module.exports = {
             }
             this.$refs.gmap.mapObject.fitBounds(bounds);
         },
+    },
+
+    events: {
+      selectPing(ping) {
+        this.selectedPing = ping;
+        this.selectedStop = null
+      }
     }
 }
 
