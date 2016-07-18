@@ -31,20 +31,23 @@ export function logOut() {
 }
 
 function login() {
-  var lock = new Auth0Lock(env.AUTH0_CID, env.AUTH0_DOMAIN);
+  authAjax('/auth/credentials')
+  .then((response) => {
+    var lock = new Auth0Lock(response.cid, response.domain);
 
-  lock.show({
-    authParams: {
-      scope: 'openid name email app_metadata user_id'
-    }
-  }, (err, profile, token) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
+    lock.show({
+      authParams: {
+        scope: 'openid name email app_metadata user_id'
+      }
+    }, (err, profile, token) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
 
-    localStorage.setItem('profile', profile);
-    localStorage.setItem('id_token', token);
-    localStorage.setItem('session_token', token)
+      localStorage.setItem('profile', profile);
+      localStorage.setItem('id_token', token);
+      localStorage.setItem('session_token', token)
+    });
   });
 }
