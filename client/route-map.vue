@@ -162,7 +162,8 @@ module.exports = {
         otherPingOptions() {
           return {
             polyline: {
-              strokeOpacity: 0.5,
+              strokeOpacity: 0.8,
+              strokeWeight: 2
             }
           }
         },
@@ -227,22 +228,21 @@ module.exports = {
             startTime.setHours(0,0,0,0);
 
             // The official pings
-            authAjax(`/trips/${this.service}/pings`, {
-              data: {
-                startTime: startTime.getTime(),
-                limit: 100000,
-              }
-            })
-            .then((data) => {
-              this.pings = data;
-            })
+            // authAjax(`/trips/${this.service}/pings`, {
+            //   data: {
+            //     startTime: startTime.getTime(),
+            //     limit: 100000,
+            //   }
+            // })
+            // .then((data) => {
+            //   this.pings = data;
+            // })
 
             // Pings of other drivers who also
             // claimed this trip id
-            authAjax(`/trips/${this.service}/pings`, {
+            authAjax(`/trips/${this.service}/pingsByTripId`, {
               data: {
                 startTime: startTime.getTime(),
-                byTripId: true,
                 limit: 100000,
               }
             })
