@@ -170,6 +170,7 @@ var authAjax = require('./login').authAjax;
 var Vue=require('vue');
 const _ = require('lodash')
 import MessageTemplates from './message-templates'
+import {watch} from './loading-overlay';
 
 Vue.filter('formatScheduled', (s) => {
     return s.substr(0,2) + ':' + s.substr(2,4);
@@ -248,6 +249,7 @@ module.exports = {
         messageTemplates() {
             return MessageTemplates;
         },
+
         setMessage: {
             set(value) {
                 this.$el.querySelector('textarea[name="message"]')
@@ -285,38 +287,50 @@ module.exports = {
 
     watch: {
         tripId: function () {
-            this.requery();
-            this.requeryTrips();
+            watch(Promise.all([
+              this.requery(),
+              this.requeryTrips()
+            ]))
         },
     },
 
-    ready: function () {
-        this.requery();
+    ready() {
+      var queryAgain = () => {
+        this.$queryTimeout = null;
+        this.requery()
+        .always(() => {
+          if (this.$queryTimeout === null) {
+            this.$queryTimeout = setTimeout(queryAgain, 30000);
+          }
+        })
+      };
+
+      queryAgain();
+    },
+
+    destroyed() {
+      if (this.$queryTimeout) {
+        clearTimeout(this.$queryTimeout);
+      }
+      this.$queryTimeout = false;
     },
 
     methods: {
         requeryTrips() {
-            authAjax(`/monitoring`)
+            return authAjax(`/monitoring`)
             .then((status) => {
               console.log(status)
               this.trip = _.values(status).find(t => t.tripId == this.tripId)
             })
         },
-        requery: function (timeout) {
-            clearTimeout(this.$timeout);
-
-            timeout = timeout || 30000;
-
-            authAjax(`/trips/${this.tripId}/get_passengers`)
+        requery: function () {
+            return authAjax(`/trips/${this.tripId}/get_passengers`)
             .then((passengers) => {
               this.passengers = passengers
             })
             .then(null, (err) => {
                 console.error(err);
             })
-            .always(() => {
-              this.$timeout = setTimeout(() => {this.requery(timeout);}, timeout);
-            });
         },
 
         confirmAndSend(event) {

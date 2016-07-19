@@ -5,10 +5,12 @@ var Navi = require('./nav.vue');
 var PassengerList = require('./route-passengers.vue');
 var VueRouter = require('vue-router');
 import {load} from 'vue-google-maps'
+import LoadingOverlay from './loading-overlay.vue';
 var Login = require('./login');
 
 Vue.use(VueRouter);
 Vue.component('navi', Navi);
+Vue.component('loadingOverlay', LoadingOverlay);
 
 window.Login = Login;
 window.ServiceData = { services: {} };

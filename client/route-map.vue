@@ -90,6 +90,7 @@ import _ from 'lodash'
 import assert from 'assert';
 
 var authAjax = require('./login').authAjax;
+import {watch} from './loading-overlay';
 
 module.exports = {
     components: {
@@ -134,14 +135,29 @@ module.exports = {
     },
 
     ready: function () {
-        var self = this;
-        this.$map = null;
-        this.$queryInterval = setInterval(() => this.requery(), 30000);
+      this.$map = null;
+
+      var queryAgain = () => {
+        this.$queryTimeout = null;
+
+        this.requery()
+        .catch((err) => console.error(err))
+        .then(() => {
+          if (this.$queryTimeout === null) {
+            this.$queryTimeout = setTimeout(queryAgain, 30000);
+          }
+        })
+      };
+      queryAgain();
     },
 
     destroyed() {
-        clearInterval(this.$queryInterval);
+      if (this.$queryTimeout) {
+        clearTimeout(this.$queryTimeout);
+      }
+      this.$queryTimeout = false;
     },
+
     computed: {
         startPoint() {
           return {
@@ -214,33 +230,21 @@ module.exports = {
 
     watch: {
         service: function () {
-            this.requery()
+            watch(this.requery()
             .then(() => {
                 this.setBounds()
-            });
+            }));
         },
     },
 
     methods: {
         requery: function () {
             var startTime = new Date();
-
             startTime.setHours(0,0,0,0);
-
-            // The official pings
-            // authAjax(`/trips/${this.service}/pings`, {
-            //   data: {
-            //     startTime: startTime.getTime(),
-            //     limit: 100000,
-            //   }
-            // })
-            // .then((data) => {
-            //   this.pings = data;
-            // })
 
             // Pings of other drivers who also
             // claimed this trip id
-            authAjax(`/trips/${this.service}/pingsByTripId`, {
+            var pingsPromise = authAjax(`/trips/${this.service}/pingsByTripId`, {
               data: {
                 startTime: startTime.getTime(),
                 limit: 100000,
@@ -251,7 +255,7 @@ module.exports = {
             })
 
             // Get the pings and other data
-            authAjax(`/trips/${this.service}/latestInfo`, {
+            var infoPromise = authAjax(`/trips/${this.service}/latestInfo`, {
                 cache: false,
             })
             .then((data) => {
@@ -259,16 +263,15 @@ module.exports = {
               this.statuses = statuses;
             });
 
-            var stopInfo = authAjax(`/trips/${this.service}`, {
+            var tripPromise = authAjax(`/trips/${this.service}`, {
                 cache: false,
             });
-            var passengerInfo = authAjax(`/trips/${this.service}/get_passengers`, {
+            var passengersPromise = authAjax(`/trips/${this.service}/get_passengers`, {
                 cache: false,
             });
 
-            return Promise.all([stopInfo, passengerInfo])
-            .then((result) => {
-                var [stopData, passengerData] = result;
+            Promise.all([tripPromise, passengersPromise])
+            .then(([stopData, passengerData]) => {
                 var stops = stopData.tripStops;
                 var passengers = passengerData;
 
@@ -281,6 +284,7 @@ module.exports = {
                 this.stops = stops;
             });
 
+            return Promise.all([tripPromise, passengersPromise, infoPromise, pingsPromise]);
         },
 
         selectStop(stop) {

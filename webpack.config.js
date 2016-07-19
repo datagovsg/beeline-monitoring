@@ -8,7 +8,10 @@ var env = {
 fs.writeFileSync(`${__dirname}/client/env.json`, JSON.stringify(env))
 
 module.exports = {
-    entry: './client/main.js',
+    entry: [
+        'babel-polyfill',
+        './client/main.js',
+    ],
     output: {
         path: __dirname + '/static',
         filename: 'bundle.js',
@@ -34,9 +37,11 @@ module.exports = {
         loaders: {
             js: 'babel',
         },
+        html: {
+            attrs: false,
+        }
     },
     babel: {
         presets: ['es2015', 'stage-3']
     }
 }
-
