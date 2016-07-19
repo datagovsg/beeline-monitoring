@@ -70,6 +70,18 @@
         </div>
     </div>
 
+
+    <h1>Cancel Trip</h1>
+    <form class="cancel-form"
+        method="POST"
+        @submit="confirmAndCancel"
+        >
+        <b>Warning</b>: This will cancel the trip, and passengers will be notified
+        via SMS. This action is irreversible.
+
+        <button class="danger-button" type="submit">Cancel Trip</button>
+    </form>
+
     <h1>Send message to passengers</h1>
     <form action="/send_message"
         method="POST"
@@ -159,6 +171,14 @@ td.boarding {
 }
 td.alighting {
     background-color: #ff7070;
+}
+
+.cancel-form {
+  background-color: #FFDDDD;
+}
+.danger-button {
+  background-color: #FF0000;
+  color: #FFFFFF;
 }
 
 </style>
@@ -354,6 +374,32 @@ module.exports = {
             .then(null, (err) => {
                 alert("There was an error sending the message");
             })
+            return false
+        },
+
+        confirmAndCancel(event) {
+            event.preventDefault()
+
+            var confirmResponse = prompt(
+              `To confirm please enter the route ID (${this.trip.routeId}):`
+            )
+            if (confirmResponse.trim() !== this.trip.routeId.toString()) {
+              alert("The trip was not cancelled");
+              return;
+            }
+
+            watch(authAjax(`/trips/${this.tripId}/statuses?messagePassengers=true`, {
+                method: 'POST',
+                data: {
+                  status: 'cancelled'
+                }
+            })
+            .then(() => {
+                alert("Trip cancelled!");
+            })
+            .then(null, (err) => {
+                alert("There was an error sending the message");
+            }))
             return false
         },
     },

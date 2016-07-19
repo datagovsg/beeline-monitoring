@@ -1,4 +1,3 @@
-
 var env = require('./env.json')
 
 export function authAjax(path, opts) {
@@ -48,6 +47,8 @@ function login() {
       localStorage.setItem('profile', profile);
       localStorage.setItem('id_token', token);
       localStorage.setItem('session_token', token)
+
+      window.location.reload();
     });
   });
 }

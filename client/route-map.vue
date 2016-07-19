@@ -61,9 +61,9 @@
               <i>Driver Id #{{selectedPing.driverId}}</i>
             </gmap-infowindow>
 
-            <ping-line :pings="pings" :options="pingOptions" :sample-rate="3"></ping-line>
+            <ping-line :pings="pings" :options="pingOptions" :sample-rate="5"></ping-line>
             <ping-line v-for="(driverId,driverPings) in otherPings" :pings="driverPings"
-                :options="otherPingOptions" :sample-rate="3"></ping-line>
+                :options="otherPingOptions" :sample-rate="5"></ping-line>
         </gmap-map>
     </div>
 </div>

@@ -21,7 +21,7 @@
     <tr v-for="service in servicesByStartTime"
         track-by='tripId'
         :class="{
-            emergency: service.status.emergency,
+            emergency: service.tripStatus === 'cancelled',
             nobody: service.nobody,
         }"
         >
@@ -180,8 +180,23 @@ module.exports = {
         },
     },
     created: function() {
-        var self=this;
-        self.requery(10000);
+        var queryAgain = () => {
+          this.$queryTimeout = null;
+          this.requery()
+          .catch((err) => console.error(err))
+          .then(() => {
+            if (this.$queryTimeout === null) {
+              this.$queryTimeout = setTimeout(queryAgain, 20000);
+            }
+          })
+        };
+        queryAgain();
+    },
+    destroyed() {
+      if (this.$queryTimeout) {
+        clearTimeout(this.$queryTimeout);
+      }
+      this.$queryTimeout = false;
     },
     methods: {
         showService: function (svc) {
@@ -190,7 +205,7 @@ module.exports = {
         },
         requery: function(timeout) {
             var self = this;
-            authAjax('/monitoring', {
+            return Promise.resolve(authAjax('/monitoring', {
                 method: 'GET',
                 dataType: 'json',
                 cache: false,
@@ -200,12 +215,7 @@ module.exports = {
             })
             .then(null, function (err) {
                 console.log(err);
-            })
-            .always(() => {
-                setTimeout(function () {
-                    self.requery(timeout);
-                }, timeout);
-            });
+            }))
         },
     },
 }
