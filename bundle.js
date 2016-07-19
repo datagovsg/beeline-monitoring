@@ -8122,17 +8122,24 @@
 
 	var _vueGoogleMaps = __webpack_require__(300);
 
-	var Vue = __webpack_require__(305);
-	var Overview = __webpack_require__(306);
-	var Map = __webpack_require__(315);
-	var Navi = __webpack_require__(328);
-	var PassengerList = __webpack_require__(333);
-	var VueRouter = __webpack_require__(339);
+	var _loadingOverlay = __webpack_require__(306);
 
-	var Login = __webpack_require__(312);
+	var _loadingOverlay2 = _interopRequireDefault(_loadingOverlay);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Vue = __webpack_require__(305);
+	var Overview = __webpack_require__(314);
+	var Map = __webpack_require__(323);
+	var Navi = __webpack_require__(332);
+	var PassengerList = __webpack_require__(337);
+	var VueRouter = __webpack_require__(343);
+
+	var Login = __webpack_require__(320);
 
 	Vue.use(VueRouter);
 	Vue.component('navi', Navi);
+	Vue.component('loadingOverlay', _loadingOverlay2.default);
 
 	window.Login = Login;
 	window.ServiceData = { services: {} };
@@ -36838,13 +36845,12 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(307)
-	__vue_script__ = __webpack_require__(311)
+	__vue_script__ = __webpack_require__(307)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] client/overview.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(314)
+	  console.warn("[vue-loader] client/loading-overlay.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(313)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -36854,7 +36860,7 @@
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), false)
 	  if (!hotAPI.compatible) return
-	  var id = "_v-c6014784/overview.vue"
+	  var id = "_v-d8ad0aec/loading-overlay.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -36866,1325 +36872,100 @@
 /* 307 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// style-loader: Adds some css to the DOM by adding a <style> tag
+	'use strict';
 
-	// load the styles
-	var content = __webpack_require__(308);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(310)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-c6014784&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./overview.vue", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-c6014784&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./overview.vue");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	// <template>
+	//     <div v-bind:class="{hide: hide}">
+	//       <img src="img/spinner.svg">
+	//     </div>
+	// </template>
+	//
+	// <script>
+	var Vue = __webpack_require__(305);
+	var LoadingOverlay = __webpack_require__(308);
+
+	exports.default = {
+	  data: function data() {
+	    return {
+	      counter: null
+	    };
+	  },
+	  created: function created() {
+	    LoadingOverlay.registerOverlay(this);
+	  },
+	  destroyed: function destroyed() {
+	    LoadingOverlay.deregisterOverlay(this);
+	  },
+
+	  computed: {
+	    hide: function hide() {
+	      return !this.counter || this.counter.count == 0;
+	    }
+	  },
+	  events: {
+	    useCounter: function useCounter(counter) {
+	      this.counter = counter;
+	    }
+	  }
+
+	};
+
+	// </script>
 
 /***/ },
 /* 308 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(309)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntable[_v-c6014784] {\n    width: 100%;\n    border-collapse: collapse;\n    border-spacing: 0;\n}\nth[_v-c6014784] {\n    background-color: #EBEFF2;\n    color: #493761;\n    font-size: 80%;\n    height: 30px;\n}\n\ntr.emergency td[_v-c6014784] {\n    background-color: #FFECEC;\n}\n\ntr.nobody td[_v-c6014784]{\n    opacity: 0.3;\n    background-color: #ccc;\n}\n\nth[_v-c6014784],\ntd[_v-c6014784] {\n    border-bottom: solid 1px #CCC;\n}\n\nth[data-column=\"route\"][_v-c6014784],\ntd[data-column=\"route\"][_v-c6014784] {\n    min-width: 60px;\n}\nth[data-column=\"led\"][_v-c6014784],\ntd[data-column=\"led\"][_v-c6014784] {\n    width: 60px;\n}\nth[data-column=\"next\"][_v-c6014784],\ntd[data-column=\"next\"][_v-c6014784] {\n    width: 20px;\n    position: relative;\n}\ntd[data-column=\"next\"][_v-c6014784]:hover {\n    background-color: #dddddd;\n}\n\n.service_name[_v-c6014784] {\n    color: #666;\n    font-size: 80%;\n}\n.led[_v-c6014784] {\n    min-width: 50px;\n    min-height: 50px;\n    border-radius: 25px;\n    box-sizing: border-box;\n    margin: 10px;\n    text-align: center;\n    overflow: visible;\n    font-size: 80%;\n    line-height: 1.3;\n    padding-top: 0.4em;\n}\n\n.led.sU[_v-c6014784] {\n    background-color: #c9c9c9;\n}\n\n.led.s0[_v-c6014784], .led.s1[_v-c6014784] {\n    background-color: #14c3a6;\n}\n.led.s2[_v-c6014784], .led.s3[_v-c6014784] {\n    background-color: #ff6f6f;\n}\n\n.details_button[_v-c6014784] {\n    display: block;\n    width: 100%;\n    position: absolute;\n    top: 0px;\n    bottom: 0px;\n    left: 0px;\n}\n\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 309 */
-/***/ function(module, exports) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	// css base code, injected by the css-loader
-	module.exports = function() {
-		var list = [];
-
-		// return the list of modules as css string
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
-			}
-			return result.join("");
-		};
-
-		// import a list of modules into the list
-		list.i = function(modules, mediaQuery) {
-			if(typeof modules === "string")
-				modules = [[null, modules, ""]];
-			var alreadyImportedModules = {};
-			for(var i = 0; i < this.length; i++) {
-				var id = this[i][0];
-				if(typeof id === "number")
-					alreadyImportedModules[id] = true;
-			}
-			for(i = 0; i < modules.length; i++) {
-				var item = modules[i];
-				// skip already imported module
-				// this implementation is not 100% perfect for weird media query combinations
-				//  when a module is imported multiple times with different media queries.
-				//  I hope this will never occur (Hey this way we have smaller bundles)
-				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-					if(mediaQuery && !item[2]) {
-						item[2] = mediaQuery;
-					} else if(mediaQuery) {
-						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-					}
-					list.push(item);
-				}
-			}
-		};
-		return list;
-	};
-
-
-/***/ },
-/* 310 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	var stylesInDom = {},
-		memoize = function(fn) {
-			var memo;
-			return function () {
-				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-				return memo;
-			};
-		},
-		isOldIE = memoize(function() {
-			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
-		}),
-		getHeadElement = memoize(function () {
-			return document.head || document.getElementsByTagName("head")[0];
-		}),
-		singletonElement = null,
-		singletonCounter = 0,
-		styleElementsInsertedAtTop = [];
-
-	module.exports = function(list, options) {
-		if(false) {
-			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-		}
-
-		options = options || {};
-		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-		// tags it will allow on a page
-		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
-
-		// By default, add <style> tags to the bottom of <head>.
-		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
-
-		var styles = listToStyles(list);
-		addStylesToDom(styles, options);
-
-		return function update(newList) {
-			var mayRemove = [];
-			for(var i = 0; i < styles.length; i++) {
-				var item = styles[i];
-				var domStyle = stylesInDom[item.id];
-				domStyle.refs--;
-				mayRemove.push(domStyle);
-			}
-			if(newList) {
-				var newStyles = listToStyles(newList);
-				addStylesToDom(newStyles, options);
-			}
-			for(var i = 0; i < mayRemove.length; i++) {
-				var domStyle = mayRemove[i];
-				if(domStyle.refs === 0) {
-					for(var j = 0; j < domStyle.parts.length; j++)
-						domStyle.parts[j]();
-					delete stylesInDom[domStyle.id];
-				}
-			}
-		};
-	}
-
-	function addStylesToDom(styles, options) {
-		for(var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-			if(domStyle) {
-				domStyle.refs++;
-				for(var j = 0; j < domStyle.parts.length; j++) {
-					domStyle.parts[j](item.parts[j]);
-				}
-				for(; j < item.parts.length; j++) {
-					domStyle.parts.push(addStyle(item.parts[j], options));
-				}
-			} else {
-				var parts = [];
-				for(var j = 0; j < item.parts.length; j++) {
-					parts.push(addStyle(item.parts[j], options));
-				}
-				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-			}
-		}
-	}
-
-	function listToStyles(list) {
-		var styles = [];
-		var newStyles = {};
-		for(var i = 0; i < list.length; i++) {
-			var item = list[i];
-			var id = item[0];
-			var css = item[1];
-			var media = item[2];
-			var sourceMap = item[3];
-			var part = {css: css, media: media, sourceMap: sourceMap};
-			if(!newStyles[id])
-				styles.push(newStyles[id] = {id: id, parts: [part]});
-			else
-				newStyles[id].parts.push(part);
-		}
-		return styles;
-	}
-
-	function insertStyleElement(options, styleElement) {
-		var head = getHeadElement();
-		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
-		if (options.insertAt === "top") {
-			if(!lastStyleElementInsertedAtTop) {
-				head.insertBefore(styleElement, head.firstChild);
-			} else if(lastStyleElementInsertedAtTop.nextSibling) {
-				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
-			} else {
-				head.appendChild(styleElement);
-			}
-			styleElementsInsertedAtTop.push(styleElement);
-		} else if (options.insertAt === "bottom") {
-			head.appendChild(styleElement);
-		} else {
-			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
-		}
-	}
-
-	function removeStyleElement(styleElement) {
-		styleElement.parentNode.removeChild(styleElement);
-		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
-		if(idx >= 0) {
-			styleElementsInsertedAtTop.splice(idx, 1);
-		}
-	}
-
-	function createStyleElement(options) {
-		var styleElement = document.createElement("style");
-		styleElement.type = "text/css";
-		insertStyleElement(options, styleElement);
-		return styleElement;
-	}
-
-	function addStyle(obj, options) {
-		var styleElement, update, remove;
-
-		if (options.singleton) {
-			var styleIndex = singletonCounter++;
-			styleElement = singletonElement || (singletonElement = createStyleElement(options));
-			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
-			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
-		} else {
-			styleElement = createStyleElement(options);
-			update = applyToTag.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-			};
-		}
-
-		update(obj);
-
-		return function updateStyle(newObj) {
-			if(newObj) {
-				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
-					return;
-				update(obj = newObj);
-			} else {
-				remove();
-			}
-		};
-	}
-
-	var replaceText = (function () {
-		var textStore = [];
-
-		return function (index, replacement) {
-			textStore[index] = replacement;
-			return textStore.filter(Boolean).join('\n');
-		};
-	})();
-
-	function applyToSingletonTag(styleElement, index, remove, obj) {
-		var css = remove ? "" : obj.css;
-
-		if (styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = replaceText(index, css);
-		} else {
-			var cssNode = document.createTextNode(css);
-			var childNodes = styleElement.childNodes;
-			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
-			if (childNodes.length) {
-				styleElement.insertBefore(cssNode, childNodes[index]);
-			} else {
-				styleElement.appendChild(cssNode);
-			}
-		}
-	}
-
-	function applyToTag(styleElement, obj) {
-		var css = obj.css;
-		var media = obj.media;
-		var sourceMap = obj.sourceMap;
-
-		if (media) {
-			styleElement.setAttribute("media", media);
-		}
-
-		if (sourceMap) {
-			// https://developer.chrome.com/devtools/docs/javascript-debugging
-			// this makes source maps inside style tags work properly in Chrome
-			css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */';
-			// http://stackoverflow.com/a/26603875
-			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
-		}
-
-		if (styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = css;
-		} else {
-			while(styleElement.firstChild) {
-				styleElement.removeChild(styleElement.firstChild);
-			}
-			styleElement.appendChild(document.createTextNode(css));
-		}
-	}
-
-
-/***/ },
-/* 311 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	//
-	// <template>
-	// {{date}}
-	// <table>
-	//     <thead>
-	//     <tr>
-	//         <th data-column="route">Route</th>
-	//         <th data-column="led">App is on</th>
-	//         <th data-column="led">ETA (1<sup>st</sup> stop)</th>
-	//         <th data-column="next"></th>
-	//     </tr>
-	//     </thead>
-	//     <tbody>
-	//     <tr v-if="servicesByStartTime.length == 0">
-	//         <td colspan="4">
-	//             You have no bus services today.
-	//             You might not be authorized to view the bus service status.
-	//             Please contact the Beeline team if this is incorrect.
-	//         </td>
-	//     </tr>
-	//     <tr v-for="service in servicesByStartTime"
-	//         track-by='tripId'
-	//         :class="{
-	//             emergency: service.status.emergency,
-	//             nobody: service.nobody,
-	//         }"
-	//         >
-	//         <td data-column="route">
-	//             <h4 style="float: left; margin: 0 10px 0 10px">{{service.route.label}}
-	//             <div class="service_name">{{service.route.id}}</div>
-	//             </h4>
-	//             <h4 style="float: left; margin: 0 10px 0 10px">
-	//               {{service.stops[0].time | takeTime}}
-	//             </h4>
-	//             <div style="float: left">
-	//               {{service.route.from}}<br/>
-	//               {{service.route.to}}
-	//               </div>
-	//         </td>
-	//         <td data-column="led">
-	//             <div :class="{
-	//                 led: true,
-	//                 s0 : service.status.ping == 0,
-	//                 s1 : service.status.ping == 1,
-	//                 s2 : service.status.ping == 2,
-	//                 s3 : service.status.ping >= 3,
-	//                 sU : service.status.ping == -1,
-	//             }">
-	//                 <span v-if="service.firstPing">
-	//                     1<sup>st</sup>: {{service.firstPing.createdAt | takeTime}}
-	//                 </span>
-	//                 <template v-if="service.status.arrival_time">
-	//                     (arrived)
-	//                 </template>
-	//                 <template v-else>
-	//                     <template v-if="service.lastPing">
-	//                         L<sup>ast</sup>: {{service.lastPing | minutesSince}} <br/> mins ago
-	//                     </template>
-	//                 </template>
-	//             </div>
-	//         </td>
-	//         <td data-column="led">
-	//             <div :class="{
-	//                 led: true,
-	//                 s0 : service.status.distance == 0,
-	//                 s1 : service.status.distance == 1,
-	//                 s2 : service.status.distance == 2,
-	//                 s3 : service.status.distance >= 3,
-	//                 sU : service.status.distance == -1,
-	//             }">
-	//                 <template v-if="service.status.arrival_time">
-	//                     {{service.status.arrival_time | takeTime}} (arrived)
-	//                 </template>
-	//                 <template v-else>
-	//                     {{service.status.eta | takeTime}} (est)
-	//                 </template>
-	//             </div>
-	//         </td>
-	//         <td data-column="next">
-	//         <a v-link="{path: '/map/' + service.tripId}" class="details_button">
-	//         &gt;&gt;
-	//         </a>
-	//         </td>
-	//     </tr>
-	//     </tbody>
-	// </table>
-	//
-	// </template>
-	//
-	// <script>
-	var Vue = __webpack_require__(305);
-	var _ = __webpack_require__(301);
-
-	Vue.filter('minutesSince', function (dt) {
-	    if (dt) {
-	        return Math.round((new Date().getTime() - new Date(dt.createdAt).getTime()) / 60000).toFixed(0);
-	    }
-	    return '';
-	});
-
-	Vue.filter('takeTime', function (dt) {
-	    if (dt) {
-	        return new Date(dt).localISO().substr(11, 5);
-	    }
-	    return '';
-	});
-
-	Vue.filter('firstStopETA', function (svc) {
-	    // Has it arrived at all?
-	    // check first stop...
-	    var firstStop = svc.stops[0];
-
-	    var hasArrived = false;
-	    if (firstStop.lastPing) {
-	        var time_part = new Date(firstStop.lastPing.createdAt);
-	        var scheduledTime = new Date(time_part.getTime());
-	        scheduledTime.setUTCHours(parseInt(firstStop.time.substr(0, 2)));
-	        scheduledTime.setUTCMinutes(parseInt(firstStop.time.substr(2, 4)));
-	        scheduledTime.setUTCSeconds(0);
-
-	        if (svc.route_service_id == 77) {
-	            console.log(time_part);
-	            console.log(scheduledTime);
-	        }
-
-	        if (time_part.getTime() - scheduledTime.getTime() >= -5 * 60 * 1000) {
-	            return time_part.localISO().substr(11, 5) + ' (Arrived)';
-	        }
-	    } else if (svc.lastPing) {
-	        var time_part = new Date(svc.lastPing.createdAt);
-	        var distance = svc.lastPing.distance;
-
-	        var hours = distance / 1000 / 60;
-	        var estimatedArrivalTime = new Date(time_part.getTime() + hours * 60 * 60 * 1000);
-
-	        return estimatedArrivalTime.localISO().substr(11, 5);
-	        //var arrival_time = new Date(firstStop.createdAt);
-	        //arrival_time.setHours(parseInt(firstStop.time.substr(0,2)));
-	        //arrival_time.setMinutes(parseInt(firstStop.time.substr(2,4)));
-	        //arrival_time.setSeconds(0);
-	    }
-
-	    return '';
-	});
-
-	var months = 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec'.split(',');
-	var tzo = new Date().getTimezoneOffset() * 60000;
-	var authAjax = __webpack_require__(312).authAjax;
-
-	Date.prototype.localISO = function () {
-	    return new Date(this.getTime() - tzo).toISOString();
-	};
-
-	module.exports = {
-	    data: function data() {
-	        return {
-	            services: {}
-	        };
-	    },
-
-	    computed: {
-	        date: function date() {
-	            // FIXME use server date?
-	            var d = new Date();
-	            return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
-	        },
-
-	        servicesByStartTime: function servicesByStartTime() {
-	            var rv = [];
-	            var self = this;
-	            var ss = self.services;
-
-	            ss = _.values(ss);
-	            ss = _.sortBy(ss, function (svc) {
-	                return [svc.stops[0].time, svc.route.label];
-	            });
-	            return ss;
-	        }
-	    },
-	    created: function created() {
-	        var self = this;
-	        self.requery(10000);
-	    },
-	    methods: {
-	        showService: function showService(svc) {
-	            if (mapVue) mapVue.service = svc;
-	        },
-	        requery: function requery(timeout) {
-	            var self = this;
-	            authAjax('/monitoring', {
-	                method: 'GET',
-	                dataType: 'json',
-	                cache: false
-	            }).then(function (s) {
-	                window.ServiceData.services = self.services = s;
-	            }).then(null, function (err) {
-	                console.log(err);
-	            }).always(function () {
-	                setTimeout(function () {
-	                    self.requery(timeout);
-	                }, timeout);
-	            });
-	        }
-	    }
-	};
-	// </script>
-	//
-	// <style scoped>
-	// table {
-	//     width: 100%;
-	//     border-collapse: collapse;
-	//     border-spacing: 0;
-	// }
-	// th {
-	//     background-color: #EBEFF2;
-	//     color: #493761;
-	//     font-size: 80%;
-	//     height: 30px;
-	// }
-	//
-	// tr.emergency td {
-	//     background-color: #FFECEC;
-	// }
-	//
-	// tr.nobody td{
-	//     opacity: 0.3;
-	//     background-color: #ccc;
-	// }
-	//
-	// th,
-	// td {
-	//     border-bottom: solid 1px #CCC;
-	// }
-	//
-	// th[data-column="route"],
-	// td[data-column="route"] {
-	//     min-width: 60px;
-	// }
-	// th[data-column="led"],
-	// td[data-column="led"] {
-	//     width: 60px;
-	// }
-	// th[data-column="next"],
-	// td[data-column="next"] {
-	//     width: 20px;
-	//     position: relative;
-	// }
-	// td[data-column="next"]:hover {
-	//     background-color: #dddddd;
-	// }
-	//
-	// .service_name {
-	//     color: #666;
-	//     font-size: 80%;
-	// }
-	// .led {
-	//     min-width: 50px;
-	//     min-height: 50px;
-	//     border-radius: 25px;
-	//     box-sizing: border-box;
-	//     margin: 10px;
-	//     text-align: center;
-	//     overflow: visible;
-	//     font-size: 80%;
-	//     line-height: 1.3;
-	//     padding-top: 0.4em;
-	// }
-	//
-	// .led.sU {
-	//     background-color: #c9c9c9;
-	// }
-	//
-	// .led.s0, .led.s1 {
-	//     background-color: #14c3a6;
-	// }
-	// .led.s2, .led.s3 {
-	//     background-color: #ff6f6f;
-	// }
-	//
-	// .details_button {
-	//     display: block;
-	//     width: 100%;
-	//     position: absolute;
-	//     top: 0px;
-	//     bottom: 0px;
-	//     left: 0px;
-	// }
-	//
-	// </style>
-
-/***/ },
-/* 312 */
-/***/ function(module, exports, __webpack_require__) {
-
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.authAjax = authAjax;
-	exports.checkLoggedIn = checkLoggedIn;
-	exports.logOut = logOut;
+	exports.registerOverlay = registerOverlay;
+	exports.deregisterOverlay = deregisterOverlay;
+	exports.watch = watch;
 
-	var env = __webpack_require__(313);
-
-	function authAjax(path, opts) {
-	  opts = opts || {};
-	  opts.headers = opts.headers || {};
-
-	  if (localStorage.session_token) {
-	    opts.headers.Authorization = 'Bearer ' + localStorage['session_token'];
-	  }
-	  return $.ajax(env.BACKEND_URL + path, opts);
-	};
-
-	function checkLoggedIn() {
-	  authAjax('/admins', {}).then(function (what) {}, function (data, status) {
-	    /* failure */
-	    if (data.status == 403) {
-	      delete localStorage.session_token;
-	      login();
-	    }
-	  });
-	};
-
-	function logOut() {
-	  delete localStorage.profile;
-	  delete localStorage.id_token;
-	  delete localStorage.session_token;
-
-	  login();
-	}
-
-	function login() {
-	  authAjax('/auth/credentials').then(function (response) {
-	    var lock = new Auth0Lock(response.cid, response.domain);
-
-	    lock.show({
-	      authParams: {
-	        scope: 'openid name email app_metadata user_id'
-	      }
-	    }, function (err, profile, token) {
-	      if (err) {
-	        console.error(err);
-	        return;
-	      }
-
-	      localStorage.setItem('profile', profile);
-	      localStorage.setItem('id_token', token);
-	      localStorage.setItem('session_token', token);
-	    });
-	  });
-	}
-
-/***/ },
-/* 313 */
-/***/ function(module, exports) {
-
-	module.exports = {
-		"BACKEND_URL": "https://api.beeline.sg",
-		"AUTH0_DOMAIN": "beeline.au.auth0.com",
-		"AUTH0_CID": "BslsfnrdKMedsmr9GYkTv7ejJPReMgcE"
-	};
-
-/***/ },
-/* 314 */
-/***/ function(module, exports) {
-
-	module.exports = "\n\n{{date}}\n<table _v-c6014784=\"\">\n    <thead _v-c6014784=\"\">\n    <tr _v-c6014784=\"\">\n        <th data-column=\"route\" _v-c6014784=\"\">Route</th>\n        <th data-column=\"led\" _v-c6014784=\"\">App is on</th>\n        <th data-column=\"led\" _v-c6014784=\"\">ETA (1<sup _v-c6014784=\"\">st</sup> stop)</th>\n        <th data-column=\"next\" _v-c6014784=\"\"></th>\n    </tr>\n    </thead>\n    <tbody _v-c6014784=\"\">\n    <tr v-if=\"servicesByStartTime.length == 0\" _v-c6014784=\"\">\n        <td colspan=\"4\" _v-c6014784=\"\">\n            You have no bus services today.\n            You might not be authorized to view the bus service status.\n            Please contact the Beeline team if this is incorrect.\n        </td>\n    </tr>\n    <tr v-for=\"service in servicesByStartTime\" track-by=\"tripId\" :class=\"{\n            emergency: service.status.emergency,\n            nobody: service.nobody,\n        }\" _v-c6014784=\"\">\n        <td data-column=\"route\" _v-c6014784=\"\">\n            <h4 style=\"float: left; margin: 0 10px 0 10px\" _v-c6014784=\"\">{{service.route.label}}\n            <div class=\"service_name\" _v-c6014784=\"\">{{service.route.id}}</div>\n            </h4>\n            <h4 style=\"float: left; margin: 0 10px 0 10px\" _v-c6014784=\"\">\n              {{service.stops[0].time | takeTime}}\n            </h4>\n            <div style=\"float: left\" _v-c6014784=\"\">\n              {{service.route.from}}<br _v-c6014784=\"\">\n              {{service.route.to}}\n              </div>\n        </td>\n        <td data-column=\"led\" _v-c6014784=\"\">\n            <div :class=\"{\n                led: true,\n                s0 : service.status.ping == 0,\n                s1 : service.status.ping == 1,\n                s2 : service.status.ping == 2,\n                s3 : service.status.ping >= 3,\n                sU : service.status.ping == -1,\n            }\" _v-c6014784=\"\">\n                <span v-if=\"service.firstPing\" _v-c6014784=\"\">\n                    1<sup _v-c6014784=\"\">st</sup>: {{service.firstPing.createdAt | takeTime}}\n                </span>\n                <template v-if=\"service.status.arrival_time\">\n                    (arrived)\n                </template>\n                <template v-else=\"\">\n                    <template v-if=\"service.lastPing\">\n                        L<sup _v-c6014784=\"\">ast</sup>: {{service.lastPing | minutesSince}} <br _v-c6014784=\"\"> mins ago\n                    </template>\n                </template>\n            </div>\n        </td>\n        <td data-column=\"led\" _v-c6014784=\"\">\n            <div :class=\"{\n                led: true,\n                s0 : service.status.distance == 0,\n                s1 : service.status.distance == 1,\n                s2 : service.status.distance == 2,\n                s3 : service.status.distance >= 3,\n                sU : service.status.distance == -1,\n            }\" _v-c6014784=\"\">\n                <template v-if=\"service.status.arrival_time\">\n                    {{service.status.arrival_time | takeTime}} (arrived)\n                </template>\n                <template v-else=\"\">\n                    {{service.status.eta | takeTime}} (est)\n                </template>\n            </div>\n        </td>\n        <td data-column=\"next\" _v-c6014784=\"\">\n        <a v-link=\"{path: '/map/' + service.tripId}\" class=\"details_button\" _v-c6014784=\"\">\n        &gt;&gt;\n        </a>\n        </td>\n    </tr>\n    </tbody>\n</table>\n\n";
-
-/***/ },
-/* 315 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_script__, __vue_template__
-	__webpack_require__(316)
-	__vue_script__ = __webpack_require__(318)
-	if (__vue_script__ &&
-	    __vue_script__.__esModule &&
-	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] client/route-map.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(327)
-	module.exports = __vue_script__ || {}
-	if (module.exports.__esModule) module.exports = module.exports.default
-	if (__vue_template__) {
-	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
-	}
-	if (false) {(function () {  module.hot.accept()
-	  var hotAPI = require("vue-hot-reload-api")
-	  hotAPI.install(require("vue"), false)
-	  if (!hotAPI.compatible) return
-	  var id = "_v-234e7b63/route-map.vue"
-	  if (!module.hot.data) {
-	    hotAPI.createRecord(id, module.exports)
-	  } else {
-	    hotAPI.update(id, module.exports, __vue_template__)
-	  }
-	})()}
-
-/***/ },
-/* 316 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(317);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(310)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-map.vue", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-map.vue");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 317 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(309)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndiv.sec-map .map {\n    position: absolute;\n    left: 0px;\n    width: 100%;\n    bottom: 0px;\n    border: solid 2px red;\n    top: 0px;\n}\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 318 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); // <template>
-	// <div class="sec-map">
-	//     <navi :service="service"></navi>
-	//     <div class="contents-with-nav">
-	//         <gmap-map
-	//             v-ref:gmap
-	//             class="sec-map"
-	//             :center="{lng: 103.8, lat: 1.38}"
-	//             :zoom="12"
-	//             >
-	//             <!-- Start and end markers -->
-	//             <gmap-marker
-	//                 v-if="pings.length > 0"
-	//                 :position="{
-	//                     lat: pings[pings.length - 1].coordinates.coordinates[1],
-	//                     lng: pings[pings.length - 1].coordinates.coordinates[0],
-	//                 }"
-	//                 :icon="startPoint"
-	//                 :title="Start"
-	//                 >
-	//             </gmap-marker>
-	//             <gmap-marker
-	//                 v-if="pings.length > 0"
-	//                 :position="{
-	//                     lat: pings[0].coordinates.coordinates[1],
-	//                     lng: pings[0].coordinates.coordinates[0],
-	//                 }"
-	//                 :icon="endPoint"
-	//                 :title="End"
-	//                 >
-	//             </gmap-marker>
-	//
-	//             <gmap-marker
-	//                 v-for="stop in stops"
-	//                 track-by='$index'
-	//                 :position="stop | stopPosition"
-	//                 :icon="stop | stopIcon $index"
-	//                 @g-mouseover='selectStop(stop)'
-	//                 @g-mouseout='closeWindow'
-	//                 >
-	//             </gmap-marker>
-	//
-	//             <gmap-infowindow
-	//                 v-if="selectedStop != null"
-	//                 :opened='selectedStop != null'
-	//                 :position="selectedStop | stopPosition"
-	//             >
-	//                 Scheduled: {{selectedStop.time | formatTime}}
-	//                 <div v-if="selectedStop.canBoard">
-	//                 No. of Passengers: {{selectedStop.passengers.length}}
-	//                 </div>
-	//             </gmap-infowindow>
-	//
-	//             <gmap-infowindow
-	//                 v-if="selectedPing != null"
-	//                 :opened="selectedPing != null"
-	//                 :position="selectedPing.coordinates | coordinatesToLatLng"
-	//             >
-	//               {{selectedPing.time | formatTime}}
-	//               <br/>
-	//               <i>Driver Id #{{selectedPing.driverId}}</i>
-	//             </gmap-infowindow>
-	//
-	//             <ping-line :pings="pings" :options="pingOptions" :sample-rate="3"></ping-line>
-	//             <ping-line v-for="(driverId,driverPings) in otherPings" :pings="driverPings"
-	//                 :options="otherPingOptions" :sample-rate="3"></ping-line>
-	//         </gmap-map>
-	//     </div>
-	// </div>
-	// </template>
-	//
-	// <style>
-	// div.sec-map .map {
-	//     position: absolute;
-	//     left: 0px;
-	//     width: 100%;
-	//     bottom: 0px;
-	//     border: solid 2px red;
-	//     top: 0px;
-	// }
-	// </style>
-	//
-	// <script>
-
-	var _vueGoogleMaps = __webpack_require__(300);
-
-	var _pingLine = __webpack_require__(319);
-
-	var _pingLine2 = _interopRequireDefault(_pingLine);
-
-	var _leftPad = __webpack_require__(321);
-
-	var _leftPad2 = _interopRequireDefault(_leftPad);
-
-	var _vue = __webpack_require__(305);
-
-	var _vue2 = _interopRequireDefault(_vue);
-
-	var _lodash = __webpack_require__(301);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
-
-	var _assert = __webpack_require__(323);
+	var _assert = __webpack_require__(309);
 
 	var _assert2 = _interopRequireDefault(_assert);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var authAjax = __webpack_require__(312).authAjax;
-
-	module.exports = {
-	    components: {
-	        'gmap-map': _vueGoogleMaps.Map,
-	        'gmap-marker': _vueGoogleMaps.Marker,
-	        'gmap-polyline': _vueGoogleMaps.Polyline,
-	        'gmap-infowindow': _vueGoogleMaps.InfoWindow,
-	        'ping-line': _pingLine2.default
-	    },
-
-	    data: function data() {
-	        return {
-	            title: '',
-	            subtitle: '',
-
-	            center: { lng: 103.8, lat: 1.38 },
-	            zoom: 12,
-
-	            service: null,
-	            pings: [],
-	            otherPings: {},
-	            stops: [],
-	            bounds: null,
-
-	            selectedStop: null,
-	            selectedPing: null
-	        };
-	    },
-
-
-	    route: {
-	        activate: function activate() {
-	            var _this = this;
-
-	            this.service = this.$route.params.svc;
-
-	            // Trigger map change
-	            _vue2.default.nextTick(function () {
-	                if (!_this.$refs.gmap.mapObject) {
-	                    return;
-	                }
-	                _this.$broadcast('g-resize-map');
-	            });
-	        }
-	    },
-
-	    ready: function ready() {
-	        var _this2 = this;
-
-	        var self = this;
-	        this.$map = null;
-	        this.$queryInterval = setInterval(function () {
-	            return _this2.requery();
-	        }, 30000);
-	    },
-
-	    destroyed: function destroyed() {
-	        clearInterval(this.$queryInterval);
-	    },
-
-	    computed: {
-	        startPoint: function startPoint() {
-	            return {
-	                url: 'img/routeStartMarker.png',
-	                size: new google.maps.Size(50, 40),
-	                origin: new google.maps.Point(0, 0),
-	                anchor: new google.maps.Point(25, 40)
-	            };
-	        },
-	        endPoint: function endPoint() {
-	            return {
-	                url: 'img/routeEndMarker.png',
-	                size: new google.maps.Size(50, 40),
-	                origin: new google.maps.Point(0, 0),
-	                anchor: new google.maps.Point(25, 40)
-	            };
-	        },
-	        otherPingOptions: function otherPingOptions() {
-	            return {
-	                polyline: {
-	                    strokeOpacity: 0.5
-	                }
-	            };
-	        },
-	        pingOptions: function pingOptions() {
-	            return {
-	                polyline: {
-	                    strokeOpacity: 1.0
-	                }
-	            };
-	        }
-	    },
-
-	    filters: {
-	        formatTime: function formatTime(sdt) {
-	            if (!(sdt instanceof Date)) {
-	                sdt = new Date(sdt);
-	            }
-	            return (0, _leftPad2.default)(sdt.getHours(), 1, '0') + ':' + (0, _leftPad2.default)(sdt.getMinutes(), 2, '0');
-	        },
-	        stopIcon: function stopIcon(stop, index) {
-	            return {
-	                url: 'img/stop' + (stop.canBoard ? 'Board' : 'Alight') + (index + 1) + '.png',
-	                size: new google.maps.Size(100, 100),
-	                origin: new google.maps.Point(0, 0),
-	                anchor: new google.maps.Point(20, 20),
-	                scaledSize: new google.maps.Size(40, 40)
-	            };
-	        },
-	        stopPosition: function stopPosition(ts) {
-	            return {
-	                lat: ts.stop.coordinates.coordinates[1],
-	                lng: ts.stop.coordinates.coordinates[0]
-	            };
-	        },
-	        coordinatesToLatLng: function coordinatesToLatLng(cc) {
-	            (0, _assert2.default)(typeof cc.coordinates[1] === 'number');
-	            return {
-	                lat: cc.coordinates[1],
-	                lng: cc.coordinates[0]
-	            };
-	        }
-	    },
-
-	    watch: {
-	        service: function service() {
-	            var _this3 = this;
-
-	            this.requery().then(function () {
-	                _this3.setBounds();
-	            });
-	        }
-	    },
-
-	    methods: {
-	        requery: function requery() {
-	            var _this4 = this;
-
-	            var startTime = new Date();
-
-	            startTime.setHours(0, 0, 0, 0);
-
-	            // The official pings
-	            authAjax('/trips/' + this.service + '/pings', {
-	                data: {
-	                    startTime: startTime.getTime(),
-	                    limit: 100000
-	                }
-	            }).then(function (data) {
-	                _this4.pings = data;
-	            });
-
-	            // Pings of other drivers who also
-	            // claimed this trip id
-	            authAjax('/trips/' + this.service + '/pings', {
-	                data: {
-	                    startTime: startTime.getTime(),
-	                    byTripId: true,
-	                    limit: 100000
-	                }
-	            }).then(function (data) {
-	                _this4.otherPings = _lodash2.default.groupBy(data, 'driverId');
-	            });
-
-	            // Get the pings and other data
-	            authAjax('/trips/' + this.service + '/latestInfo', {
-	                cache: false
-	            }).then(function (data) {
-	                var statuses = data.statuses;
-
-	                _this4.statuses = statuses;
-	            });
-
-	            var stopInfo = authAjax('/trips/' + this.service, {
-	                cache: false
-	            });
-	            var passengerInfo = authAjax('/trips/' + this.service + '/get_passengers', {
-	                cache: false
-	            });
-
-	            return Promise.all([stopInfo, passengerInfo]).then(function (result) {
-	                var _result = _slicedToArray(result, 2);
-
-	                var stopData = _result[0];
-	                var passengerData = _result[1];
-
-	                var stops = stopData.tripStops;
-	                var passengers = passengerData;
-
-	                var passengersByStopId = _lodash2.default.groupBy(passengers, function (p) {
-	                    return p.boardStopId;
-	                });
-
-	                for (var i = 0; i < stops.length; i++) {
-	                    stops[i].passengers = passengersByStopId[stops[i].id] || [];
-	                }
-
-	                _this4.stops = stops;
-	            });
-	        },
-
-	        selectStop: function selectStop(stop) {
-	            this.selectedPing = null;
-	            this.selectedStop = stop;
-	        },
-	        closeWindow: function closeWindow() {
-	            this.selectedPing = null;
-	            this.selectedStop = null;
-	        },
-	        setBounds: function setBounds() {
-	            var bounds = new google.maps.LatLngBounds();
-	            var self = this;
-
-	            var _iteratorNormalCompletion = true;
-	            var _didIteratorError = false;
-	            var _iteratorError = undefined;
-
-	            try {
-	                for (var _iterator = this.stops[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	                    stop = _step.value;
-
-	                    var latlng = new google.maps.LatLng(stop.stop.coordinates.coordinates[1], stop.stop.coordinates.coordinates[0]);
-	                    bounds.extend(latlng);
-	                }
-	            } catch (err) {
-	                _didIteratorError = true;
-	                _iteratorError = err;
-	            } finally {
-	                try {
-	                    if (!_iteratorNormalCompletion && _iterator.return) {
-	                        _iterator.return();
-	                    }
-	                } finally {
-	                    if (_didIteratorError) {
-	                        throw _iteratorError;
-	                    }
-	                }
-	            }
-
-	            this.$refs.gmap.mapObject.fitBounds(bounds);
-	        }
-	    },
-
-	    events: {
-	        selectPing: function selectPing(ping) {
-	            this.selectedPing = ping;
-	            this.selectedStop = null;
-	        }
-	    }
+	var overlays = [];
+	var counter = {
+	  count: 0
 	};
-
-	// </script>
-
-/***/ },
-/* 319 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(320)
-	if (__vue_script__ &&
-	    __vue_script__.__esModule &&
-	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] client/ping-line.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(322)
-	module.exports = __vue_script__ || {}
-	if (module.exports.__esModule) module.exports = module.exports.default
-	if (__vue_template__) {
-	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
-	}
-	if (false) {(function () {  module.hot.accept()
-	  var hotAPI = require("vue-hot-reload-api")
-	  hotAPI.install(require("vue"), false)
-	  if (!hotAPI.compatible) return
-	  var id = "_v-018fbf7a/ping-line.vue"
-	  if (!module.hot.data) {
-	    hotAPI.createRecord(id, module.exports)
-	  } else {
-	    hotAPI.update(id, module.exports, __vue_template__)
-	  }
-	})()}
-
-/***/ },
-/* 320 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _vueGoogleMaps = __webpack_require__(300);
-
-	var _leftPad = __webpack_require__(321);
-
-	var _leftPad2 = _interopRequireDefault(_leftPad);
-
-	var _vue = __webpack_require__(305);
-
-	var _vue2 = _interopRequireDefault(_vue);
-
-	var _lodash = __webpack_require__(301);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	// <template>
-	//   <!-- Pings -->
-	//   <gmap-marker v-if="pings"
-	//                 v-for="ping in pings | everyN"
-	//                 track-by="$index"
-	//                 :position="{
-	//                     lat: ping.coordinates.coordinates[1],
-	//                     lng: ping.coordinates.coordinates[0],
-	//                 }"
-	//                 :icon="pingPoint"
-	//                 @g-mouseover="selectPing(ping)"
-	//                 >
-	//   </gmap-marker>
-	//
-	//   <gmap-polyline v-if="pings" :options="polylineOptions" :path="pingPath">
-	//   </gmap-polyline>
-	// </template>
-	//
-	// <script>
-
-	exports.default = {
-	  components: {
-	    'gmap-marker': _vueGoogleMaps.Marker,
-	    'gmap-polyline': _vueGoogleMaps.Polyline,
-	    'gmap-infowindow': _vueGoogleMaps.InfoWindow
-	  },
-	  props: ['pings', 'options', 'sampleRate'],
-	  data: function data() {
-	    return {
-	      selectedPing: null,
-	      selectedStop: null
-	    };
-	  },
-
-	  computed: {
-	    pingPoint: function pingPoint() {
-	      return {
-	        url: 'img/routePtMarker.png',
-	        size: new google.maps.Size(15, 15),
-	        origin: new google.maps.Point(0, 0),
-	        anchor: new google.maps.Point(7, 7)
-	      };
-	    },
-	    polylineOptions: function polylineOptions() {
-	      return _lodash2.default.defaults(this.options.polyline, {
-	        strokeColor: '#33F',
-	        strokeOpacity: 1.0,
-	        strokeWeight: 2
-	      });
-	    },
-	    pingPath: function pingPath() {
-	      return this.pings.map(function (ping) {
-	        return {
-	          lat: ping.coordinates.coordinates[1],
-	          lng: ping.coordinates.coordinates[0]
-	        };
-	      });
-	    }
-	  },
-	  methods: {
-	    selectPing: function selectPing(ping) {
-	      this.$dispatch('selectPing', ping);
-	    }
-	  },
-	  filters: {
-	    everyN: function everyN(s) {
-	      var _this = this;
-
-	      return _lodash2.default.filter(s, function (value, key) {
-	        return key % _this.sampleRate === 0;
-	      });
-	    }
-	  }
-	};
-
-	// </script>
-
-/***/ },
-/* 321 */
-/***/ function(module, exports) {
-
-	'use strict';
-	module.exports = leftPad;
-
-	var cache = [
-	  '',
-	  ' ',
-	  '  ',
-	  '   ',
-	  '    ',
-	  '     ',
-	  '      ',
-	  '       ',
-	  '        ',
-	  '         '
-	];
-
-	function leftPad (str, len, ch) {
-	  // convert `str` to `string`
-	  str = str + '';
-	  // `len` is the `pad`'s length now
-	  len = len - str.length;
-	  // doesn't need to pad
-	  if (len <= 0) return str;
-	  // `ch` defaults to `' '`
-	  if (!ch && ch !== 0) ch = ' ';
-	  // convert `ch` to `string`
-	  ch = ch + '';
-	  // cache common use cases
-	  if (ch === ' ' && len < 10) return cache[len] + str;
-	  // `pad` starts with an empty string
-	  var pad = '';
-	  // loop
-	  while (true) {
-	    // add `ch` to `pad` if `len` is odd
-	    if (len & 1) pad += ch;
-	    // devide `len` by 2, ditch the fraction
-	    len >>= 1;
-	    // "double" the `ch` so this operation count grows logarithmically on `len`
-	    // each time `ch` is "doubled", the `len` would need to be "doubled" too
-	    // similar to finding a value in binary search tree, hence O(log(n))
-	    if (len) ch += ch;
-	    // `len` is 0, exit the loop
-	    else break;
-	  }
-	  // pad `str`!
-	  return pad + str;
+	function registerOverlay(overlay) {
+	  overlay.$emit('useCounter', counter);
+	  overlays.push(overlay);
 	}
 
+	function deregisterOverlay(overlay) {
+	  var index = overlays.indexOf(overlay);
+
+	  _assert2.default.notEqual(index, -1);
+
+	  overlays.splice(index, 1);
+	}
+
+	function watch(promise) {
+	  counter.count++;
+
+	  function clear() {
+	    counter.count--;
+	  }
+
+	  promise.then(clear, function (err) {
+	    clear();throw err;
+	  });
+	  return promise;
+	}
 
 /***/ },
-/* 322 */
-/***/ function(module, exports) {
-
-	module.exports = "\n<!-- Pings -->\n<gmap-marker v-if=\"pings\"\n              v-for=\"ping in pings | everyN\"\n              track-by=\"$index\"\n              :position=\"{\n                  lat: ping.coordinates.coordinates[1],\n                  lng: ping.coordinates.coordinates[0],\n              }\"\n              :icon=\"pingPoint\"\n              @g-mouseover=\"selectPing(ping)\"\n              >\n</gmap-marker>\n\n<gmap-polyline v-if=\"pings\" :options=\"polylineOptions\" :path=\"pingPath\">\n</gmap-polyline>\n";
-
-/***/ },
-/* 323 */
+/* 309 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -38255,7 +37036,7 @@
 	// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 	// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-	var util = __webpack_require__(324);
+	var util = __webpack_require__(310);
 	var hasOwn = Object.prototype.hasOwnProperty;
 	var pSlice = Array.prototype.slice;
 	var functionsHaveNames = (function () {
@@ -38681,7 +37462,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 324 */
+/* 310 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -39209,7 +37990,7 @@
 	}
 	exports.isPrimitive = isPrimitive;
 
-	exports.isBuffer = __webpack_require__(325);
+	exports.isBuffer = __webpack_require__(311);
 
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -39253,7 +38034,7 @@
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(326);
+	exports.inherits = __webpack_require__(312);
 
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -39274,7 +38055,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(295)))
 
 /***/ },
-/* 325 */
+/* 311 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -39285,7 +38066,7 @@
 	}
 
 /***/ },
-/* 326 */
+/* 312 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -39314,23 +38095,1401 @@
 
 
 /***/ },
-/* 327 */
+/* 313 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div class=\"sec-map\">\n    <navi :service=\"service\"></navi>\n    <div class=\"contents-with-nav\">\n        <gmap-map\n            v-ref:gmap\n            class=\"sec-map\"\n            :center=\"{lng: 103.8, lat: 1.38}\"\n            :zoom=\"12\"\n            >\n            <!-- Start and end markers -->\n            <gmap-marker\n                v-if=\"pings.length > 0\"\n                :position=\"{\n                    lat: pings[pings.length - 1].coordinates.coordinates[1],\n                    lng: pings[pings.length - 1].coordinates.coordinates[0],\n                }\"\n                :icon=\"startPoint\"\n                :title=\"Start\"\n                >\n            </gmap-marker>\n            <gmap-marker\n                v-if=\"pings.length > 0\"\n                :position=\"{\n                    lat: pings[0].coordinates.coordinates[1],\n                    lng: pings[0].coordinates.coordinates[0],\n                }\"\n                :icon=\"endPoint\"\n                :title=\"End\"\n                >\n            </gmap-marker>\n\n            <gmap-marker\n                v-for=\"stop in stops\"\n                track-by='$index'\n                :position=\"stop | stopPosition\"\n                :icon=\"stop | stopIcon $index\"\n                @g-mouseover='selectStop(stop)'\n                @g-mouseout='closeWindow'\n                >\n            </gmap-marker>\n\n            <gmap-infowindow\n                v-if=\"selectedStop != null\"\n                :opened='selectedStop != null'\n                :position=\"selectedStop | stopPosition\"\n            >\n                Scheduled: {{selectedStop.time | formatTime}}\n                <div v-if=\"selectedStop.canBoard\">\n                No. of Passengers: {{selectedStop.passengers.length}}\n                </div>\n            </gmap-infowindow>\n\n            <gmap-infowindow\n                v-if=\"selectedPing != null\"\n                :opened=\"selectedPing != null\"\n                :position=\"selectedPing.coordinates | coordinatesToLatLng\"\n            >\n              {{selectedPing.time | formatTime}}\n              <br/>\n              <i>Driver Id #{{selectedPing.driverId}}</i>\n            </gmap-infowindow>\n\n            <ping-line :pings=\"pings\" :options=\"pingOptions\" :sample-rate=\"3\"></ping-line>\n            <ping-line v-for=\"(driverId,driverPings) in otherPings\" :pings=\"driverPings\"\n                :options=\"otherPingOptions\" :sample-rate=\"3\"></ping-line>\n        </gmap-map>\n    </div>\n</div>\n";
+	module.exports = "\n<div v-bind:class=\"{hide: hide}\">\n  <img src=\"img/spinner.svg\">\n</div>\n";
+
+/***/ },
+/* 314 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__webpack_require__(315)
+	__vue_script__ = __webpack_require__(319)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] client/overview.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(322)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "_v-c6014784/overview.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 315 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(316);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(318)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-c6014784&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./overview.vue", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-c6014784&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./overview.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 316 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(317)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntable[_v-c6014784] {\n    width: 100%;\n    border-collapse: collapse;\n    border-spacing: 0;\n}\nth[_v-c6014784] {\n    background-color: #EBEFF2;\n    color: #493761;\n    font-size: 80%;\n    height: 30px;\n}\n\ntr.emergency td[_v-c6014784] {\n    background-color: #FFECEC;\n}\n\ntr.nobody td[_v-c6014784]{\n    opacity: 0.3;\n    background-color: #ccc;\n}\n\nth[_v-c6014784],\ntd[_v-c6014784] {\n    border-bottom: solid 1px #CCC;\n}\n\nth[data-column=\"route\"][_v-c6014784],\ntd[data-column=\"route\"][_v-c6014784] {\n    min-width: 60px;\n}\nth[data-column=\"led\"][_v-c6014784],\ntd[data-column=\"led\"][_v-c6014784] {\n    width: 60px;\n}\nth[data-column=\"next\"][_v-c6014784],\ntd[data-column=\"next\"][_v-c6014784] {\n    width: 20px;\n    position: relative;\n}\ntd[data-column=\"next\"][_v-c6014784]:hover {\n    background-color: #dddddd;\n}\n\n.service_name[_v-c6014784] {\n    color: #666;\n    font-size: 80%;\n}\n.led[_v-c6014784] {\n    min-width: 50px;\n    min-height: 50px;\n    border-radius: 25px;\n    box-sizing: border-box;\n    margin: 10px;\n    text-align: center;\n    overflow: visible;\n    font-size: 80%;\n    line-height: 1.3;\n    padding-top: 0.4em;\n}\n\n.led.sU[_v-c6014784] {\n    background-color: #c9c9c9;\n}\n\n.led.s0[_v-c6014784], .led.s1[_v-c6014784] {\n    background-color: #14c3a6;\n}\n.led.s2[_v-c6014784], .led.s3[_v-c6014784] {\n    background-color: #ff6f6f;\n}\n\n.details_button[_v-c6014784] {\n    display: block;\n    width: 100%;\n    position: absolute;\n    top: 0px;\n    bottom: 0px;\n    left: 0px;\n}\n\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 317 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 318 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0,
+		styleElementsInsertedAtTop = [];
+
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+		// By default, add <style> tags to the bottom of <head>.
+		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+
+	function insertStyleElement(options, styleElement) {
+		var head = getHeadElement();
+		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+		if (options.insertAt === "top") {
+			if(!lastStyleElementInsertedAtTop) {
+				head.insertBefore(styleElement, head.firstChild);
+			} else if(lastStyleElementInsertedAtTop.nextSibling) {
+				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+			} else {
+				head.appendChild(styleElement);
+			}
+			styleElementsInsertedAtTop.push(styleElement);
+		} else if (options.insertAt === "bottom") {
+			head.appendChild(styleElement);
+		} else {
+			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+		}
+	}
+
+	function removeStyleElement(styleElement) {
+		styleElement.parentNode.removeChild(styleElement);
+		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+		if(idx >= 0) {
+			styleElementsInsertedAtTop.splice(idx, 1);
+		}
+	}
+
+	function createStyleElement(options) {
+		var styleElement = document.createElement("style");
+		styleElement.type = "text/css";
+		insertStyleElement(options, styleElement);
+		return styleElement;
+	}
+
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement(options));
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else {
+			styleElement = createStyleElement(options);
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+			};
+		}
+
+		update(obj);
+
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+
+	var replaceText = (function () {
+		var textStore = [];
+
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+		var sourceMap = obj.sourceMap;
+
+		if (media) {
+			styleElement.setAttribute("media", media);
+		}
+
+		if (sourceMap) {
+			// https://developer.chrome.com/devtools/docs/javascript-debugging
+			// this makes source maps inside style tags work properly in Chrome
+			css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */';
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+
+
+/***/ },
+/* 319 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	//
+	// <template>
+	// {{date}}
+	// <table>
+	//     <thead>
+	//     <tr>
+	//         <th data-column="route">Route</th>
+	//         <th data-column="led">App is on</th>
+	//         <th data-column="led">ETA (1<sup>st</sup> stop)</th>
+	//         <th data-column="next"></th>
+	//     </tr>
+	//     </thead>
+	//     <tbody>
+	//     <tr v-if="servicesByStartTime.length == 0">
+	//         <td colspan="4">
+	//             You have no bus services today.
+	//             You might not be authorized to view the bus service status.
+	//             Please contact the Beeline team if this is incorrect.
+	//         </td>
+	//     </tr>
+	//     <tr v-for="service in servicesByStartTime"
+	//         track-by='tripId'
+	//         :class="{
+	//             emergency: service.tripStatus === 'cancelled',
+	//             nobody: service.nobody,
+	//         }"
+	//         >
+	//         <td data-column="route">
+	//             <h4 style="float: left; margin: 0 10px 0 10px">{{service.route.label}}
+	//             <div class="service_name">{{service.route.id}}</div>
+	//             </h4>
+	//             <h4 style="float: left; margin: 0 10px 0 10px">
+	//               {{service.stops[0].time | takeTime}}
+	//             </h4>
+	//             <div style="float: left">
+	//               {{service.route.from}}<br/>
+	//               {{service.route.to}}
+	//               </div>
+	//         </td>
+	//         <td data-column="led">
+	//             <div :class="{
+	//                 led: true,
+	//                 s0 : service.status.ping == 0,
+	//                 s1 : service.status.ping == 1,
+	//                 s2 : service.status.ping == 2,
+	//                 s3 : service.status.ping >= 3,
+	//                 sU : service.status.ping == -1,
+	//             }">
+	//                 <span v-if="service.firstPing">
+	//                     1<sup>st</sup>: {{service.firstPing.createdAt | takeTime}}
+	//                 </span>
+	//                 <template v-if="service.status.arrival_time">
+	//                     (arrived)
+	//                 </template>
+	//                 <template v-else>
+	//                     <template v-if="service.lastPing">
+	//                         L<sup>ast</sup>: {{service.lastPing | minutesSince}} <br/> mins ago
+	//                     </template>
+	//                 </template>
+	//             </div>
+	//         </td>
+	//         <td data-column="led">
+	//             <div :class="{
+	//                 led: true,
+	//                 s0 : service.status.distance == 0,
+	//                 s1 : service.status.distance == 1,
+	//                 s2 : service.status.distance == 2,
+	//                 s3 : service.status.distance >= 3,
+	//                 sU : service.status.distance == -1,
+	//             }">
+	//                 <template v-if="service.status.arrival_time">
+	//                     {{service.status.arrival_time | takeTime}} (arrived)
+	//                 </template>
+	//                 <template v-else>
+	//                     {{service.status.eta | takeTime}} (est)
+	//                 </template>
+	//             </div>
+	//         </td>
+	//         <td data-column="next">
+	//         <a v-link="{path: '/map/' + service.tripId}" class="details_button">
+	//         &gt;&gt;
+	//         </a>
+	//         </td>
+	//     </tr>
+	//     </tbody>
+	// </table>
+	//
+	// </template>
+	//
+	// <script>
+	var Vue = __webpack_require__(305);
+	var _ = __webpack_require__(301);
+
+	Vue.filter('minutesSince', function (dt) {
+	    if (dt) {
+	        return Math.round((new Date().getTime() - new Date(dt.createdAt).getTime()) / 60000).toFixed(0);
+	    }
+	    return '';
+	});
+
+	Vue.filter('takeTime', function (dt) {
+	    if (dt) {
+	        return new Date(dt).localISO().substr(11, 5);
+	    }
+	    return '';
+	});
+
+	Vue.filter('firstStopETA', function (svc) {
+	    // Has it arrived at all?
+	    // check first stop...
+	    var firstStop = svc.stops[0];
+
+	    var hasArrived = false;
+	    if (firstStop.lastPing) {
+	        var time_part = new Date(firstStop.lastPing.createdAt);
+	        var scheduledTime = new Date(time_part.getTime());
+	        scheduledTime.setUTCHours(parseInt(firstStop.time.substr(0, 2)));
+	        scheduledTime.setUTCMinutes(parseInt(firstStop.time.substr(2, 4)));
+	        scheduledTime.setUTCSeconds(0);
+
+	        if (svc.route_service_id == 77) {
+	            console.log(time_part);
+	            console.log(scheduledTime);
+	        }
+
+	        if (time_part.getTime() - scheduledTime.getTime() >= -5 * 60 * 1000) {
+	            return time_part.localISO().substr(11, 5) + ' (Arrived)';
+	        }
+	    } else if (svc.lastPing) {
+	        var time_part = new Date(svc.lastPing.createdAt);
+	        var distance = svc.lastPing.distance;
+
+	        var hours = distance / 1000 / 60;
+	        var estimatedArrivalTime = new Date(time_part.getTime() + hours * 60 * 60 * 1000);
+
+	        return estimatedArrivalTime.localISO().substr(11, 5);
+	        //var arrival_time = new Date(firstStop.createdAt);
+	        //arrival_time.setHours(parseInt(firstStop.time.substr(0,2)));
+	        //arrival_time.setMinutes(parseInt(firstStop.time.substr(2,4)));
+	        //arrival_time.setSeconds(0);
+	    }
+
+	    return '';
+	});
+
+	var months = 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec'.split(',');
+	var tzo = new Date().getTimezoneOffset() * 60000;
+	var authAjax = __webpack_require__(320).authAjax;
+
+	Date.prototype.localISO = function () {
+	    return new Date(this.getTime() - tzo).toISOString();
+	};
+
+	module.exports = {
+	    data: function data() {
+	        return {
+	            services: {}
+	        };
+	    },
+
+	    computed: {
+	        date: function date() {
+	            // FIXME use server date?
+	            var d = new Date();
+	            return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+	        },
+
+	        servicesByStartTime: function servicesByStartTime() {
+	            var rv = [];
+	            var self = this;
+	            var ss = self.services;
+
+	            ss = _.values(ss);
+	            ss = _.sortBy(ss, function (svc) {
+	                return [svc.stops[0].time, svc.route.label];
+	            });
+	            return ss;
+	        }
+	    },
+	    created: function created() {
+	        var _this = this;
+
+	        var queryAgain = function queryAgain() {
+	            _this.$queryTimeout = null;
+	            _this.requery().catch(function (err) {
+	                return console.error(err);
+	            }).then(function () {
+	                if (_this.$queryTimeout === null) {
+	                    _this.$queryTimeout = setTimeout(queryAgain, 20000);
+	                }
+	            });
+	        };
+	        queryAgain();
+	    },
+	    destroyed: function destroyed() {
+	        if (this.$queryTimeout) {
+	            clearTimeout(this.$queryTimeout);
+	        }
+	        this.$queryTimeout = false;
+	    },
+
+	    methods: {
+	        showService: function showService(svc) {
+	            if (mapVue) mapVue.service = svc;
+	        },
+	        requery: function requery(timeout) {
+	            var self = this;
+	            return Promise.resolve(authAjax('/monitoring', {
+	                method: 'GET',
+	                dataType: 'json',
+	                cache: false
+	            }).then(function (s) {
+	                window.ServiceData.services = self.services = s;
+	            }).then(null, function (err) {
+	                console.log(err);
+	            }));
+	        }
+	    }
+	};
+	// </script>
+	//
+	// <style scoped>
+	// table {
+	//     width: 100%;
+	//     border-collapse: collapse;
+	//     border-spacing: 0;
+	// }
+	// th {
+	//     background-color: #EBEFF2;
+	//     color: #493761;
+	//     font-size: 80%;
+	//     height: 30px;
+	// }
+	//
+	// tr.emergency td {
+	//     background-color: #FFECEC;
+	// }
+	//
+	// tr.nobody td{
+	//     opacity: 0.3;
+	//     background-color: #ccc;
+	// }
+	//
+	// th,
+	// td {
+	//     border-bottom: solid 1px #CCC;
+	// }
+	//
+	// th[data-column="route"],
+	// td[data-column="route"] {
+	//     min-width: 60px;
+	// }
+	// th[data-column="led"],
+	// td[data-column="led"] {
+	//     width: 60px;
+	// }
+	// th[data-column="next"],
+	// td[data-column="next"] {
+	//     width: 20px;
+	//     position: relative;
+	// }
+	// td[data-column="next"]:hover {
+	//     background-color: #dddddd;
+	// }
+	//
+	// .service_name {
+	//     color: #666;
+	//     font-size: 80%;
+	// }
+	// .led {
+	//     min-width: 50px;
+	//     min-height: 50px;
+	//     border-radius: 25px;
+	//     box-sizing: border-box;
+	//     margin: 10px;
+	//     text-align: center;
+	//     overflow: visible;
+	//     font-size: 80%;
+	//     line-height: 1.3;
+	//     padding-top: 0.4em;
+	// }
+	//
+	// .led.sU {
+	//     background-color: #c9c9c9;
+	// }
+	//
+	// .led.s0, .led.s1 {
+	//     background-color: #14c3a6;
+	// }
+	// .led.s2, .led.s3 {
+	//     background-color: #ff6f6f;
+	// }
+	//
+	// .details_button {
+	//     display: block;
+	//     width: 100%;
+	//     position: absolute;
+	//     top: 0px;
+	//     bottom: 0px;
+	//     left: 0px;
+	// }
+	//
+	// </style>
+
+/***/ },
+/* 320 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.authAjax = authAjax;
+	exports.checkLoggedIn = checkLoggedIn;
+	exports.logOut = logOut;
+	var env = __webpack_require__(321);
+
+	function authAjax(path, opts) {
+	  opts = opts || {};
+	  opts.headers = opts.headers || {};
+
+	  if (localStorage.session_token) {
+	    opts.headers.Authorization = 'Bearer ' + localStorage['session_token'];
+	  }
+	  return $.ajax(env.BACKEND_URL + path, opts);
+	};
+
+	function checkLoggedIn() {
+	  authAjax('/admins', {}).then(function (what) {}, function (data, status) {
+	    /* failure */
+	    if (data.status == 403) {
+	      delete localStorage.session_token;
+	      login();
+	    }
+	  });
+	};
+
+	function logOut() {
+	  delete localStorage.profile;
+	  delete localStorage.id_token;
+	  delete localStorage.session_token;
+
+	  login();
+	}
+
+	function login() {
+	  authAjax('/auth/credentials').then(function (response) {
+	    var lock = new Auth0Lock(response.cid, response.domain);
+
+	    lock.show({
+	      authParams: {
+	        scope: 'openid name email app_metadata user_id'
+	      }
+	    }, function (err, profile, token) {
+	      if (err) {
+	        console.error(err);
+	        return;
+	      }
+
+	      localStorage.setItem('profile', profile);
+	      localStorage.setItem('id_token', token);
+	      localStorage.setItem('session_token', token);
+
+	      window.location.reload();
+	    });
+	  });
+	}
+
+/***/ },
+/* 321 */
+/***/ function(module, exports) {
+
+	module.exports = {
+		"BACKEND_URL": "https://api.beeline.sg",
+		"AUTH0_DOMAIN": "beeline.au.auth0.com",
+		"AUTH0_CID": "BslsfnrdKMedsmr9GYkTv7ejJPReMgcE"
+	};
+
+/***/ },
+/* 322 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n{{date}}\n<table _v-c6014784=\"\">\n    <thead _v-c6014784=\"\">\n    <tr _v-c6014784=\"\">\n        <th data-column=\"route\" _v-c6014784=\"\">Route</th>\n        <th data-column=\"led\" _v-c6014784=\"\">App is on</th>\n        <th data-column=\"led\" _v-c6014784=\"\">ETA (1<sup _v-c6014784=\"\">st</sup> stop)</th>\n        <th data-column=\"next\" _v-c6014784=\"\"></th>\n    </tr>\n    </thead>\n    <tbody _v-c6014784=\"\">\n    <tr v-if=\"servicesByStartTime.length == 0\" _v-c6014784=\"\">\n        <td colspan=\"4\" _v-c6014784=\"\">\n            You have no bus services today.\n            You might not be authorized to view the bus service status.\n            Please contact the Beeline team if this is incorrect.\n        </td>\n    </tr>\n    <tr v-for=\"service in servicesByStartTime\" track-by=\"tripId\" :class=\"{\n            emergency: service.tripStatus === 'cancelled',\n            nobody: service.nobody,\n        }\" _v-c6014784=\"\">\n        <td data-column=\"route\" _v-c6014784=\"\">\n            <h4 style=\"float: left; margin: 0 10px 0 10px\" _v-c6014784=\"\">{{service.route.label}}\n            <div class=\"service_name\" _v-c6014784=\"\">{{service.route.id}}</div>\n            </h4>\n            <h4 style=\"float: left; margin: 0 10px 0 10px\" _v-c6014784=\"\">\n              {{service.stops[0].time | takeTime}}\n            </h4>\n            <div style=\"float: left\" _v-c6014784=\"\">\n              {{service.route.from}}<br _v-c6014784=\"\">\n              {{service.route.to}}\n              </div>\n        </td>\n        <td data-column=\"led\" _v-c6014784=\"\">\n            <div :class=\"{\n                led: true,\n                s0 : service.status.ping == 0,\n                s1 : service.status.ping == 1,\n                s2 : service.status.ping == 2,\n                s3 : service.status.ping >= 3,\n                sU : service.status.ping == -1,\n            }\" _v-c6014784=\"\">\n                <span v-if=\"service.firstPing\" _v-c6014784=\"\">\n                    1<sup _v-c6014784=\"\">st</sup>: {{service.firstPing.createdAt | takeTime}}\n                </span>\n                <template v-if=\"service.status.arrival_time\">\n                    (arrived)\n                </template>\n                <template v-else=\"\">\n                    <template v-if=\"service.lastPing\">\n                        L<sup _v-c6014784=\"\">ast</sup>: {{service.lastPing | minutesSince}} <br _v-c6014784=\"\"> mins ago\n                    </template>\n                </template>\n            </div>\n        </td>\n        <td data-column=\"led\" _v-c6014784=\"\">\n            <div :class=\"{\n                led: true,\n                s0 : service.status.distance == 0,\n                s1 : service.status.distance == 1,\n                s2 : service.status.distance == 2,\n                s3 : service.status.distance >= 3,\n                sU : service.status.distance == -1,\n            }\" _v-c6014784=\"\">\n                <template v-if=\"service.status.arrival_time\">\n                    {{service.status.arrival_time | takeTime}} (arrived)\n                </template>\n                <template v-else=\"\">\n                    {{service.status.eta | takeTime}} (est)\n                </template>\n            </div>\n        </td>\n        <td data-column=\"next\" _v-c6014784=\"\">\n        <a v-link=\"{path: '/map/' + service.tripId}\" class=\"details_button\" _v-c6014784=\"\">\n        &gt;&gt;\n        </a>\n        </td>\n    </tr>\n    </tbody>\n</table>\n\n";
+
+/***/ },
+/* 323 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__webpack_require__(324)
+	__vue_script__ = __webpack_require__(326)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] client/route-map.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(331)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "_v-234e7b63/route-map.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 324 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(325);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(318)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-map.vue", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-map.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 325 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(317)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndiv.sec-map .map {\n    position: absolute;\n    left: 0px;\n    width: 100%;\n    bottom: 0px;\n    border: solid 2px red;\n    top: 0px;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 326 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); // <template>
+	// <div class="sec-map">
+	//     <navi :service="service"></navi>
+	//     <div class="contents-with-nav">
+	//         <gmap-map
+	//             v-ref:gmap
+	//             class="sec-map"
+	//             :center="{lng: 103.8, lat: 1.38}"
+	//             :zoom="12"
+	//             >
+	//             <!-- Start and end markers -->
+	//             <gmap-marker
+	//                 v-if="pings.length > 0"
+	//                 :position="{
+	//                     lat: pings[pings.length - 1].coordinates.coordinates[1],
+	//                     lng: pings[pings.length - 1].coordinates.coordinates[0],
+	//                 }"
+	//                 :icon="startPoint"
+	//                 :title="Start"
+	//                 >
+	//             </gmap-marker>
+	//             <gmap-marker
+	//                 v-if="pings.length > 0"
+	//                 :position="{
+	//                     lat: pings[0].coordinates.coordinates[1],
+	//                     lng: pings[0].coordinates.coordinates[0],
+	//                 }"
+	//                 :icon="endPoint"
+	//                 :title="End"
+	//                 >
+	//             </gmap-marker>
+	//
+	//             <gmap-marker
+	//                 v-for="stop in stops"
+	//                 track-by='$index'
+	//                 :position="stop | stopPosition"
+	//                 :icon="stop | stopIcon $index"
+	//                 @g-mouseover='selectStop(stop)'
+	//                 @g-mouseout='closeWindow'
+	//                 >
+	//             </gmap-marker>
+	//
+	//             <gmap-infowindow
+	//                 v-if="selectedStop != null"
+	//                 :opened='selectedStop != null'
+	//                 :position="selectedStop | stopPosition"
+	//             >
+	//                 Scheduled: {{selectedStop.time | formatTime}}
+	//                 <div v-if="selectedStop.canBoard">
+	//                 No. of Passengers: {{selectedStop.passengers.length}}
+	//                 </div>
+	//             </gmap-infowindow>
+	//
+	//             <gmap-infowindow
+	//                 v-if="selectedPing != null"
+	//                 :opened="selectedPing != null"
+	//                 :position="selectedPing.coordinates | coordinatesToLatLng"
+	//             >
+	//               {{selectedPing.time | formatTime}}
+	//               <br/>
+	//               <i>Driver Id #{{selectedPing.driverId}}</i>
+	//             </gmap-infowindow>
+	//
+	//             <ping-line :pings="pings" :options="pingOptions" :sample-rate="5"></ping-line>
+	//             <ping-line v-for="(driverId,driverPings) in otherPings" :pings="driverPings"
+	//                 :options="otherPingOptions" :sample-rate="5"></ping-line>
+	//         </gmap-map>
+	//     </div>
+	// </div>
+	// </template>
+	//
+	// <style>
+	// div.sec-map .map {
+	//     position: absolute;
+	//     left: 0px;
+	//     width: 100%;
+	//     bottom: 0px;
+	//     border: solid 2px red;
+	//     top: 0px;
+	// }
+	// </style>
+	//
+	// <script>
+
+	var _vueGoogleMaps = __webpack_require__(300);
+
+	var _pingLine = __webpack_require__(327);
+
+	var _pingLine2 = _interopRequireDefault(_pingLine);
+
+	var _leftPad = __webpack_require__(329);
+
+	var _leftPad2 = _interopRequireDefault(_leftPad);
+
+	var _vue = __webpack_require__(305);
+
+	var _vue2 = _interopRequireDefault(_vue);
+
+	var _lodash = __webpack_require__(301);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var _assert = __webpack_require__(309);
+
+	var _assert2 = _interopRequireDefault(_assert);
+
+	var _loadingOverlay = __webpack_require__(308);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var authAjax = __webpack_require__(320).authAjax;
+
+
+	module.exports = {
+	    components: {
+	        'gmap-map': _vueGoogleMaps.Map,
+	        'gmap-marker': _vueGoogleMaps.Marker,
+	        'gmap-polyline': _vueGoogleMaps.Polyline,
+	        'gmap-infowindow': _vueGoogleMaps.InfoWindow,
+	        'ping-line': _pingLine2.default
+	    },
+
+	    data: function data() {
+	        return {
+	            title: '',
+	            subtitle: '',
+
+	            center: { lng: 103.8, lat: 1.38 },
+	            zoom: 12,
+
+	            service: null,
+	            pings: [],
+	            otherPings: {},
+	            stops: [],
+	            bounds: null,
+
+	            selectedStop: null,
+	            selectedPing: null
+	        };
+	    },
+
+
+	    route: {
+	        activate: function activate() {
+	            var _this = this;
+
+	            this.service = this.$route.params.svc;
+
+	            // Trigger map change
+	            _vue2.default.nextTick(function () {
+	                if (!_this.$refs.gmap.mapObject) {
+	                    return;
+	                }
+	                _this.$broadcast('g-resize-map');
+	            });
+	        }
+	    },
+
+	    ready: function ready() {
+	        var _this2 = this;
+
+	        this.$map = null;
+
+	        var queryAgain = function queryAgain() {
+	            _this2.$queryTimeout = null;
+
+	            _this2.requery().catch(function (err) {
+	                return console.error(err);
+	            }).then(function () {
+	                if (_this2.$queryTimeout === null) {
+	                    _this2.$queryTimeout = setTimeout(queryAgain, 30000);
+	                }
+	            });
+	        };
+	        queryAgain();
+	    },
+
+	    destroyed: function destroyed() {
+	        if (this.$queryTimeout) {
+	            clearTimeout(this.$queryTimeout);
+	        }
+	        this.$queryTimeout = false;
+	    },
+
+
+	    computed: {
+	        startPoint: function startPoint() {
+	            return {
+	                url: 'img/routeStartMarker.png',
+	                size: new google.maps.Size(50, 40),
+	                origin: new google.maps.Point(0, 0),
+	                anchor: new google.maps.Point(25, 40)
+	            };
+	        },
+	        endPoint: function endPoint() {
+	            return {
+	                url: 'img/routeEndMarker.png',
+	                size: new google.maps.Size(50, 40),
+	                origin: new google.maps.Point(0, 0),
+	                anchor: new google.maps.Point(25, 40)
+	            };
+	        },
+	        otherPingOptions: function otherPingOptions() {
+	            return {
+	                polyline: {
+	                    strokeOpacity: 0.8,
+	                    strokeWeight: 2
+	                }
+	            };
+	        },
+	        pingOptions: function pingOptions() {
+	            return {
+	                polyline: {
+	                    strokeOpacity: 1.0
+	                }
+	            };
+	        }
+	    },
+
+	    filters: {
+	        formatTime: function formatTime(sdt) {
+	            if (!(sdt instanceof Date)) {
+	                sdt = new Date(sdt);
+	            }
+	            return (0, _leftPad2.default)(sdt.getHours(), 1, '0') + ':' + (0, _leftPad2.default)(sdt.getMinutes(), 2, '0');
+	        },
+	        stopIcon: function stopIcon(stop, index) {
+	            return {
+	                url: 'img/stop' + (stop.canBoard ? 'Board' : 'Alight') + (index + 1) + '.png',
+	                size: new google.maps.Size(100, 100),
+	                origin: new google.maps.Point(0, 0),
+	                anchor: new google.maps.Point(20, 20),
+	                scaledSize: new google.maps.Size(40, 40)
+	            };
+	        },
+	        stopPosition: function stopPosition(ts) {
+	            return {
+	                lat: ts.stop.coordinates.coordinates[1],
+	                lng: ts.stop.coordinates.coordinates[0]
+	            };
+	        },
+	        coordinatesToLatLng: function coordinatesToLatLng(cc) {
+	            (0, _assert2.default)(typeof cc.coordinates[1] === 'number');
+	            return {
+	                lat: cc.coordinates[1],
+	                lng: cc.coordinates[0]
+	            };
+	        }
+	    },
+
+	    watch: {
+	        service: function service() {
+	            var _this3 = this;
+
+	            (0, _loadingOverlay.watch)(this.requery().then(function () {
+	                _this3.setBounds();
+	            }));
+	        }
+	    },
+
+	    methods: {
+	        requery: function requery() {
+	            var _this4 = this;
+
+	            var startTime = new Date();
+	            startTime.setHours(0, 0, 0, 0);
+
+	            // Pings of other drivers who also
+	            // claimed this trip id
+	            var pingsPromise = authAjax('/trips/' + this.service + '/pingsByTripId', {
+	                data: {
+	                    startTime: startTime.getTime(),
+	                    limit: 100000
+	                }
+	            }).then(function (data) {
+	                _this4.otherPings = _lodash2.default.groupBy(data, 'driverId');
+	            });
+
+	            // Get the pings and other data
+	            var infoPromise = authAjax('/trips/' + this.service + '/latestInfo', {
+	                cache: false
+	            }).then(function (data) {
+	                var statuses = data.statuses;
+
+	                _this4.statuses = statuses;
+	            });
+
+	            var tripPromise = authAjax('/trips/' + this.service, {
+	                cache: false
+	            });
+	            var passengersPromise = authAjax('/trips/' + this.service + '/get_passengers', {
+	                cache: false
+	            });
+
+	            Promise.all([tripPromise, passengersPromise]).then(function (_ref) {
+	                var _ref2 = _slicedToArray(_ref, 2);
+
+	                var stopData = _ref2[0];
+	                var passengerData = _ref2[1];
+
+	                var stops = stopData.tripStops;
+	                var passengers = passengerData;
+
+	                var passengersByStopId = _lodash2.default.groupBy(passengers, function (p) {
+	                    return p.boardStopId;
+	                });
+
+	                for (var i = 0; i < stops.length; i++) {
+	                    stops[i].passengers = passengersByStopId[stops[i].id] || [];
+	                }
+
+	                _this4.stops = stops;
+	            });
+
+	            return Promise.all([tripPromise, passengersPromise, infoPromise, pingsPromise]);
+	        },
+
+	        selectStop: function selectStop(stop) {
+	            this.selectedPing = null;
+	            this.selectedStop = stop;
+	        },
+	        closeWindow: function closeWindow() {
+	            this.selectedPing = null;
+	            this.selectedStop = null;
+	        },
+	        setBounds: function setBounds() {
+	            var bounds = new google.maps.LatLngBounds();
+	            var self = this;
+
+	            var _iteratorNormalCompletion = true;
+	            var _didIteratorError = false;
+	            var _iteratorError = undefined;
+
+	            try {
+	                for (var _iterator = this.stops[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                    stop = _step.value;
+
+	                    var latlng = new google.maps.LatLng(stop.stop.coordinates.coordinates[1], stop.stop.coordinates.coordinates[0]);
+	                    bounds.extend(latlng);
+	                }
+	            } catch (err) {
+	                _didIteratorError = true;
+	                _iteratorError = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion && _iterator.return) {
+	                        _iterator.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError) {
+	                        throw _iteratorError;
+	                    }
+	                }
+	            }
+
+	            this.$refs.gmap.mapObject.fitBounds(bounds);
+	        }
+	    },
+
+	    events: {
+	        selectPing: function selectPing(ping) {
+	            this.selectedPing = ping;
+	            this.selectedStop = null;
+	        }
+	    }
+	};
+
+	// </script>
+
+/***/ },
+/* 327 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_script__ = __webpack_require__(328)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] client/ping-line.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(330)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "_v-018fbf7a/ping-line.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
 
 /***/ },
 /* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _vueGoogleMaps = __webpack_require__(300);
+
+	var _leftPad = __webpack_require__(329);
+
+	var _leftPad2 = _interopRequireDefault(_leftPad);
+
+	var _vue = __webpack_require__(305);
+
+	var _vue2 = _interopRequireDefault(_vue);
+
+	var _lodash = __webpack_require__(301);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// <template>
+	//   <!-- Pings -->
+	//   <gmap-marker v-if="pings"
+	//                 v-for="ping in pings | everyN"
+	//                 track-by="$index"
+	//                 :position="{
+	//                     lat: ping.coordinates.coordinates[1],
+	//                     lng: ping.coordinates.coordinates[0],
+	//                 }"
+	//                 :icon="pingPoint"
+	//                 @g-mouseover="selectPing(ping)"
+	//                 >
+	//   </gmap-marker>
+	//
+	//   <gmap-polyline v-if="pings" :options="polylineOptions" :path="pingPath">
+	//   </gmap-polyline>
+	// </template>
+	//
+	// <script>
+
+	exports.default = {
+	  components: {
+	    'gmap-marker': _vueGoogleMaps.Marker,
+	    'gmap-polyline': _vueGoogleMaps.Polyline,
+	    'gmap-infowindow': _vueGoogleMaps.InfoWindow
+	  },
+	  props: ['pings', 'options', 'sampleRate'],
+	  data: function data() {
+	    return {
+	      selectedPing: null,
+	      selectedStop: null
+	    };
+	  },
+
+	  computed: {
+	    pingPoint: function pingPoint() {
+	      return {
+	        url: 'img/routePtMarker.png',
+	        size: new google.maps.Size(15, 15),
+	        origin: new google.maps.Point(0, 0),
+	        anchor: new google.maps.Point(7, 7)
+	      };
+	    },
+	    polylineOptions: function polylineOptions() {
+	      return _lodash2.default.defaults(this.options.polyline, {
+	        strokeColor: '#33F',
+	        strokeOpacity: 1.0,
+	        strokeWeight: 2
+	      });
+	    },
+	    pingPath: function pingPath() {
+	      return this.pings.map(function (ping) {
+	        return {
+	          lat: ping.coordinates.coordinates[1],
+	          lng: ping.coordinates.coordinates[0]
+	        };
+	      });
+	    }
+	  },
+	  methods: {
+	    selectPing: function selectPing(ping) {
+	      this.$dispatch('selectPing', ping);
+	    }
+	  },
+	  filters: {
+	    everyN: function everyN(s) {
+	      var _this = this;
+
+	      return _lodash2.default.filter(s, function (value, key) {
+	        return key % _this.sampleRate === 0;
+	      });
+	    }
+	  }
+	};
+
+	// </script>
+
+/***/ },
+/* 329 */
+/***/ function(module, exports) {
+
+	'use strict';
+	module.exports = leftPad;
+
+	var cache = [
+	  '',
+	  ' ',
+	  '  ',
+	  '   ',
+	  '    ',
+	  '     ',
+	  '      ',
+	  '       ',
+	  '        ',
+	  '         '
+	];
+
+	function leftPad (str, len, ch) {
+	  // convert `str` to `string`
+	  str = str + '';
+	  // `len` is the `pad`'s length now
+	  len = len - str.length;
+	  // doesn't need to pad
+	  if (len <= 0) return str;
+	  // `ch` defaults to `' '`
+	  if (!ch && ch !== 0) ch = ' ';
+	  // convert `ch` to `string`
+	  ch = ch + '';
+	  // cache common use cases
+	  if (ch === ' ' && len < 10) return cache[len] + str;
+	  // `pad` starts with an empty string
+	  var pad = '';
+	  // loop
+	  while (true) {
+	    // add `ch` to `pad` if `len` is odd
+	    if (len & 1) pad += ch;
+	    // devide `len` by 2, ditch the fraction
+	    len >>= 1;
+	    // "double" the `ch` so this operation count grows logarithmically on `len`
+	    // each time `ch` is "doubled", the `len` would need to be "doubled" too
+	    // similar to finding a value in binary search tree, hence O(log(n))
+	    if (len) ch += ch;
+	    // `len` is 0, exit the loop
+	    else break;
+	  }
+	  // pad `str`!
+	  return pad + str;
+	}
+
+
+/***/ },
+/* 330 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<!-- Pings -->\n<gmap-marker v-if=\"pings\"\n              v-for=\"ping in pings | everyN\"\n              track-by=\"$index\"\n              :position=\"{\n                  lat: ping.coordinates.coordinates[1],\n                  lng: ping.coordinates.coordinates[0],\n              }\"\n              :icon=\"pingPoint\"\n              @g-mouseover=\"selectPing(ping)\"\n              >\n</gmap-marker>\n\n<gmap-polyline v-if=\"pings\" :options=\"polylineOptions\" :path=\"pingPath\">\n</gmap-polyline>\n";
+
+/***/ },
+/* 331 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<div class=\"sec-map\">\n    <navi :service=\"service\"></navi>\n    <div class=\"contents-with-nav\">\n        <gmap-map\n            v-ref:gmap\n            class=\"sec-map\"\n            :center=\"{lng: 103.8, lat: 1.38}\"\n            :zoom=\"12\"\n            >\n            <!-- Start and end markers -->\n            <gmap-marker\n                v-if=\"pings.length > 0\"\n                :position=\"{\n                    lat: pings[pings.length - 1].coordinates.coordinates[1],\n                    lng: pings[pings.length - 1].coordinates.coordinates[0],\n                }\"\n                :icon=\"startPoint\"\n                :title=\"Start\"\n                >\n            </gmap-marker>\n            <gmap-marker\n                v-if=\"pings.length > 0\"\n                :position=\"{\n                    lat: pings[0].coordinates.coordinates[1],\n                    lng: pings[0].coordinates.coordinates[0],\n                }\"\n                :icon=\"endPoint\"\n                :title=\"End\"\n                >\n            </gmap-marker>\n\n            <gmap-marker\n                v-for=\"stop in stops\"\n                track-by='$index'\n                :position=\"stop | stopPosition\"\n                :icon=\"stop | stopIcon $index\"\n                @g-mouseover='selectStop(stop)'\n                @g-mouseout='closeWindow'\n                >\n            </gmap-marker>\n\n            <gmap-infowindow\n                v-if=\"selectedStop != null\"\n                :opened='selectedStop != null'\n                :position=\"selectedStop | stopPosition\"\n            >\n                Scheduled: {{selectedStop.time | formatTime}}\n                <div v-if=\"selectedStop.canBoard\">\n                No. of Passengers: {{selectedStop.passengers.length}}\n                </div>\n            </gmap-infowindow>\n\n            <gmap-infowindow\n                v-if=\"selectedPing != null\"\n                :opened=\"selectedPing != null\"\n                :position=\"selectedPing.coordinates | coordinatesToLatLng\"\n            >\n              {{selectedPing.time | formatTime}}\n              <br/>\n              <i>Driver Id #{{selectedPing.driverId}}</i>\n            </gmap-infowindow>\n\n            <ping-line :pings=\"pings\" :options=\"pingOptions\" :sample-rate=\"5\"></ping-line>\n            <ping-line v-for=\"(driverId,driverPings) in otherPings\" :pings=\"driverPings\"\n                :options=\"otherPingOptions\" :sample-rate=\"5\"></ping-line>\n        </gmap-map>\n    </div>\n</div>\n";
+
+/***/ },
+/* 332 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var __vue_script__, __vue_template__
-	__webpack_require__(329)
-	__vue_script__ = __webpack_require__(331)
+	__webpack_require__(333)
+	__vue_script__ = __webpack_require__(335)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/nav.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(332)
+	__vue_template__ = __webpack_require__(336)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -39349,16 +39508,16 @@
 	})()}
 
 /***/ },
-/* 329 */
+/* 333 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(330);
+	var content = __webpack_require__(334);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(310)(content, {});
+	var update = __webpack_require__(318)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -39375,10 +39534,10 @@
 	}
 
 /***/ },
-/* 330 */
+/* 334 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(309)();
+	exports = module.exports = __webpack_require__(317)();
 	// imports
 
 
@@ -39389,7 +39548,7 @@
 
 
 /***/ },
-/* 331 */
+/* 335 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -39445,23 +39604,23 @@
 	// </script>
 
 /***/ },
-/* 332 */
+/* 336 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<ul _v-1ed90d24=\"\">\n    <li _v-1ed90d24=\"\"><a v-link=\"{ path: '/map/' + service}\" _v-1ed90d24=\"\">Map</a></li>\n    <li _v-1ed90d24=\"\"><a v-link=\"{ path: '/passengers/' + service}\" _v-1ed90d24=\"\">Passenger List</a></li>\n</ul>\n";
 
 /***/ },
-/* 333 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(334)
-	__vue_script__ = __webpack_require__(336)
+	__webpack_require__(338)
+	__vue_script__ = __webpack_require__(340)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/route-passengers.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(338)
+	__vue_template__ = __webpack_require__(342)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -39480,16 +39639,16 @@
 	})()}
 
 /***/ },
-/* 334 */
+/* 338 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(335);
+	var content = __webpack_require__(339);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(310)(content, {});
+	var update = __webpack_require__(318)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -39506,28 +39665,30 @@
 	}
 
 /***/ },
-/* 335 */
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(309)();
+	exports = module.exports = __webpack_require__(317)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nform[_v-d6983e3c] {\n    padding: 1em;\n    width: 100%;\n    border: solid 1px #888;\n}\nlabel select[_v-d6983e3c]{\n    margin: 1em;\n}\nbutton.message-button[_v-d6983e3c] {\n    padding: 10px 30px;\n    display: block;\n    margin: 10px auto;\n    width: 80%;\n\n    border: solid 1px black;\n    background-color: #ccc;\n}\ntable.arrivalInfo[_v-d6983e3c] {\n    border-collapse: collapse;\n    border-spacing: 0px;\n}\n\n.arrivalInfo th[_v-d6983e3c] {\n    background-color: #ebeff2;\n}\n.arrivalInfo th[_v-d6983e3c],\n.arrivalInfo td[_v-d6983e3c] {\n    min-width: 50px;\n    border: solid 1px #CCCCCC;\n    padding: 5px;\n}\n\n.passenger[_v-d6983e3c] {\n    padding: 5px;\n}\n\nh4[_v-d6983e3c],\nh3[_v-d6983e3c] {\n    background-color: #ebeff2;\n    margin: 0;\n    padding: 5px;\n}\nh3[_v-d6983e3c] {\n    white-space: nowrap;\n    overflow-x: auto;\n}\n\nh4[_v-d6983e3c] {\n    border-bottom: solid 1px #999;\n}\n\ntd.boarding[_v-d6983e3c] {\n    background-color: #19c3a5;\n}\ntd.alighting[_v-d6983e3c] {\n    background-color: #ff7070;\n}\n\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nform[_v-d6983e3c] {\n    padding: 1em;\n    width: 100%;\n    border: solid 1px #888;\n}\nlabel select[_v-d6983e3c]{\n    margin: 1em;\n}\nbutton.message-button[_v-d6983e3c] {\n    padding: 10px 30px;\n    display: block;\n    margin: 10px auto;\n    width: 80%;\n\n    border: solid 1px black;\n    background-color: #ccc;\n}\ntable.arrivalInfo[_v-d6983e3c] {\n    border-collapse: collapse;\n    border-spacing: 0px;\n}\n\n.arrivalInfo th[_v-d6983e3c] {\n    background-color: #ebeff2;\n}\n.arrivalInfo th[_v-d6983e3c],\n.arrivalInfo td[_v-d6983e3c] {\n    min-width: 50px;\n    border: solid 1px #CCCCCC;\n    padding: 5px;\n}\n\n.passenger[_v-d6983e3c] {\n    padding: 5px;\n}\n\nh4[_v-d6983e3c],\nh3[_v-d6983e3c] {\n    background-color: #ebeff2;\n    margin: 0;\n    padding: 5px;\n}\nh3[_v-d6983e3c] {\n    white-space: nowrap;\n    overflow-x: auto;\n}\n\nh4[_v-d6983e3c] {\n    border-bottom: solid 1px #999;\n}\n\ntd.boarding[_v-d6983e3c] {\n    background-color: #19c3a5;\n}\ntd.alighting[_v-d6983e3c] {\n    background-color: #ff7070;\n}\n\n.cancel-form[_v-d6983e3c] {\n  background-color: #FFDDDD;\n}\n.danger-button[_v-d6983e3c] {\n  background-color: #FF0000;\n  color: #FFFFFF;\n}\n\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 336 */
+/* 340 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _messageTemplates = __webpack_require__(337);
+	var _messageTemplates = __webpack_require__(341);
 
 	var _messageTemplates2 = _interopRequireDefault(_messageTemplates);
+
+	var _loadingOverlay = __webpack_require__(308);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -39602,6 +39763,18 @@
 	//             {{passenger.email}}
 	//         </div>
 	//     </div>
+	//
+	//
+	//     <h1>Cancel Trip</h1>
+	//     <form class="cancel-form"
+	//         method="POST"
+	//         @submit="confirmAndCancel"
+	//         >
+	//         <b>Warning</b>: This will cancel the trip, and passengers will be notified
+	//         via SMS. This action is irreversible.
+	//
+	//         <button class="danger-button" type="submit">Cancel Trip</button>
+	//     </form>
 	//
 	//     <h1>Send message to passengers</h1>
 	//     <form action="/send_message"
@@ -39694,12 +39867,20 @@
 	//     background-color: #ff7070;
 	// }
 	//
+	// .cancel-form {
+	//   background-color: #FFDDDD;
+	// }
+	// .danger-button {
+	//   background-color: #FF0000;
+	//   color: #FFFFFF;
+	// }
+	//
 	// </style>
 	//
 	// <script>
 
-	var leftPad = __webpack_require__(321);
-	var authAjax = __webpack_require__(312).authAjax;
+	var leftPad = __webpack_require__(329);
+	var authAjax = __webpack_require__(320).authAjax;
 	var Vue = __webpack_require__(305);
 	var _ = __webpack_require__(301);
 
@@ -39778,6 +39959,7 @@
 	        messageTemplates: function messageTemplates() {
 	            return _messageTemplates2.default;
 	        },
+
 
 	        setMessage: {
 	            set: function set(value) {
@@ -39861,42 +40043,51 @@
 
 	    watch: {
 	        tripId: function tripId() {
-	            this.requery();
-	            this.requeryTrips();
+	            (0, _loadingOverlay.watch)(Promise.all([this.requery(), this.requeryTrips()]));
 	        }
 	    },
 
 	    ready: function ready() {
-	        this.requery();
+	        var _this = this;
+
+	        var queryAgain = function queryAgain() {
+	            _this.$queryTimeout = null;
+	            _this.requery().always(function () {
+	                if (_this.$queryTimeout === null) {
+	                    _this.$queryTimeout = setTimeout(queryAgain, 30000);
+	                }
+	            });
+	        };
+
+	        queryAgain();
 	    },
+	    destroyed: function destroyed() {
+	        if (this.$queryTimeout) {
+	            clearTimeout(this.$queryTimeout);
+	        }
+	        this.$queryTimeout = false;
+	    },
+
 
 	    methods: {
 	        requeryTrips: function requeryTrips() {
-	            var _this = this;
+	            var _this2 = this;
 
-	            authAjax('/monitoring').then(function (status) {
+	            return authAjax('/monitoring').then(function (status) {
 	                console.log(status);
-	                _this.trip = _.values(status).find(function (t) {
-	                    return t.tripId == _this.tripId;
+	                _this2.trip = _.values(status).find(function (t) {
+	                    return t.tripId == _this2.tripId;
 	                });
 	            });
 	        },
 
-	        requery: function requery(timeout) {
-	            var _this2 = this;
+	        requery: function requery() {
+	            var _this3 = this;
 
-	            clearTimeout(this.$timeout);
-
-	            timeout = timeout || 30000;
-
-	            authAjax('/trips/' + this.tripId + '/get_passengers').then(function (passengers) {
-	                _this2.passengers = passengers;
+	            return authAjax('/trips/' + this.tripId + '/get_passengers').then(function (passengers) {
+	                _this3.passengers = passengers;
 	            }).then(null, function (err) {
 	                console.error(err);
-	            }).always(function () {
-	                _this2.$timeout = setTimeout(function () {
-	                    _this2.requery(timeout);
-	                }, timeout);
 	            });
 	        },
 
@@ -39918,6 +40109,27 @@
 	                alert("There was an error sending the message");
 	            });
 	            return false;
+	        },
+	        confirmAndCancel: function confirmAndCancel(event) {
+	            event.preventDefault();
+
+	            var confirmResponse = prompt('To confirm please enter the route ID (' + this.trip.routeId + '):');
+	            if (confirmResponse.trim() !== this.trip.routeId.toString()) {
+	                alert("The trip was not cancelled");
+	                return;
+	            }
+
+	            (0, _loadingOverlay.watch)(authAjax('/trips/' + this.tripId + '/statuses?messagePassengers=true', {
+	                method: 'POST',
+	                data: {
+	                    status: 'cancelled'
+	                }
+	            }).then(function () {
+	                alert("Trip cancelled!");
+	            }).then(null, function (err) {
+	                alert("There was an error sending the message");
+	            }));
+	            return false;
 	        }
 	    },
 	    filters: {
@@ -39933,7 +40145,7 @@
 	// </script>
 
 /***/ },
-/* 337 */
+/* 341 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -39944,13 +40156,13 @@
 	exports.default = [['Bus Cancellation', "(DO NOT REPLY) Attention: The service for today has been cancelled due to unforeseen circumstances. " + "Please make alternative transport arrangements. Today's fare will be refunded and we sincerely apologise for the inconvenience caused to all our commuters."], ['Bus is going to be more than 15 mins late', '(DO NOT REPLY) Attention: Service for today will be delayed. The bus is still on its way to your stop. Sorry for the inconvenience.'], ['Driver App is unavailable', '(DO NOT REPLY) Attention: The location tracking on the app is not working today. The bus is still on its way to your stop. We sincerely apologise for the inconvenience caused to all our commuters.']];
 
 /***/ },
-/* 338 */
+/* 342 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div _v-d6983e3c=\"\">\n    <navi :service=\"tripId\" _v-d6983e3c=\"\"></navi>\n    <div class=\"contents-with-nav\" _v-d6983e3c=\"\">\n<!--    <h1>{{services[service].stops[0].route_service_id}}:\n        {{services[service].stops[0].from_name}} &mdash;\n        {{services[service].stops[0].to_name}}-->\n    <h2 _v-d6983e3c=\"\">Boarding stops</h2>\n    <table class=\"arrivalInfo\" _v-d6983e3c=\"\">\n        <tbody _v-d6983e3c=\"\"><tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Stop number</th>\n            <td v-for=\"tripStop in arrivalInfo\" :class=\"{ boarding: tripStop.canBoard,\n                          alighting: tripStop.canAlight }\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ $index + 1 }}\n                {{ tripStop.canBoard ? '↗' : '↙' }}\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Pax boarding</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                  {{ tripStop.passengers.length  }}\n                </span>\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Scheduled</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.time | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Actual</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Diff (mins)</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | minsDiff tripStop.time }}\n            </span></td>\n        </tr>\n    </tbody></table>\n\n\n    <h1 _v-d6983e3c=\"\">Passenger List</h1>\n    <div v-for=\"stop in arrivalInfo\" v-show=\"stop.canBoard\" _v-d6983e3c=\"\">\n        <h3 _v-d6983e3c=\"\">{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>\n        <h4 _v-d6983e3c=\"\">Boarding time: {{stop.time | formatTime}}</h4>\n\n        <div v-for=\"passenger in stop.passengers\" class=\"passenger\" _v-d6983e3c=\"\">\n            {{passenger.index + 1}}.\n            {{passenger.name}}\n            —\n            {{passenger.telephone}}\n            —\n            {{passenger.email}}\n        </div>\n    </div>\n\n    <h1 _v-d6983e3c=\"\">Send message to passengers</h1>\n    <form action=\"/send_message\" method=\"POST\" @submit=\"confirmAndSend\" _v-d6983e3c=\"\">\n        <label _v-d6983e3c=\"\">\n            Use template:\n            <select v-model=\"sms.message\" _v-d6983e3c=\"\">\n               <option v-for=\"mt in messageTemplates\" :value=\"mt[1]\" _v-d6983e3c=\"\">\n                    {{mt[0]}}\n               </option>\n            </select>\n        </label>\n        <input type=\"hidden\" name=\"session_token\" value=\"{{sessionToken}}\" _v-d6983e3c=\"\">\n        <input type=\"hidden\" name=\"service\" value=\"{{service}}\" _v-d6983e3c=\"\">\n        <textarea v-model=\"sms.message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-d6983e3c=\"\"></textarea>\n        <button class=\"message-button\" type=\"submit\" _v-d6983e3c=\"\">Submit</button>\n    </form>\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n\n    </div>\n</div>\n";
+	module.exports = "\n<div _v-d6983e3c=\"\">\n    <navi :service=\"tripId\" _v-d6983e3c=\"\"></navi>\n    <div class=\"contents-with-nav\" _v-d6983e3c=\"\">\n<!--    <h1>{{services[service].stops[0].route_service_id}}:\n        {{services[service].stops[0].from_name}} &mdash;\n        {{services[service].stops[0].to_name}}-->\n    <h2 _v-d6983e3c=\"\">Boarding stops</h2>\n    <table class=\"arrivalInfo\" _v-d6983e3c=\"\">\n        <tbody _v-d6983e3c=\"\"><tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Stop number</th>\n            <td v-for=\"tripStop in arrivalInfo\" :class=\"{ boarding: tripStop.canBoard,\n                          alighting: tripStop.canAlight }\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ $index + 1 }}\n                {{ tripStop.canBoard ? '↗' : '↙' }}\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Pax boarding</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                  {{ tripStop.passengers.length  }}\n                </span>\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Scheduled</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.time | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Actual</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Diff (mins)</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | minsDiff tripStop.time }}\n            </span></td>\n        </tr>\n    </tbody></table>\n\n\n    <h1 _v-d6983e3c=\"\">Passenger List</h1>\n    <div v-for=\"stop in arrivalInfo\" v-show=\"stop.canBoard\" _v-d6983e3c=\"\">\n        <h3 _v-d6983e3c=\"\">{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>\n        <h4 _v-d6983e3c=\"\">Boarding time: {{stop.time | formatTime}}</h4>\n\n        <div v-for=\"passenger in stop.passengers\" class=\"passenger\" _v-d6983e3c=\"\">\n            {{passenger.index + 1}}.\n            {{passenger.name}}\n            —\n            {{passenger.telephone}}\n            —\n            {{passenger.email}}\n        </div>\n    </div>\n\n\n    <h1 _v-d6983e3c=\"\">Cancel Trip</h1>\n    <form class=\"cancel-form\" method=\"POST\" @submit=\"confirmAndCancel\" _v-d6983e3c=\"\">\n        <b _v-d6983e3c=\"\">Warning</b>: This will cancel the trip, and passengers will be notified\n        via SMS. This action is irreversible.\n\n        <button class=\"danger-button\" type=\"submit\" _v-d6983e3c=\"\">Cancel Trip</button>\n    </form>\n\n    <h1 _v-d6983e3c=\"\">Send message to passengers</h1>\n    <form action=\"/send_message\" method=\"POST\" @submit=\"confirmAndSend\" _v-d6983e3c=\"\">\n        <label _v-d6983e3c=\"\">\n            Use template:\n            <select v-model=\"sms.message\" _v-d6983e3c=\"\">\n               <option v-for=\"mt in messageTemplates\" :value=\"mt[1]\" _v-d6983e3c=\"\">\n                    {{mt[0]}}\n               </option>\n            </select>\n        </label>\n        <input type=\"hidden\" name=\"session_token\" value=\"{{sessionToken}}\" _v-d6983e3c=\"\">\n        <input type=\"hidden\" name=\"service\" value=\"{{service}}\" _v-d6983e3c=\"\">\n        <textarea v-model=\"sms.message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-d6983e3c=\"\"></textarea>\n        <button class=\"message-button\" type=\"submit\" _v-d6983e3c=\"\">Submit</button>\n    </form>\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n\n    </div>\n</div>\n";
 
 /***/ },
-/* 339 */
+/* 343 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*!
