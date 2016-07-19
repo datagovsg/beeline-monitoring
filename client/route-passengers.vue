@@ -206,17 +206,10 @@ Vue.filter('takeLocalTime', (s) => {
 });
 Vue.filter('minsDiff', (s, sched) => {
     if (!s) return '';
-    var now = new Date();
-    var d = new Date(s);
+    var actualDate = new Date(s);
+    var schedDate = new Date(sched);
 
-    d = new Date(d.getTime());
-
-    var schedDate = new Date(d.getTime());
-    schedDate.setHours(parseInt(sched.substr(0,2)));
-    schedDate.setMinutes(parseInt(sched.substr(2,4)));
-    schedDate.setSeconds(0);
-
-    var minsDiff = Math.round((d.getTime() - schedDate.getTime()) / 60000);
+    var minsDiff = Math.round((actualDate.getTime() - schedDate.getTime()) / 60000);
 
     if (minsDiff == 0) {
         return '0';
