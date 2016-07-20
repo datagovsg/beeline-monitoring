@@ -174,7 +174,7 @@ h4 {
 td.boarding {
     background-color: #19c3a5;
 }
-td.alighting {
+td.alighting:not(.boarding) {
     background-color: #ff7070;
 }
 
