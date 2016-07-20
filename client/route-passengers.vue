@@ -387,7 +387,7 @@ module.exports = {
                 }
             })
             .then(() => {
-                alert("Trip cancelled!");
+                alert("Trip cancelled! The route list will be updated shortly.");
             })
             .then(null, (err) => {
                 alert("There was an error sending the message");

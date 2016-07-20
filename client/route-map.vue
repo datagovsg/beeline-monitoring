@@ -254,15 +254,6 @@ module.exports = {
               this.otherPings = _.groupBy(data, 'driverId');
             })
 
-            // Get the pings and other data
-            var infoPromise = authAjax(`/trips/${this.service}/latestInfo`, {
-                cache: false,
-            })
-            .then((data) => {
-              var {statuses} = data
-              this.statuses = statuses;
-            });
-
             var tripPromise = authAjax(`/trips/${this.service}`, {
                 cache: false,
             });
