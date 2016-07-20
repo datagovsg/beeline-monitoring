@@ -275,7 +275,7 @@ module.exports = {
                 this.stops = stops;
             });
 
-            return Promise.all([tripPromise, passengersPromise, infoPromise, pingsPromise]);
+            return Promise.all([tripPromise, passengersPromise, pingsPromise]);
         },
 
         selectStop(stop) {

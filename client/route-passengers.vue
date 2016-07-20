@@ -76,10 +76,15 @@
         method="POST"
         @submit="confirmAndCancel"
         >
-        <b>Warning</b>: This will cancel the trip, and passengers will be notified
-        via SMS. This action is irreversible.
+        <div v-if="trip.tripStatus !== 'cancelled'">
+          <b>Warning</b>: This will cancel the trip, and passengers will be notified
+          via SMS. This action is irreversible.
 
-        <button class="danger-button" type="submit">Cancel Trip</button>
+          <button class="danger-button" type="submit">Cancel Trip</button>
+        </div>
+        <div v-else>
+          This trip has been cancelled.
+        </div>
     </form>
 
     <h1>Send message to passengers</h1>
@@ -332,7 +337,8 @@ module.exports = {
             return authAjax(`/monitoring`)
             .then((status) => {
               console.log(status)
-              this.trip = _.values(status).find(t => t.tripId == this.tripId)
+              this.trip = _.values(status)
+                  .find(t => t.tripId == this.tripId)
             })
         },
         requery: function () {
@@ -387,6 +393,7 @@ module.exports = {
                 }
             })
             .then(() => {
+                this.requery();
                 alert("Trip cancelled! The route list will be updated shortly.");
             })
             .then(null, (err) => {

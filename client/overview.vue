@@ -149,6 +149,7 @@ Vue.filter('firstStopETA', function (svc) {
 var months = 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec'.split(',');
 var tzo = (new Date()).getTimezoneOffset() * 60000;
 var authAjax = require('./login').authAjax;
+import {watch} from './loading-overlay';
 
 Date.prototype.localISO = function () {
     return (new Date(this.getTime() - tzo)).toISOString();
@@ -179,10 +180,10 @@ module.exports = {
             return ss;
         },
     },
-    created: function() {
+    ready: function() {
         var queryAgain = () => {
           this.$queryTimeout = null;
-          this.requery()
+          return this.requery()
           .catch((err) => console.error(err))
           .then(() => {
             if (this.$queryTimeout === null) {
@@ -190,7 +191,7 @@ module.exports = {
             }
           })
         };
-        queryAgain();
+        watch(queryAgain());
     },
     destroyed() {
       if (this.$queryTimeout) {

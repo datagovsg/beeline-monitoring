@@ -24,6 +24,11 @@ export function watch(promise) {
     counter.count--;
   }
 
-  promise.then(clear, (err) => { clear(); throw err });
+  Promise.resolve(promise)
+    .then(clear)
+    .catch((err) => {
+      clear();
+      throw err
+    });
   return promise;
 }
