@@ -220,7 +220,6 @@ Vue.filter('minsDiff', (s, sched) => {
     else if (minsDiff > 0) {
         return '+' + minsDiff.toFixed(0);
     }
-
 });
 
 
