@@ -39,7 +39,7 @@
             <td v-for="tripStop in arrivalInfo"
                 v-show="tripStop.canBoard">
                 <span v-if="tripStop.canBoard">
-                {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | takeLocalTime }}
+                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | takeLocalTime }}
             </td>
         </tr>
         <tr>
@@ -47,7 +47,7 @@
             <td v-for="tripStop in arrivalInfo"
                 v-show="tripStop.canBoard">
                 <span v-if="tripStop.canBoard">
-                {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | minsDiff tripStop.time }}
+                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | minsDiff tripStop.time }}
             </td>
         </tr>
     </table>
@@ -76,7 +76,7 @@
         method="POST"
         @submit="confirmAndCancel"
         >
-        <div v-if="trip.trip.status !== 'cancelled'">
+        <div v-if="trip.status !== 'cancelled'">
           <b>Warning</b>: This will cancel the trip, and passengers will be notified
           via SMS. This action is irreversible.
 
@@ -277,7 +277,7 @@ module.exports = {
         },
 
         arrivalInfo() {
-          var stops = _.sortBy(this.trip.trip.tripStops, s => s.time);
+          var stops = _.sortBy(this.trip.tripStops, s => s.time);
           var passengersByStops = _.groupBy(this.passengers, p => p.boardStopId)
           var index = 0;
 
@@ -341,6 +341,7 @@ module.exports = {
               console.log(status)
               this.trip = _.values(status)
                   .find(t => t.trip.id == this.tripId)
+                  .trip
             })
         },
         requery: function () {
@@ -381,9 +382,9 @@ module.exports = {
             event.preventDefault()
 
             var confirmResponse = prompt(
-              `To confirm please enter the route ID (${this.trip.routeId}):`
+              `To confirm please enter the route ID (${this.trip.route.id}):`
             )
-            if (confirmResponse.trim() !== this.trip.routeId.toString()) {
+            if (confirmResponse.trim() !== this.trip.route.id.toString()) {
               alert("The trip was not cancelled");
               return;
             }
