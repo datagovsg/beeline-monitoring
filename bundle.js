@@ -39723,7 +39723,7 @@
 	//             <td v-for="tripStop in arrivalInfo"
 	//                 v-show="tripStop.canBoard">
 	//                 <span v-if="tripStop.canBoard">
-	//                 {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | takeLocalTime }}
+	//                 {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | takeLocalTime }}
 	//             </td>
 	//         </tr>
 	//         <tr>
@@ -39731,7 +39731,7 @@
 	//             <td v-for="tripStop in arrivalInfo"
 	//                 v-show="tripStop.canBoard">
 	//                 <span v-if="tripStop.canBoard">
-	//                 {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | minsDiff tripStop.time }}
+	//                 {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | minsDiff tripStop.time }}
 	//             </td>
 	//         </tr>
 	//     </table>
@@ -39760,7 +39760,7 @@
 	//         method="POST"
 	//         @submit="confirmAndCancel"
 	//         >
-	//         <div v-if="trip.trip.status !== 'cancelled'">
+	//         <div v-if="trip.status !== 'cancelled'">
 	//           <b>Warning</b>: This will cancel the trip, and passengers will be notified
 	//           via SMS. This action is irreversible.
 	//
@@ -39958,7 +39958,7 @@
 	        },
 
 	        arrivalInfo: function arrivalInfo() {
-	            var stops = _.sortBy(this.trip.trip.tripStops, function (s) {
+	            var stops = _.sortBy(this.trip.tripStops, function (s) {
 	                return s.time;
 	            });
 	            var passengersByStops = _.groupBy(this.passengers, function (p) {
@@ -40067,7 +40067,7 @@
 	                console.log(status);
 	                _this2.trip = _.values(status).find(function (t) {
 	                    return t.trip.id == _this2.tripId;
-	                });
+	                }).trip;
 	            });
 	        },
 
@@ -40105,8 +40105,8 @@
 
 	            event.preventDefault();
 
-	            var confirmResponse = prompt('To confirm please enter the route ID (' + this.trip.routeId + '):');
-	            if (confirmResponse.trim() !== this.trip.routeId.toString()) {
+	            var confirmResponse = prompt('To confirm please enter the route ID (' + this.trip.route.id + '):');
+	            if (confirmResponse.trim() !== this.trip.route.id.toString()) {
 	                alert("The trip was not cancelled");
 	                return;
 	            }
@@ -40152,7 +40152,7 @@
 /* 342 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div _v-d6983e3c=\"\">\n    <navi :service=\"tripId\" _v-d6983e3c=\"\"></navi>\n    <div class=\"contents-with-nav\" _v-d6983e3c=\"\">\n<!--    <h1>{{services[service].stops[0].route_service_id}}:\n        {{services[service].stops[0].from_name}} &mdash;\n        {{services[service].stops[0].to_name}}-->\n    <h2 _v-d6983e3c=\"\">Boarding stops</h2>\n    <table class=\"arrivalInfo\" _v-d6983e3c=\"\">\n        <tbody _v-d6983e3c=\"\"><tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Stop number</th>\n            <td v-for=\"tripStop in arrivalInfo\" :class=\"{ boarding: tripStop.canBoard,\n                          alighting: tripStop.canAlight }\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ $index + 1 }}\n                {{ tripStop.canBoard ? '↗' : '↙' }}\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Pax boarding</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                  {{ tripStop.passengers.length  }}\n                </span>\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Scheduled</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.time | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Actual</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Diff (mins)</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | minsDiff tripStop.time }}\n            </span></td>\n        </tr>\n    </tbody></table>\n\n\n    <h1 _v-d6983e3c=\"\">Passenger List</h1>\n    <div v-for=\"stop in arrivalInfo\" v-show=\"stop.canBoard\" _v-d6983e3c=\"\">\n        <h3 _v-d6983e3c=\"\">{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>\n        <h4 _v-d6983e3c=\"\">Boarding time: {{stop.time | formatTime}}</h4>\n\n        <div v-for=\"passenger in stop.passengers\" class=\"passenger\" _v-d6983e3c=\"\">\n            {{passenger.index + 1}}.\n            {{passenger.name}}\n            —\n            {{passenger.telephone}}\n            —\n            {{passenger.email}}\n        </div>\n    </div>\n\n\n    <h1 _v-d6983e3c=\"\">Cancel Trip</h1>\n    <form class=\"cancel-form\" method=\"POST\" @submit=\"confirmAndCancel\" _v-d6983e3c=\"\">\n        <div v-if=\"trip.trip.status !== 'cancelled'\" _v-d6983e3c=\"\">\n          <b _v-d6983e3c=\"\">Warning</b>: This will cancel the trip, and passengers will be notified\n          via SMS. This action is irreversible.\n\n          <button class=\"danger-button\" type=\"submit\" _v-d6983e3c=\"\">Cancel Trip</button>\n        </div>\n        <div v-else=\"\" _v-d6983e3c=\"\">\n          This trip has been cancelled.\n        </div>\n    </form>\n\n    <h1 _v-d6983e3c=\"\">Send message to passengers</h1>\n    <form action=\"/send_message\" method=\"POST\" @submit=\"confirmAndSend\" _v-d6983e3c=\"\">\n        <label _v-d6983e3c=\"\">\n            Use template:\n            <select v-model=\"sms.message\" _v-d6983e3c=\"\">\n               <option v-for=\"mt in messageTemplates\" :value=\"mt[1]\" _v-d6983e3c=\"\">\n                    {{mt[0]}}\n               </option>\n            </select>\n        </label>\n        <input type=\"hidden\" name=\"session_token\" value=\"{{sessionToken}}\" _v-d6983e3c=\"\">\n        <input type=\"hidden\" name=\"service\" value=\"{{service}}\" _v-d6983e3c=\"\">\n        <textarea v-model=\"sms.message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-d6983e3c=\"\"></textarea>\n        <button class=\"message-button\" type=\"submit\" _v-d6983e3c=\"\">Submit</button>\n    </form>\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n\n    </div>\n</div>\n";
+	module.exports = "\n<div _v-d6983e3c=\"\">\n    <navi :service=\"tripId\" _v-d6983e3c=\"\"></navi>\n    <div class=\"contents-with-nav\" _v-d6983e3c=\"\">\n<!--    <h1>{{services[service].stops[0].route_service_id}}:\n        {{services[service].stops[0].from_name}} &mdash;\n        {{services[service].stops[0].to_name}}-->\n    <h2 _v-d6983e3c=\"\">Boarding stops</h2>\n    <table class=\"arrivalInfo\" _v-d6983e3c=\"\">\n        <tbody _v-d6983e3c=\"\"><tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Stop number</th>\n            <td v-for=\"tripStop in arrivalInfo\" :class=\"{ boarding: tripStop.canBoard,\n                          alighting: tripStop.canAlight }\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ $index + 1 }}\n                {{ tripStop.canBoard ? '↗' : '↙' }}\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Pax boarding</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                  {{ tripStop.passengers.length  }}\n                </span>\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Scheduled</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.time | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Actual</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Diff (mins)</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | minsDiff tripStop.time }}\n            </span></td>\n        </tr>\n    </tbody></table>\n\n\n    <h1 _v-d6983e3c=\"\">Passenger List</h1>\n    <div v-for=\"stop in arrivalInfo\" v-show=\"stop.canBoard\" _v-d6983e3c=\"\">\n        <h3 _v-d6983e3c=\"\">{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>\n        <h4 _v-d6983e3c=\"\">Boarding time: {{stop.time | formatTime}}</h4>\n\n        <div v-for=\"passenger in stop.passengers\" class=\"passenger\" _v-d6983e3c=\"\">\n            {{passenger.index + 1}}.\n            {{passenger.name}}\n            —\n            {{passenger.telephone}}\n            —\n            {{passenger.email}}\n        </div>\n    </div>\n\n\n    <h1 _v-d6983e3c=\"\">Cancel Trip</h1>\n    <form class=\"cancel-form\" method=\"POST\" @submit=\"confirmAndCancel\" _v-d6983e3c=\"\">\n        <div v-if=\"trip.status !== 'cancelled'\" _v-d6983e3c=\"\">\n          <b _v-d6983e3c=\"\">Warning</b>: This will cancel the trip, and passengers will be notified\n          via SMS. This action is irreversible.\n\n          <button class=\"danger-button\" type=\"submit\" _v-d6983e3c=\"\">Cancel Trip</button>\n        </div>\n        <div v-else=\"\" _v-d6983e3c=\"\">\n          This trip has been cancelled.\n        </div>\n    </form>\n\n    <h1 _v-d6983e3c=\"\">Send message to passengers</h1>\n    <form action=\"/send_message\" method=\"POST\" @submit=\"confirmAndSend\" _v-d6983e3c=\"\">\n        <label _v-d6983e3c=\"\">\n            Use template:\n            <select v-model=\"sms.message\" _v-d6983e3c=\"\">\n               <option v-for=\"mt in messageTemplates\" :value=\"mt[1]\" _v-d6983e3c=\"\">\n                    {{mt[0]}}\n               </option>\n            </select>\n        </label>\n        <input type=\"hidden\" name=\"session_token\" value=\"{{sessionToken}}\" _v-d6983e3c=\"\">\n        <input type=\"hidden\" name=\"service\" value=\"{{service}}\" _v-d6983e3c=\"\">\n        <textarea v-model=\"sms.message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-d6983e3c=\"\"></textarea>\n        <button class=\"message-button\" type=\"submit\" _v-d6983e3c=\"\">Submit</button>\n    </form>\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n\n    </div>\n</div>\n";
 
 /***/ },
 /* 343 */
