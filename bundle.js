@@ -36958,8 +36958,9 @@
 	    counter.count--;
 	  }
 
-	  promise.then(clear, function (err) {
-	    clear();throw err;
+	  Promise.resolve(promise).then(clear).catch(function (err) {
+	    clear();
+	    throw err;
 	  });
 	  return promise;
 	}
@@ -38164,7 +38165,7 @@
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntable[_v-c6014784] {\n    width: 100%;\n    border-collapse: collapse;\n    border-spacing: 0;\n}\nth[_v-c6014784] {\n    background-color: #EBEFF2;\n    color: #493761;\n    font-size: 80%;\n    height: 30px;\n}\n\ntr.emergency td[_v-c6014784] {\n    background-color: #FFECEC;\n}\n\ntr.nobody td[_v-c6014784]{\n    opacity: 0.3;\n    background-color: #ccc;\n}\n\nth[_v-c6014784],\ntd[_v-c6014784] {\n    border-bottom: solid 1px #CCC;\n}\n\nth[data-column=\"route\"][_v-c6014784],\ntd[data-column=\"route\"][_v-c6014784] {\n    min-width: 60px;\n}\nth[data-column=\"led\"][_v-c6014784],\ntd[data-column=\"led\"][_v-c6014784] {\n    width: 60px;\n}\nth[data-column=\"next\"][_v-c6014784],\ntd[data-column=\"next\"][_v-c6014784] {\n    width: 20px;\n    position: relative;\n}\ntd[data-column=\"next\"][_v-c6014784]:hover {\n    background-color: #dddddd;\n}\n\n.service_name[_v-c6014784] {\n    color: #666;\n    font-size: 80%;\n}\n.led[_v-c6014784] {\n    min-width: 50px;\n    min-height: 50px;\n    border-radius: 25px;\n    box-sizing: border-box;\n    margin: 10px;\n    text-align: center;\n    overflow: visible;\n    font-size: 80%;\n    line-height: 1.3;\n    padding-top: 0.4em;\n}\n\n.led.sU[_v-c6014784] {\n    background-color: #c9c9c9;\n}\n\n.led.s0[_v-c6014784], .led.s1[_v-c6014784] {\n    background-color: #14c3a6;\n}\n.led.s2[_v-c6014784], .led.s3[_v-c6014784] {\n    background-color: #ff6f6f;\n}\n\n.details_button[_v-c6014784] {\n    display: block;\n    width: 100%;\n    position: absolute;\n    top: 0px;\n    bottom: 0px;\n    left: 0px;\n}\n\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntable[_v-c6014784] {\n    width: 100%;\n    border-collapse: collapse;\n    border-spacing: 0;\n}\nth[_v-c6014784] {\n    background-color: #EBEFF2;\n    color: #493761;\n    font-size: 80%;\n    height: 30px;\n}\n\ntr.emergency td[_v-c6014784] {\n    background-color: #FFECEC;\n}\n\ntr.nobody td[_v-c6014784]{\n    opacity: 0.3;\n    background-color: #ccc;\n}\n\nth[_v-c6014784],\ntd[_v-c6014784] {\n    border-bottom: solid 1px #CCC;\n}\n\nth[data-column=\"route\"][_v-c6014784],\ntd[data-column=\"route\"][_v-c6014784] {\n    min-width: 60px;\n}\nth[data-column=\"led\"][_v-c6014784],\ntd[data-column=\"led\"][_v-c6014784] {\n    width: 60px;\n}\nth[data-column=\"next\"][_v-c6014784],\ntd[data-column=\"next\"][_v-c6014784] {\n    width: 20px;\n    position: relative;\n}\ntd[data-column=\"next\"][_v-c6014784]:hover {\n    background-color: #dddddd;\n}\n\n.service_name[_v-c6014784] {\n    color: #666;\n    font-size: 80%;\n}\n.led[_v-c6014784] {\n    min-width: 50px;\n    min-height: 50px;\n    border-radius: 25px;\n    box-sizing: border-box;\n    margin: 10px;\n    text-align: center;\n    overflow: visible;\n    font-size: 80%;\n    line-height: 1.3;\n    padding-top: 0.4em;\n}\n\n.led.sU[_v-c6014784] {\n    background-color: #c9c9c9;\n}\n\n.led.s0[_v-c6014784], .led.s1[_v-c6014784] {\n    background-color: #14c3a6;\n}\n.led.s2[_v-c6014784], .led.s3[_v-c6014784] {\n    background-color: #ff6f6f;\n}\n\n.details_button[_v-c6014784] {\n    display: block;\n    width: 100%;\n    position: absolute;\n    top: 0px;\n    bottom: 0px;\n    left: 0px;\n}\n\n", ""]);
 
 	// exports
 
@@ -38453,6 +38454,8 @@
 
 	'use strict';
 
+	var _loadingOverlay = __webpack_require__(308);
+
 	//
 	// <template>
 	// {{date}}
@@ -38474,22 +38477,22 @@
 	//         </td>
 	//     </tr>
 	//     <tr v-for="service in servicesByStartTime"
-	//         track-by='tripId'
+	//         track-by='trip.route.id'
 	//         :class="{
-	//             emergency: service.tripStatus === 'cancelled',
+	//             emergency: service.trip.status === 'cancelled',
 	//             nobody: service.nobody,
 	//         }"
 	//         >
 	//         <td data-column="route">
-	//             <h4 style="float: left; margin: 0 10px 0 10px">{{service.route.label}}
-	//             <div class="service_name">{{service.route.id}}</div>
+	//             <h4 style="float: left; margin: 0 10px 0 10px">{{service.trip.route.label}}
+	//             <div class="service_name">{{service.trip.route.id}}</div>
 	//             </h4>
 	//             <h4 style="float: left; margin: 0 10px 0 10px">
-	//               {{service.stops[0].time | takeTime}}
+	//               {{service.trip.tripStops[0].time | takeTime}}
 	//             </h4>
 	//             <div style="float: left">
-	//               {{service.route.from}}<br/>
-	//               {{service.route.to}}
+	//               {{service.trip.route.from}}<br/>
+	//               {{service.trip.route.to}}
 	//               </div>
 	//         </td>
 	//         <td data-column="led">
@@ -38532,7 +38535,7 @@
 	//             </div>
 	//         </td>
 	//         <td data-column="next">
-	//         <a v-link="{path: '/map/' + service.tripId}" class="details_button">
+	//         <a v-link="{path: '/map/' + service.trip.id}" class="details_button">
 	//         &gt;&gt;
 	//         </a>
 	//         </td>
@@ -38563,7 +38566,7 @@
 	Vue.filter('firstStopETA', function (svc) {
 	    // Has it arrived at all?
 	    // check first stop...
-	    var firstStop = svc.stops[0];
+	    var firstStop = svc.trip.tripStops[0];
 
 	    var hasArrived = false;
 	    if (firstStop.lastPing) {
@@ -38572,11 +38575,6 @@
 	        scheduledTime.setUTCHours(parseInt(firstStop.time.substr(0, 2)));
 	        scheduledTime.setUTCMinutes(parseInt(firstStop.time.substr(2, 4)));
 	        scheduledTime.setUTCSeconds(0);
-
-	        if (svc.route_service_id == 77) {
-	            console.log(time_part);
-	            console.log(scheduledTime);
-	        }
 
 	        if (time_part.getTime() - scheduledTime.getTime() >= -5 * 60 * 1000) {
 	            return time_part.localISO().substr(11, 5) + ' (Arrived)';
@@ -38601,6 +38599,7 @@
 	var months = 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec'.split(',');
 	var tzo = new Date().getTimezoneOffset() * 60000;
 	var authAjax = __webpack_require__(320).authAjax;
+
 
 	Date.prototype.localISO = function () {
 	    return new Date(this.getTime() - tzo).toISOString();
@@ -38627,17 +38626,17 @@
 
 	            ss = _.values(ss);
 	            ss = _.sortBy(ss, function (svc) {
-	                return [svc.stops[0].time, svc.route.label];
+	                return [svc.trip.tripStops[0].time, svc.trip.route.label];
 	            });
 	            return ss;
 	        }
 	    },
-	    created: function created() {
+	    ready: function ready() {
 	        var _this = this;
 
 	        var queryAgain = function queryAgain() {
 	            _this.$queryTimeout = null;
-	            _this.requery().catch(function (err) {
+	            return _this.requery().catch(function (err) {
 	                return console.error(err);
 	            }).then(function () {
 	                if (_this.$queryTimeout === null) {
@@ -38645,7 +38644,7 @@
 	                }
 	            });
 	        };
-	        queryAgain();
+	        (0, _loadingOverlay.watch)(queryAgain());
 	    },
 	    destroyed: function destroyed() {
 	        if (this.$queryTimeout) {
@@ -38836,7 +38835,7 @@
 /* 322 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n{{date}}\n<table _v-c6014784=\"\">\n    <thead _v-c6014784=\"\">\n    <tr _v-c6014784=\"\">\n        <th data-column=\"route\" _v-c6014784=\"\">Route</th>\n        <th data-column=\"led\" _v-c6014784=\"\">App is on</th>\n        <th data-column=\"led\" _v-c6014784=\"\">ETA (1<sup _v-c6014784=\"\">st</sup> stop)</th>\n        <th data-column=\"next\" _v-c6014784=\"\"></th>\n    </tr>\n    </thead>\n    <tbody _v-c6014784=\"\">\n    <tr v-if=\"servicesByStartTime.length == 0\" _v-c6014784=\"\">\n        <td colspan=\"4\" _v-c6014784=\"\">\n            You have no bus services today.\n            You might not be authorized to view the bus service status.\n            Please contact the Beeline team if this is incorrect.\n        </td>\n    </tr>\n    <tr v-for=\"service in servicesByStartTime\" track-by=\"tripId\" :class=\"{\n            emergency: service.tripStatus === 'cancelled',\n            nobody: service.nobody,\n        }\" _v-c6014784=\"\">\n        <td data-column=\"route\" _v-c6014784=\"\">\n            <h4 style=\"float: left; margin: 0 10px 0 10px\" _v-c6014784=\"\">{{service.route.label}}\n            <div class=\"service_name\" _v-c6014784=\"\">{{service.route.id}}</div>\n            </h4>\n            <h4 style=\"float: left; margin: 0 10px 0 10px\" _v-c6014784=\"\">\n              {{service.stops[0].time | takeTime}}\n            </h4>\n            <div style=\"float: left\" _v-c6014784=\"\">\n              {{service.route.from}}<br _v-c6014784=\"\">\n              {{service.route.to}}\n              </div>\n        </td>\n        <td data-column=\"led\" _v-c6014784=\"\">\n            <div :class=\"{\n                led: true,\n                s0 : service.status.ping == 0,\n                s1 : service.status.ping == 1,\n                s2 : service.status.ping == 2,\n                s3 : service.status.ping >= 3,\n                sU : service.status.ping == -1,\n            }\" _v-c6014784=\"\">\n                <span v-if=\"service.firstPing\" _v-c6014784=\"\">\n                    1<sup _v-c6014784=\"\">st</sup>: {{service.firstPing.createdAt | takeTime}}\n                </span>\n                <template v-if=\"service.status.arrival_time\">\n                    (arrived)\n                </template>\n                <template v-else=\"\">\n                    <template v-if=\"service.lastPing\">\n                        L<sup _v-c6014784=\"\">ast</sup>: {{service.lastPing | minutesSince}} <br _v-c6014784=\"\"> mins ago\n                    </template>\n                </template>\n            </div>\n        </td>\n        <td data-column=\"led\" _v-c6014784=\"\">\n            <div :class=\"{\n                led: true,\n                s0 : service.status.distance == 0,\n                s1 : service.status.distance == 1,\n                s2 : service.status.distance == 2,\n                s3 : service.status.distance >= 3,\n                sU : service.status.distance == -1,\n            }\" _v-c6014784=\"\">\n                <template v-if=\"service.status.arrival_time\">\n                    {{service.status.arrival_time | takeTime}} (arrived)\n                </template>\n                <template v-else=\"\">\n                    {{service.status.eta | takeTime}} (est)\n                </template>\n            </div>\n        </td>\n        <td data-column=\"next\" _v-c6014784=\"\">\n        <a v-link=\"{path: '/map/' + service.tripId}\" class=\"details_button\" _v-c6014784=\"\">\n        &gt;&gt;\n        </a>\n        </td>\n    </tr>\n    </tbody>\n</table>\n\n";
+	module.exports = "\n\n{{date}}\n<table _v-c6014784=\"\">\n    <thead _v-c6014784=\"\">\n    <tr _v-c6014784=\"\">\n        <th data-column=\"route\" _v-c6014784=\"\">Route</th>\n        <th data-column=\"led\" _v-c6014784=\"\">App is on</th>\n        <th data-column=\"led\" _v-c6014784=\"\">ETA (1<sup _v-c6014784=\"\">st</sup> stop)</th>\n        <th data-column=\"next\" _v-c6014784=\"\"></th>\n    </tr>\n    </thead>\n    <tbody _v-c6014784=\"\">\n    <tr v-if=\"servicesByStartTime.length == 0\" _v-c6014784=\"\">\n        <td colspan=\"4\" _v-c6014784=\"\">\n            You have no bus services today.\n            You might not be authorized to view the bus service status.\n            Please contact the Beeline team if this is incorrect.\n        </td>\n    </tr>\n    <tr v-for=\"service in servicesByStartTime\" track-by=\"trip.route.id\" :class=\"{\n            emergency: service.trip.status === 'cancelled',\n            nobody: service.nobody,\n        }\" _v-c6014784=\"\">\n        <td data-column=\"route\" _v-c6014784=\"\">\n            <h4 style=\"float: left; margin: 0 10px 0 10px\" _v-c6014784=\"\">{{service.trip.route.label}}\n            <div class=\"service_name\" _v-c6014784=\"\">{{service.trip.route.id}}</div>\n            </h4>\n            <h4 style=\"float: left; margin: 0 10px 0 10px\" _v-c6014784=\"\">\n              {{service.trip.tripStops[0].time | takeTime}}\n            </h4>\n            <div style=\"float: left\" _v-c6014784=\"\">\n              {{service.trip.route.from}}<br _v-c6014784=\"\">\n              {{service.trip.route.to}}\n              </div>\n        </td>\n        <td data-column=\"led\" _v-c6014784=\"\">\n            <div :class=\"{\n                led: true,\n                s0 : service.status.ping == 0,\n                s1 : service.status.ping == 1,\n                s2 : service.status.ping == 2,\n                s3 : service.status.ping >= 3,\n                sU : service.status.ping == -1,\n            }\" _v-c6014784=\"\">\n                <span v-if=\"service.firstPing\" _v-c6014784=\"\">\n                    1<sup _v-c6014784=\"\">st</sup>: {{service.firstPing.createdAt | takeTime}}\n                </span>\n                <template v-if=\"service.status.arrival_time\">\n                    (arrived)\n                </template>\n                <template v-else=\"\">\n                    <template v-if=\"service.lastPing\">\n                        L<sup _v-c6014784=\"\">ast</sup>: {{service.lastPing | minutesSince}} <br _v-c6014784=\"\"> mins ago\n                    </template>\n                </template>\n            </div>\n        </td>\n        <td data-column=\"led\" _v-c6014784=\"\">\n            <div :class=\"{\n                led: true,\n                s0 : service.status.distance == 0,\n                s1 : service.status.distance == 1,\n                s2 : service.status.distance == 2,\n                s3 : service.status.distance >= 3,\n                sU : service.status.distance == -1,\n            }\" _v-c6014784=\"\">\n                <template v-if=\"service.status.arrival_time\">\n                    {{service.status.arrival_time | takeTime}} (arrived)\n                </template>\n                <template v-else=\"\">\n                    {{service.status.eta | takeTime}} (est)\n                </template>\n            </div>\n        </td>\n        <td data-column=\"next\" _v-c6014784=\"\">\n        <a v-link=\"{path: '/map/' + service.trip.id}\" class=\"details_button\" _v-c6014784=\"\">\n        &gt;&gt;\n        </a>\n        </td>\n    </tr>\n    </tbody>\n</table>\n\n";
 
 /***/ },
 /* 323 */
@@ -39191,15 +39190,6 @@
 	                _this4.otherPings = _lodash2.default.groupBy(data, 'driverId');
 	            });
 
-	            // Get the pings and other data
-	            var infoPromise = authAjax('/trips/' + this.service + '/latestInfo', {
-	                cache: false
-	            }).then(function (data) {
-	                var statuses = data.statuses;
-
-	                _this4.statuses = statuses;
-	            });
-
 	            var tripPromise = authAjax('/trips/' + this.service, {
 	                cache: false
 	            });
@@ -39227,7 +39217,7 @@
 	                _this4.stops = stops;
 	            });
 
-	            return Promise.all([tripPromise, passengersPromise, infoPromise, pingsPromise]);
+	            return Promise.all([tripPromise, passengersPromise, pingsPromise]);
 	        },
 
 	        selectStop: function selectStop(stop) {
@@ -39673,7 +39663,7 @@
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nform[_v-d6983e3c] {\n    padding: 1em;\n    width: 100%;\n    border: solid 1px #888;\n}\nlabel select[_v-d6983e3c]{\n    margin: 1em;\n}\nbutton.message-button[_v-d6983e3c] {\n    padding: 10px 30px;\n    display: block;\n    margin: 10px auto;\n    width: 80%;\n\n    border: solid 1px black;\n    background-color: #ccc;\n}\ntable.arrivalInfo[_v-d6983e3c] {\n    border-collapse: collapse;\n    border-spacing: 0px;\n}\n\n.arrivalInfo th[_v-d6983e3c] {\n    background-color: #ebeff2;\n}\n.arrivalInfo th[_v-d6983e3c],\n.arrivalInfo td[_v-d6983e3c] {\n    min-width: 50px;\n    border: solid 1px #CCCCCC;\n    padding: 5px;\n}\n\n.passenger[_v-d6983e3c] {\n    padding: 5px;\n}\n\nh4[_v-d6983e3c],\nh3[_v-d6983e3c] {\n    background-color: #ebeff2;\n    margin: 0;\n    padding: 5px;\n}\nh3[_v-d6983e3c] {\n    white-space: nowrap;\n    overflow-x: auto;\n}\n\nh4[_v-d6983e3c] {\n    border-bottom: solid 1px #999;\n}\n\ntd.boarding[_v-d6983e3c] {\n    background-color: #19c3a5;\n}\ntd.alighting[_v-d6983e3c] {\n    background-color: #ff7070;\n}\n\n.cancel-form[_v-d6983e3c] {\n  background-color: #FFDDDD;\n}\n.danger-button[_v-d6983e3c] {\n  background-color: #FF0000;\n  color: #FFFFFF;\n}\n\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nform[_v-d6983e3c] {\n    padding: 1em;\n    width: 100%;\n    border: solid 1px #888;\n}\nlabel select[_v-d6983e3c]{\n    margin: 1em;\n}\nbutton.message-button[_v-d6983e3c] {\n    padding: 10px 30px;\n    display: block;\n    margin: 10px auto;\n    width: 80%;\n\n    border: solid 1px black;\n    background-color: #ccc;\n}\ntable.arrivalInfo[_v-d6983e3c] {\n    border-collapse: collapse;\n    border-spacing: 0px;\n}\n\n.arrivalInfo th[_v-d6983e3c] {\n    background-color: #ebeff2;\n}\n.arrivalInfo th[_v-d6983e3c],\n.arrivalInfo td[_v-d6983e3c] {\n    min-width: 50px;\n    border: solid 1px #CCCCCC;\n    padding: 5px;\n}\n\n.passenger[_v-d6983e3c] {\n    padding: 5px;\n}\n\nh4[_v-d6983e3c],\nh3[_v-d6983e3c] {\n    background-color: #ebeff2;\n    margin: 0;\n    padding: 5px;\n}\nh3[_v-d6983e3c] {\n    white-space: nowrap;\n    overflow-x: auto;\n}\n\nh4[_v-d6983e3c] {\n    border-bottom: solid 1px #999;\n}\n\ntd.boarding[_v-d6983e3c] {\n    background-color: #19c3a5;\n}\ntd.alighting[_v-d6983e3c]:not(.boarding) {\n    background-color: #ff7070;\n}\n\n.cancel-form[_v-d6983e3c] {\n  background-color: #FFDDDD;\n}\n.danger-button[_v-d6983e3c] {\n  background-color: #FF0000;\n  color: #FFFFFF;\n}\n\n", ""]);
 
 	// exports
 
@@ -39770,10 +39760,15 @@
 	//         method="POST"
 	//         @submit="confirmAndCancel"
 	//         >
-	//         <b>Warning</b>: This will cancel the trip, and passengers will be notified
-	//         via SMS. This action is irreversible.
+	//         <div v-if="trip.trip.status !== 'cancelled'">
+	//           <b>Warning</b>: This will cancel the trip, and passengers will be notified
+	//           via SMS. This action is irreversible.
 	//
-	//         <button class="danger-button" type="submit">Cancel Trip</button>
+	//           <button class="danger-button" type="submit">Cancel Trip</button>
+	//         </div>
+	//         <div v-else>
+	//           This trip has been cancelled.
+	//         </div>
 	//     </form>
 	//
 	//     <h1>Send message to passengers</h1>
@@ -39863,7 +39858,7 @@
 	// td.boarding {
 	//     background-color: #19c3a5;
 	// }
-	// td.alighting {
+	// td.alighting:not(.boarding) {
 	//     background-color: #ff7070;
 	// }
 	//
@@ -39925,7 +39920,9 @@
 	            ServiceData: window.ServiceData,
 
 	            trip: {
-	                tripStops: []
+	                trip: {
+	                    tripStops: []
+	                }
 	            },
 	            passengers: [],
 
@@ -39961,7 +39958,7 @@
 	        },
 
 	        arrivalInfo: function arrivalInfo() {
-	            var stops = _.sortBy(this.trip.stops, function (s) {
+	            var stops = _.sortBy(this.trip.trip.tripStops, function (s) {
 	                return s.time;
 	            });
 	            var passengersByStops = _.groupBy(this.passengers, function (p) {
@@ -40069,7 +40066,7 @@
 	            return authAjax('/monitoring').then(function (status) {
 	                console.log(status);
 	                _this2.trip = _.values(status).find(function (t) {
-	                    return t.tripId == _this2.tripId;
+	                    return t.trip.id == _this2.tripId;
 	                });
 	            });
 	        },
@@ -40104,6 +40101,8 @@
 	            return false;
 	        },
 	        confirmAndCancel: function confirmAndCancel(event) {
+	            var _this4 = this;
+
 	            event.preventDefault();
 
 	            var confirmResponse = prompt('To confirm please enter the route ID (' + this.trip.routeId + '):');
@@ -40118,7 +40117,8 @@
 	                    status: 'cancelled'
 	                }
 	            }).then(function () {
-	                alert("Trip cancelled!");
+	                _this4.requery();
+	                alert("Trip cancelled! The route list will be updated shortly.");
 	            }).then(null, function (err) {
 	                alert("There was an error sending the message");
 	            }));
@@ -40141,18 +40141,18 @@
 /* 341 */
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.default = [['Bus Cancellation', "(DO NOT REPLY) Attention: The service for today has been cancelled due to unforeseen circumstances. " + "Please make alternative transport arrangements. Today's fare will be refunded and we sincerely apologise for the inconvenience caused to all our commuters."], ['Bus is going to be more than 15 mins late', '(DO NOT REPLY) Attention: Service for today will be delayed. The bus is still on its way to your stop. Sorry for the inconvenience.'], ['Driver App is unavailable', '(DO NOT REPLY) Attention: The location tracking on the app is not working today. The bus is still on its way to your stop. We sincerely apologise for the inconvenience caused to all our commuters.']];
+	exports.default = [['Bus is going to be more than 15 mins late', '(DO NOT REPLY) Attention: Service for today will be delayed. The bus is still on its way to your stop. Sorry for the inconvenience.'], ['Driver App is unavailable', '(DO NOT REPLY) Attention: The location tracking on the app is not working today. The bus is still on its way to your stop. We sincerely apologise for the inconvenience caused to all our commuters.']];
 
 /***/ },
 /* 342 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div _v-d6983e3c=\"\">\n    <navi :service=\"tripId\" _v-d6983e3c=\"\"></navi>\n    <div class=\"contents-with-nav\" _v-d6983e3c=\"\">\n<!--    <h1>{{services[service].stops[0].route_service_id}}:\n        {{services[service].stops[0].from_name}} &mdash;\n        {{services[service].stops[0].to_name}}-->\n    <h2 _v-d6983e3c=\"\">Boarding stops</h2>\n    <table class=\"arrivalInfo\" _v-d6983e3c=\"\">\n        <tbody _v-d6983e3c=\"\"><tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Stop number</th>\n            <td v-for=\"tripStop in arrivalInfo\" :class=\"{ boarding: tripStop.canBoard,\n                          alighting: tripStop.canAlight }\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ $index + 1 }}\n                {{ tripStop.canBoard ? '↗' : '↙' }}\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Pax boarding</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                  {{ tripStop.passengers.length  }}\n                </span>\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Scheduled</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.time | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Actual</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Diff (mins)</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | minsDiff tripStop.time }}\n            </span></td>\n        </tr>\n    </tbody></table>\n\n\n    <h1 _v-d6983e3c=\"\">Passenger List</h1>\n    <div v-for=\"stop in arrivalInfo\" v-show=\"stop.canBoard\" _v-d6983e3c=\"\">\n        <h3 _v-d6983e3c=\"\">{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>\n        <h4 _v-d6983e3c=\"\">Boarding time: {{stop.time | formatTime}}</h4>\n\n        <div v-for=\"passenger in stop.passengers\" class=\"passenger\" _v-d6983e3c=\"\">\n            {{passenger.index + 1}}.\n            {{passenger.name}}\n            —\n            {{passenger.telephone}}\n            —\n            {{passenger.email}}\n        </div>\n    </div>\n\n\n    <h1 _v-d6983e3c=\"\">Cancel Trip</h1>\n    <form class=\"cancel-form\" method=\"POST\" @submit=\"confirmAndCancel\" _v-d6983e3c=\"\">\n        <b _v-d6983e3c=\"\">Warning</b>: This will cancel the trip, and passengers will be notified\n        via SMS. This action is irreversible.\n\n        <button class=\"danger-button\" type=\"submit\" _v-d6983e3c=\"\">Cancel Trip</button>\n    </form>\n\n    <h1 _v-d6983e3c=\"\">Send message to passengers</h1>\n    <form action=\"/send_message\" method=\"POST\" @submit=\"confirmAndSend\" _v-d6983e3c=\"\">\n        <label _v-d6983e3c=\"\">\n            Use template:\n            <select v-model=\"sms.message\" _v-d6983e3c=\"\">\n               <option v-for=\"mt in messageTemplates\" :value=\"mt[1]\" _v-d6983e3c=\"\">\n                    {{mt[0]}}\n               </option>\n            </select>\n        </label>\n        <input type=\"hidden\" name=\"session_token\" value=\"{{sessionToken}}\" _v-d6983e3c=\"\">\n        <input type=\"hidden\" name=\"service\" value=\"{{service}}\" _v-d6983e3c=\"\">\n        <textarea v-model=\"sms.message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-d6983e3c=\"\"></textarea>\n        <button class=\"message-button\" type=\"submit\" _v-d6983e3c=\"\">Submit</button>\n    </form>\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n\n    </div>\n</div>\n";
+	module.exports = "\n<div _v-d6983e3c=\"\">\n    <navi :service=\"tripId\" _v-d6983e3c=\"\"></navi>\n    <div class=\"contents-with-nav\" _v-d6983e3c=\"\">\n<!--    <h1>{{services[service].stops[0].route_service_id}}:\n        {{services[service].stops[0].from_name}} &mdash;\n        {{services[service].stops[0].to_name}}-->\n    <h2 _v-d6983e3c=\"\">Boarding stops</h2>\n    <table class=\"arrivalInfo\" _v-d6983e3c=\"\">\n        <tbody _v-d6983e3c=\"\"><tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Stop number</th>\n            <td v-for=\"tripStop in arrivalInfo\" :class=\"{ boarding: tripStop.canBoard,\n                          alighting: tripStop.canAlight }\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ $index + 1 }}\n                {{ tripStop.canBoard ? '↗' : '↙' }}\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Pax boarding</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                  {{ tripStop.passengers.length  }}\n                </span>\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Scheduled</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.time | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Actual</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Diff (mins)</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.lastPing ? tripStop.lastPing.createdAt : '' | minsDiff tripStop.time }}\n            </span></td>\n        </tr>\n    </tbody></table>\n\n\n    <h1 _v-d6983e3c=\"\">Passenger List</h1>\n    <div v-for=\"stop in arrivalInfo\" v-show=\"stop.canBoard\" _v-d6983e3c=\"\">\n        <h3 _v-d6983e3c=\"\">{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>\n        <h4 _v-d6983e3c=\"\">Boarding time: {{stop.time | formatTime}}</h4>\n\n        <div v-for=\"passenger in stop.passengers\" class=\"passenger\" _v-d6983e3c=\"\">\n            {{passenger.index + 1}}.\n            {{passenger.name}}\n            —\n            {{passenger.telephone}}\n            —\n            {{passenger.email}}\n        </div>\n    </div>\n\n\n    <h1 _v-d6983e3c=\"\">Cancel Trip</h1>\n    <form class=\"cancel-form\" method=\"POST\" @submit=\"confirmAndCancel\" _v-d6983e3c=\"\">\n        <div v-if=\"trip.trip.status !== 'cancelled'\" _v-d6983e3c=\"\">\n          <b _v-d6983e3c=\"\">Warning</b>: This will cancel the trip, and passengers will be notified\n          via SMS. This action is irreversible.\n\n          <button class=\"danger-button\" type=\"submit\" _v-d6983e3c=\"\">Cancel Trip</button>\n        </div>\n        <div v-else=\"\" _v-d6983e3c=\"\">\n          This trip has been cancelled.\n        </div>\n    </form>\n\n    <h1 _v-d6983e3c=\"\">Send message to passengers</h1>\n    <form action=\"/send_message\" method=\"POST\" @submit=\"confirmAndSend\" _v-d6983e3c=\"\">\n        <label _v-d6983e3c=\"\">\n            Use template:\n            <select v-model=\"sms.message\" _v-d6983e3c=\"\">\n               <option v-for=\"mt in messageTemplates\" :value=\"mt[1]\" _v-d6983e3c=\"\">\n                    {{mt[0]}}\n               </option>\n            </select>\n        </label>\n        <input type=\"hidden\" name=\"session_token\" value=\"{{sessionToken}}\" _v-d6983e3c=\"\">\n        <input type=\"hidden\" name=\"service\" value=\"{{service}}\" _v-d6983e3c=\"\">\n        <textarea v-model=\"sms.message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-d6983e3c=\"\"></textarea>\n        <button class=\"message-button\" type=\"submit\" _v-d6983e3c=\"\">Submit</button>\n    </form>\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n\n    </div>\n</div>\n";
 
 /***/ },
 /* 343 */
