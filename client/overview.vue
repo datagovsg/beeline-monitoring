@@ -49,7 +49,7 @@
                 <span v-if="service.firstPing">
                     1<sup>st</sup>: {{service.firstPing.createdAt | takeTime}}
                 </span>
-                <template v-if="service.status.arrival_time">
+                <template v-if="service.status.arrivalTime">
                     (arrived)
                 </template>
                 <template v-else>
@@ -68,8 +68,8 @@
                 s3 : service.status.distance >= 3,
                 sU : service.status.distance == -1,
             }">
-                <template v-if="service.status.arrival_time">
-                    {{service.status.arrival_time | takeTime}} (arrived)
+                <template v-if="service.status.arrivalTime">
+                    {{service.status.arrivalTime | takeTime}} (arrived)
                 </template>
                 <template v-else>
                     {{service.status.eta | takeTime}} (est)
