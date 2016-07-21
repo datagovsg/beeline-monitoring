@@ -76,7 +76,7 @@
         method="POST"
         @submit="confirmAndCancel"
         >
-        <div v-if="trip.tripStatus !== 'cancelled'">
+        <div v-if="trip.trip.status !== 'cancelled'">
           <b>Warning</b>: This will cancel the trip, and passengers will be notified
           via SMS. This action is irreversible.
 
@@ -240,7 +240,9 @@ module.exports = {
             ServiceData: window.ServiceData,
 
             trip: {
-              tripStops: [],
+              trip: {
+                tripStops: [],
+              }
             },
             passengers: [],
 
@@ -275,7 +277,7 @@ module.exports = {
         },
 
         arrivalInfo() {
-          var stops = _.sortBy(this.trip.stops, s => s.time);
+          var stops = _.sortBy(this.trip.trip.tripStops, s => s.time);
           var passengersByStops = _.groupBy(this.passengers, p => p.boardStopId)
           var index = 0;
 
@@ -338,7 +340,7 @@ module.exports = {
             .then((status) => {
               console.log(status)
               this.trip = _.values(status)
-                  .find(t => t.tripId == this.tripId)
+                  .find(t => t.trip.id == this.tripId)
             })
         },
         requery: function () {

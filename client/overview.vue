@@ -19,22 +19,22 @@
         </td>
     </tr>
     <tr v-for="service in servicesByStartTime"
-        track-by='tripId'
+        track-by='trip.route.id'
         :class="{
-            emergency: service.tripStatus === 'cancelled',
+            emergency: service.trip.status === 'cancelled',
             nobody: service.nobody,
         }"
         >
         <td data-column="route">
-            <h4 style="float: left; margin: 0 10px 0 10px">{{service.route.label}}
-            <div class="service_name">{{service.route.id}}</div>
+            <h4 style="float: left; margin: 0 10px 0 10px">{{service.trip.route.label}}
+            <div class="service_name">{{service.trip.route.id}}</div>
             </h4>
             <h4 style="float: left; margin: 0 10px 0 10px">
-              {{service.stops[0].time | takeTime}}
+              {{service.trip.tripStops[0].time | takeTime}}
             </h4>
             <div style="float: left">
-              {{service.route.from}}<br/>
-              {{service.route.to}}
+              {{service.trip.route.from}}<br/>
+              {{service.trip.route.to}}
               </div>
         </td>
         <td data-column="led">
@@ -77,7 +77,7 @@
             </div>
         </td>
         <td data-column="next">
-        <a v-link="{path: '/map/' + service.tripId}" class="details_button">
+        <a v-link="{path: '/map/' + service.trip.id}" class="details_button">
         &gt;&gt;
         </a>
         </td>
@@ -108,7 +108,7 @@ Vue.filter('takeTime', function (dt) {
 Vue.filter('firstStopETA', function (svc) {
     // Has it arrived at all?
     // check first stop...
-    var firstStop = svc.stops[0];
+    var firstStop = svc.trip.tripStops[0];
 
     var hasArrived = false;
     if (firstStop.lastPing) {
@@ -117,11 +117,6 @@ Vue.filter('firstStopETA', function (svc) {
         scheduledTime.setUTCHours(parseInt(firstStop.time.substr(0,2)));
         scheduledTime.setUTCMinutes(parseInt(firstStop.time.substr(2,4)));
         scheduledTime.setUTCSeconds(0);
-
-        if (svc.route_service_id == 77) {
-            console.log(time_part);
-            console.log(scheduledTime);
-        }
 
         if (time_part.getTime() - scheduledTime.getTime() >= -5 * 60 * 1000) {
             return time_part.localISO().substr(11,5)
@@ -176,7 +171,7 @@ module.exports = {
             var ss = self.services;
 
             ss = _.values(ss)
-            ss = _.sortBy(ss, svc => [svc.stops[0].time, svc.route.label])
+            ss = _.sortBy(ss, svc => [svc.trip.tripStops[0].time, svc.trip.route.label])
             return ss;
         },
     },
