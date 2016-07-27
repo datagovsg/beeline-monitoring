@@ -39663,7 +39663,7 @@
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nform[_v-d6983e3c] {\n    padding: 1em;\n    width: 100%;\n    border: solid 1px #888;\n}\nlabel select[_v-d6983e3c]{\n    margin: 1em;\n}\nbutton.message-button[_v-d6983e3c] {\n    padding: 10px 30px;\n    display: block;\n    margin: 10px auto;\n    width: 80%;\n\n    border: solid 1px black;\n    background-color: #ccc;\n}\ntable.arrivalInfo[_v-d6983e3c] {\n    border-collapse: collapse;\n    border-spacing: 0px;\n}\n\n.arrivalInfo th[_v-d6983e3c] {\n    background-color: #ebeff2;\n}\n.arrivalInfo th[_v-d6983e3c],\n.arrivalInfo td[_v-d6983e3c] {\n    min-width: 50px;\n    border: solid 1px #CCCCCC;\n    padding: 5px;\n}\n\n.passenger[_v-d6983e3c] {\n    padding: 5px;\n}\n\nh4[_v-d6983e3c],\nh3[_v-d6983e3c] {\n    background-color: #ebeff2;\n    margin: 0;\n    padding: 5px;\n}\nh3[_v-d6983e3c] {\n    white-space: nowrap;\n    overflow-x: auto;\n}\n\nh4[_v-d6983e3c] {\n    border-bottom: solid 1px #999;\n}\n\ntd.boarding[_v-d6983e3c] {\n    background-color: #19c3a5;\n}\ntd.alighting[_v-d6983e3c]:not(.boarding) {\n    background-color: #ff7070;\n}\n\n.cancel-form[_v-d6983e3c] {\n  background-color: #FFDDDD;\n}\n.danger-button[_v-d6983e3c] {\n  background-color: #FF0000;\n  color: #FFFFFF;\n}\n\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nform[_v-d6983e3c] {\n    padding: 1em;\n    width: 100%;\n    border: solid 1px #888;\n}\nlabel select[_v-d6983e3c]{\n    margin: 1em;\n}\nbutton.message-button[_v-d6983e3c] {\n    padding: 10px 30px;\n    display: block;\n    margin: 10px auto;\n    width: 80%;\n\n    border: solid 1px black;\n    background-color: #ccc;\n}\ntable.arrivalInfo[_v-d6983e3c] {\n    border-collapse: collapse;\n    border-spacing: 0px;\n}\n\n.arrivalInfo th[_v-d6983e3c] {\n    background-color: #ebeff2;\n}\n.arrivalInfo th[_v-d6983e3c],\n.arrivalInfo td[_v-d6983e3c] {\n    min-width: 50px;\n    border: solid 1px #CCCCCC;\n    padding: 5px;\n}\n\n.passenger[_v-d6983e3c] {\n    padding: 5px;\n}\n.passenger[_v-d6983e3c]:nth-child(even) {\n  background-color: #FFF;\n}\n.passenger[_v-d6983e3c]:nth-child(odd) {\n  background-color: #EEE;\n}\n\n.passenger.animate-hide[_v-d6983e3c] {\n  max-height: 0;\n  padding-top: 0;\n  padding-bottom: 0;\n  -webkit-transition: 0.1s linear all;\n  transition: 0.1s linear all;\n  overflow: hidden;\n}\n.passenger[_v-d6983e3c]:not(.animate-hide) {\n  max-height: 100px;\n  padding-top: 5px;\n  padding-bottom: 5px;\n  -webkit-transition: 0.1s linear all;\n  transition: 0.1s linear all;\n}\n\nh3.show-passengers[_v-d6983e3c]::before {\n  content: \"[ - ] \";\n}\nh3[_v-d6983e3c]:not(.show-passengers)::before {\n  content: \"[ + ] \";\n}\n\nh4[_v-d6983e3c],\nh3[_v-d6983e3c] {\n    background-color: #ebeff2;\n    margin: 0;\n    padding: 5px;\n}\nh3[_v-d6983e3c] {\n    white-space: nowrap;\n    overflow-x: auto;\n}\n\nh4[_v-d6983e3c] {\n    border-bottom: solid 1px #999;\n}\n\ntd.boarding[_v-d6983e3c] {\n    background-color: #19c3a5;\n}\ntd.alighting[_v-d6983e3c]:not(.boarding) {\n    background-color: #ff7070;\n}\n\n.cancel-form[_v-d6983e3c] {\n  background-color: #FFDDDD;\n}\n.danger-button[_v-d6983e3c] {\n  background-color: #FF0000;\n  color: #FFFFFF;\n}\n\n", ""]);
 
 	// exports
 
@@ -39686,9 +39686,6 @@
 	// <div>
 	//     <navi :service="tripId"></navi>
 	//     <div class="contents-with-nav">
-	// <!--    <h1>{{services[service].stops[0].route_service_id}}:
-	//         {{services[service].stops[0].from_name}} &mdash;
-	//         {{services[service].stops[0].to_name}}-->
 	//     <h2>Boarding stops</h2>
 	//     <table class="arrivalInfo">
 	//         <tr>
@@ -39739,12 +39736,16 @@
 	//
 	//     <h1>Passenger List</h1>
 	//     <div v-for="stop in arrivalInfo"
-	//         v-show="stop.canBoard">
-	//         <h3>{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>
-	//         <h4>Boarding time: {{stop.time | formatTime}}</h4>
-	//
+	//         v-show="stop.canBoard"
+	//         track-by="id">
+	//         <h3 :class="{'show-passengers': stop.showPassengers}"
+	//             @click="togglePassengers(stop)">{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>
+	//         <h4 :class="{'show-passengers': stop.showPassengers}"
+	//             @click="togglePassengers(stop)">Boarding time: {{stop.time | formatTime}}</h4>
 	//         <div v-for="passenger in stop.passengers"
-	//             class="passenger">
+	//             :class="{passenger: true, 'animate-hide': !stop.showPassengers}"
+	//             track-by="id"
+	//             >
 	//             {{passenger.index + 1}}.
 	//             {{passenger.name}}
 	//             &mdash;
@@ -39777,14 +39778,14 @@
 	//         @submit="confirmAndSend"
 	//         >
 	//         <label>
-	//             Use template:
-	//             <select v-model="sms.message">
-	//                <option v-for="mt in messageTemplates"
-	//                     :value="mt[1]"
-	//                     >
-	//                     {{mt[0]}}
-	//                </option>
-	//             </select>
+	//           Use template:
+	//           <select v-model="sms.message">
+	//            <option v-for="mt in messageTemplates"
+	//               :value="mt[1]"
+	//               >
+	//               {{mt[0]}}
+	//            </option>
+	//           </select>
 	//         </label>
 	//         <input type="hidden" name="session_token" value="{{sessionToken}}" />
 	//         <input type="hidden" name="service" value="{{service}}" />
@@ -39838,6 +39839,33 @@
 	//
 	// .passenger {
 	//     padding: 5px;
+	// }
+	// .passenger:nth-child(even) {
+	//   background-color: #FFF;
+	// }
+	// .passenger:nth-child(odd) {
+	//   background-color: #EEE;
+	// }
+	//
+	// .passenger.animate-hide {
+	//   max-height: 0;
+	//   padding-top: 0;
+	//   padding-bottom: 0;
+	//   transition: 0.1s linear all;
+	//   overflow: hidden;
+	// }
+	// .passenger:not(.animate-hide) {
+	//   max-height: 100px;
+	//   padding-top: 5px;
+	//   padding-bottom: 5px;
+	//   transition: 0.1s linear all;
+	// }
+	//
+	// h3.show-passengers::before {
+	//   content: "[ - ] ";
+	// }
+	// h3:not(.show-passengers)::before {
+	//   content: "[ + ] ";
 	// }
 	//
 	// h4,
@@ -40064,10 +40092,36 @@
 	            var _this2 = this;
 
 	            return authAjax('/monitoring').then(function (status) {
-	                console.log(status);
 	                _this2.trip = _.values(status).find(function (t) {
 	                    return t.trip.id == _this2.tripId;
 	                }).trip;
+
+	                if (_this2.trip) {
+	                    var _iteratorNormalCompletion3 = true;
+	                    var _didIteratorError3 = false;
+	                    var _iteratorError3 = undefined;
+
+	                    try {
+	                        for (var _iterator3 = _this2.trip.tripStops[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	                            var tripStop = _step3.value;
+
+	                            Vue.set(tripStop, 'showPassengers', true);
+	                        }
+	                    } catch (err) {
+	                        _didIteratorError3 = true;
+	                        _iteratorError3 = err;
+	                    } finally {
+	                        try {
+	                            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+	                                _iterator3.return();
+	                            }
+	                        } finally {
+	                            if (_didIteratorError3) {
+	                                throw _iteratorError3;
+	                            }
+	                        }
+	                    }
+	                }
 	            });
 	        },
 
@@ -40123,8 +40177,12 @@
 	                alert("There was an error sending the message");
 	            }));
 	            return false;
+	        },
+	        togglePassengers: function togglePassengers(stop) {
+	            console.log(stop);
+	            stop.showPassengers = !stop.showPassengers;
 	        }
-	    },
+	    }, /* methods */
 	    filters: {
 	        formatTime: function formatTime(sdt) {
 	            if (!Date.prototype.isPrototypeOf(sdt)) {
@@ -40152,7 +40210,7 @@
 /* 342 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div _v-d6983e3c=\"\">\n    <navi :service=\"tripId\" _v-d6983e3c=\"\"></navi>\n    <div class=\"contents-with-nav\" _v-d6983e3c=\"\">\n<!--    <h1>{{services[service].stops[0].route_service_id}}:\n        {{services[service].stops[0].from_name}} &mdash;\n        {{services[service].stops[0].to_name}}-->\n    <h2 _v-d6983e3c=\"\">Boarding stops</h2>\n    <table class=\"arrivalInfo\" _v-d6983e3c=\"\">\n        <tbody _v-d6983e3c=\"\"><tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Stop number</th>\n            <td v-for=\"tripStop in arrivalInfo\" :class=\"{ boarding: tripStop.canBoard,\n                          alighting: tripStop.canAlight }\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ $index + 1 }}\n                {{ tripStop.canBoard ? '↗' : '↙' }}\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Pax boarding</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                  {{ tripStop.passengers.length  }}\n                </span>\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Scheduled</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.time | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Actual</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Diff (mins)</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | minsDiff tripStop.time }}\n            </span></td>\n        </tr>\n    </tbody></table>\n\n\n    <h1 _v-d6983e3c=\"\">Passenger List</h1>\n    <div v-for=\"stop in arrivalInfo\" v-show=\"stop.canBoard\" _v-d6983e3c=\"\">\n        <h3 _v-d6983e3c=\"\">{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>\n        <h4 _v-d6983e3c=\"\">Boarding time: {{stop.time | formatTime}}</h4>\n\n        <div v-for=\"passenger in stop.passengers\" class=\"passenger\" _v-d6983e3c=\"\">\n            {{passenger.index + 1}}.\n            {{passenger.name}}\n            —\n            {{passenger.telephone}}\n            —\n            {{passenger.email}}\n        </div>\n    </div>\n\n\n    <h1 _v-d6983e3c=\"\">Cancel Trip</h1>\n    <form class=\"cancel-form\" method=\"POST\" @submit=\"confirmAndCancel\" _v-d6983e3c=\"\">\n        <div v-if=\"trip.status !== 'cancelled'\" _v-d6983e3c=\"\">\n          <b _v-d6983e3c=\"\">Warning</b>: This will cancel the trip, and passengers will be notified\n          via SMS. This action is irreversible.\n\n          <button class=\"danger-button\" type=\"submit\" _v-d6983e3c=\"\">Cancel Trip</button>\n        </div>\n        <div v-else=\"\" _v-d6983e3c=\"\">\n          This trip has been cancelled.\n        </div>\n    </form>\n\n    <h1 _v-d6983e3c=\"\">Send message to passengers</h1>\n    <form action=\"/send_message\" method=\"POST\" @submit=\"confirmAndSend\" _v-d6983e3c=\"\">\n        <label _v-d6983e3c=\"\">\n            Use template:\n            <select v-model=\"sms.message\" _v-d6983e3c=\"\">\n               <option v-for=\"mt in messageTemplates\" :value=\"mt[1]\" _v-d6983e3c=\"\">\n                    {{mt[0]}}\n               </option>\n            </select>\n        </label>\n        <input type=\"hidden\" name=\"session_token\" value=\"{{sessionToken}}\" _v-d6983e3c=\"\">\n        <input type=\"hidden\" name=\"service\" value=\"{{service}}\" _v-d6983e3c=\"\">\n        <textarea v-model=\"sms.message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-d6983e3c=\"\"></textarea>\n        <button class=\"message-button\" type=\"submit\" _v-d6983e3c=\"\">Submit</button>\n    </form>\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n\n    </div>\n</div>\n";
+	module.exports = "\n<div _v-d6983e3c=\"\">\n    <navi :service=\"tripId\" _v-d6983e3c=\"\"></navi>\n    <div class=\"contents-with-nav\" _v-d6983e3c=\"\">\n    <h2 _v-d6983e3c=\"\">Boarding stops</h2>\n    <table class=\"arrivalInfo\" _v-d6983e3c=\"\">\n        <tbody _v-d6983e3c=\"\"><tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Stop number</th>\n            <td v-for=\"tripStop in arrivalInfo\" :class=\"{ boarding: tripStop.canBoard,\n                          alighting: tripStop.canAlight }\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ $index + 1 }}\n                {{ tripStop.canBoard ? '↗' : '↙' }}\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Pax boarding</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                  {{ tripStop.passengers.length  }}\n                </span>\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Scheduled</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.time | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Actual</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Diff (mins)</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | minsDiff tripStop.time }}\n            </span></td>\n        </tr>\n    </tbody></table>\n\n\n    <h1 _v-d6983e3c=\"\">Passenger List</h1>\n    <div v-for=\"stop in arrivalInfo\" v-show=\"stop.canBoard\" track-by=\"id\" _v-d6983e3c=\"\">\n        <h3 :class=\"{'show-passengers': stop.showPassengers}\" @click=\"togglePassengers(stop)\" _v-d6983e3c=\"\">{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>\n        <h4 :class=\"{'show-passengers': stop.showPassengers}\" @click=\"togglePassengers(stop)\" _v-d6983e3c=\"\">Boarding time: {{stop.time | formatTime}}</h4>\n        <div v-for=\"passenger in stop.passengers\" :class=\"{passenger: true, 'animate-hide': !stop.showPassengers}\" track-by=\"id\" _v-d6983e3c=\"\">\n            {{passenger.index + 1}}.\n            {{passenger.name}}\n            —\n            {{passenger.telephone}}\n            —\n            {{passenger.email}}\n        </div>\n    </div>\n\n\n    <h1 _v-d6983e3c=\"\">Cancel Trip</h1>\n    <form class=\"cancel-form\" method=\"POST\" @submit=\"confirmAndCancel\" _v-d6983e3c=\"\">\n        <div v-if=\"trip.status !== 'cancelled'\" _v-d6983e3c=\"\">\n          <b _v-d6983e3c=\"\">Warning</b>: This will cancel the trip, and passengers will be notified\n          via SMS. This action is irreversible.\n\n          <button class=\"danger-button\" type=\"submit\" _v-d6983e3c=\"\">Cancel Trip</button>\n        </div>\n        <div v-else=\"\" _v-d6983e3c=\"\">\n          This trip has been cancelled.\n        </div>\n    </form>\n\n    <h1 _v-d6983e3c=\"\">Send message to passengers</h1>\n    <form action=\"/send_message\" method=\"POST\" @submit=\"confirmAndSend\" _v-d6983e3c=\"\">\n        <label _v-d6983e3c=\"\">\n          Use template:\n          <select v-model=\"sms.message\" _v-d6983e3c=\"\">\n           <option v-for=\"mt in messageTemplates\" :value=\"mt[1]\" _v-d6983e3c=\"\">\n              {{mt[0]}}\n           </option>\n          </select>\n        </label>\n        <input type=\"hidden\" name=\"session_token\" value=\"{{sessionToken}}\" _v-d6983e3c=\"\">\n        <input type=\"hidden\" name=\"service\" value=\"{{service}}\" _v-d6983e3c=\"\">\n        <textarea v-model=\"sms.message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-d6983e3c=\"\"></textarea>\n        <button class=\"message-button\" type=\"submit\" _v-d6983e3c=\"\">Submit</button>\n    </form>\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n\n    </div>\n</div>\n";
 
 /***/ },
 /* 343 */
