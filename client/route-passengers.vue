@@ -2,9 +2,6 @@
 <div>
     <navi :service="tripId"></navi>
     <div class="contents-with-nav">
-<!--    <h1>{{services[service].stops[0].route_service_id}}:
-        {{services[service].stops[0].from_name}} &mdash;
-        {{services[service].stops[0].to_name}}-->
     <h2>Boarding stops</h2>
     <table class="arrivalInfo">
         <tr>
@@ -55,12 +52,16 @@
 
     <h1>Passenger List</h1>
     <div v-for="stop in arrivalInfo"
-        v-show="stop.canBoard">
-        <h3>{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>
-        <h4>Boarding time: {{stop.time | formatTime}}</h4>
-
+        v-show="stop.canBoard"
+        track-by="id">
+        <h3 :class="{'show-passengers': stop.showPassengers}"
+            @click="togglePassengers(stop)">{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>
+        <h4 :class="{'show-passengers': stop.showPassengers}"
+            @click="togglePassengers(stop)">Boarding time: {{stop.time | formatTime}}</h4>
         <div v-for="passenger in stop.passengers"
-            class="passenger">
+            :class="{passenger: true, 'animate-hide': !stop.showPassengers}"
+            track-by="id"
+            >
             {{passenger.index + 1}}.
             {{passenger.name}}
             &mdash;
@@ -93,14 +94,14 @@
         @submit="confirmAndSend"
         >
         <label>
-            Use template:
-            <select v-model="sms.message">
-               <option v-for="mt in messageTemplates"
-                    :value="mt[1]"
-                    >
-                    {{mt[0]}}
-               </option>
-            </select>
+          Use template:
+          <select v-model="sms.message">
+           <option v-for="mt in messageTemplates"
+              :value="mt[1]"
+              >
+              {{mt[0]}}
+           </option>
+          </select>
         </label>
         <input type="hidden" name="session_token" value="{{sessionToken}}" />
         <input type="hidden" name="service" value="{{service}}" />
@@ -154,6 +155,33 @@ table.arrivalInfo {
 
 .passenger {
     padding: 5px;
+}
+.passenger:nth-child(even) {
+  background-color: #FFF;
+}
+.passenger:nth-child(odd) {
+  background-color: #EEE;
+}
+
+.passenger.animate-hide {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: 0.1s linear all;
+  overflow: hidden;
+}
+.passenger:not(.animate-hide) {
+  max-height: 100px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  transition: 0.1s linear all;
+}
+
+h3.show-passengers::before {
+  content: "[ - ] ";
+}
+h3:not(.show-passengers)::before {
+  content: "[ + ] ";
 }
 
 h4,
@@ -338,10 +366,15 @@ module.exports = {
         requeryTrips() {
             return authAjax(`/monitoring`)
             .then((status) => {
-              console.log(status)
               this.trip = _.values(status)
                   .find(t => t.trip.id == this.tripId)
                   .trip
+
+              if (this.trip) {
+                for (let tripStop of this.trip.tripStops) {
+                  Vue.set(tripStop, 'showPassengers', true);
+                }
+              }
             })
         },
         requery: function () {
@@ -404,7 +437,12 @@ module.exports = {
             }))
             return false
         },
-    },
+
+        togglePassengers(stop) {
+          console.log(stop)
+          stop.showPassengers = !stop.showPassengers;
+        }
+    }, /* methods */
     filters: {
         formatTime(sdt) {
             if (!Date.prototype.isPrototypeOf(sdt)) {
