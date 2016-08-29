@@ -204,7 +204,6 @@ module.exports = {
             return Promise.resolve(authAjax('/monitoring', {
                 method: 'GET',
                 dataType: 'json',
-                cache: false,
             })
             .then(function (s) {
                 window.ServiceData.services = self.services = s;

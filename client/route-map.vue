@@ -254,12 +254,8 @@ module.exports = {
               this.otherPings = _.groupBy(data, 'driverId');
             })
 
-            var tripPromise = authAjax(`/trips/${this.service}`, {
-                cache: false,
-            });
-            var passengersPromise = authAjax(`/trips/${this.service}/get_passengers`, {
-                cache: false,
-            });
+            var tripPromise = authAjax(`/trips/${this.service}`);
+            var passengersPromise = authAjax(`/trips/${this.service}/passengers`);
 
             Promise.all([tripPromise, passengersPromise])
             .then(([stopData, passengerData]) => {

@@ -1,4 +1,5 @@
 var env = require('./env.json')
+var jwt_decode = require('jwt-decode');
 
 export function authAjax(path, opts) {
     opts = opts || {}
@@ -10,15 +11,35 @@ export function authAjax(path, opts) {
     return $.ajax(env.BACKEND_URL + path, opts);
 };
 
-export function checkLoggedIn() {
-    authAjax('/admins', {})
-    .then(function (what) {
-    }, function (data, status) { /* failure */
-        if (data.status == 403) {
-            delete localStorage.session_token
-            login()
-        }
-    })
+export async function checkLoggedIn() {
+  try {
+    var roleData = jwt_decode(localStorage.session_token).app_metadata;
+
+    if (roleData.roles.indexOf('superadmin') !== -1) {
+      return;
+    }
+    else if (roleData.roles.indexOf('admin') !== -1) {
+      var adminId = roleData.adminId;
+
+      try {
+        await new Promise((resolve, reject) => {
+          authAjax(`/admins/${adminId}`, {})
+        });
+      } catch (err) {
+        console.log(err)
+        if (err.status === 403) throw err;
+        // otherwise we cannot be sure why the check failed.
+        // e.g. poor connection
+      }
+    }
+    else {
+      throw new Error("Problem with your token")
+    }
+  }
+  catch (err) {
+    console.log(err)
+    login();
+  }
 };
 
 export function logOut() {

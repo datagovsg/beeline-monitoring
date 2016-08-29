@@ -40,7 +40,6 @@ $(document).ready( function () {
     Login.authAjax('/monitoring', {
         method: 'GET',
         dataType: 'json',
-        cache: false,
     })
     .done(function (s) {
         window.ServiceData.services = self.services = s;
