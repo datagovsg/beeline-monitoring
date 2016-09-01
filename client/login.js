@@ -1,75 +1,110 @@
+var Vue = require('vue');
 var env = require('./env.json')
 var jwt_decode = require('jwt-decode');
+
+/////////// Functions
 
 export function authAjax(path, opts) {
     opts = opts || {}
     opts.headers = opts.headers || {};
 
     if (localStorage.session_token) {
-      opts.headers.Authorization = 'Bearer ' + localStorage['session_token'];
+      opts.headers.Authorization = 'Bearer ' + localStorage.session_token;
     }
-    return $.ajax(env.BACKEND_URL + path, opts);
+    opts.url = env.BACKEND_URL + path;
+    return Vue.http(opts);
 };
 
-export async function checkLoggedIn() {
+export function refreshTokenIfNecessary() {
   try {
-    var roleData = jwt_decode(localStorage.session_token).app_metadata;
+    if (!localStorage.refresh_token) throw new Error();
 
-    if (roleData.roles.indexOf('superadmin') !== -1) {
+    var currentToken = jwt_decode(localStorage.id_token);
+
+    // Check expiry
+    // Set a timeout to get a new token when it's closer to expiry
+    if (currentToken.exp * 1000 - Date.now() > 3600*1000) {
+      console.log("Will request token in future")
+      setTimeout(refreshTokenIfNecessary, 3500*1000);
       return;
     }
-    else if (roleData.roles.indexOf('admin') !== -1) {
-      var adminId = roleData.adminId;
 
-      try {
-        await new Promise((resolve, reject) => {
-          authAjax(`/admins/${adminId}`, {})
-        });
-      } catch (err) {
-        console.log(err)
-        if (err.status === 403) throw err;
-        // otherwise we cannot be sure why the check failed.
-        // e.g. poor connection
-      }
-    }
-    else {
-      throw new Error("Problem with your token")
-    }
+    return new Promise((resolve, reject) => {
+      if (!localStorage.refresh_token) reject(new Error())
+      auth0.refreshToken(localStorage.refresh_token, (err, result) => {
+        if (err) return reject(err);
+
+        localStorage.id_token = localStorage.session_token = result.id_token;
+
+        resolve();
+      })
+    })
+  } catch (err) {
   }
-  catch (err) {
-    console.log(err)
+}
+
+export async function checkLoggedIn() {
+  refreshTokenIfNecessary();
+
+  try {
+    await authAjax(`/monitoring`)
+    return;
+  } catch (err) {
+    console.log(err);
+    if (err.status !== 403) {
+      return;
+    }
     login();
   }
-};
+}
+
+export var lock;
+export var auth0;
+
+export function initAuth0() {
+  auth0 = new Auth0({
+    clientID: env.AUTH0_CID,
+    domain: env.AUTH0_DOMAIN
+  });
+  lock = new Auth0Lock(env.AUTH0_CID, env.AUTH0_DOMAIN, {
+    auth: {
+      params: {
+        scope: 'openid name email app_metadata user_id offline_access'
+      }
+    }
+  });
+
+  function authenticated(what) {
+    localStorage.setItem('id_token', what.idToken);
+    localStorage.setItem('session_token', what.idToken)
+    localStorage.setItem('refresh_token', what.refreshToken)
+
+    lock.getProfile(what.idToken, (err, profile) => {
+      if (!err) {
+        localStorage.setItem('profile', JSON.stringify(profile))
+      }
+    });
+  }
+
+  lock.on('authenticated', authenticated);
+
+  lock.on('hash_parsed', (result) => {
+    console.log(result, 'hash_parsed');
+    if (result === null) {
+      checkLoggedIn();
+    }
+  })
+}
 
 export function logOut() {
     delete localStorage.profile
     delete localStorage.id_token
     delete localStorage.session_token
-
-    login();
+    delete localStorage.refresh_token
+    window.location.reload();
 }
 
-function login() {
-  authAjax('/auth/credentials')
-  .then((response) => {
-    var lock = new Auth0Lock(response.cid, response.domain);
-
-    lock.show({
-      authParams: {
-        scope: 'openid name email app_metadata user_id'
-      }
-    }, (err, profile, token) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-
-      localStorage.setItem('profile', profile);
-      localStorage.setItem('id_token', token);
-      localStorage.setItem('session_token', token)
-
-      window.location.reload();
-    });
-  });
+export function login() {
+  // Else
+  lock.show();
 }

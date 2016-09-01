@@ -201,16 +201,15 @@ module.exports = {
         },
         requery: function(timeout) {
             var self = this;
-            return Promise.resolve(authAjax('/monitoring', {
+            return authAjax('/monitoring', {
                 method: 'GET',
-                dataType: 'json',
             })
-            .then(function (s) {
-                window.ServiceData.services = self.services = s;
+            .then(function (result) {
+                window.ServiceData.services = self.services = result.json();
             })
             .then(null, function (err) {
                 console.log(err);
-            }))
+            })
         },
     },
 }

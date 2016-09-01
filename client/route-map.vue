@@ -88,6 +88,7 @@ import leftPad from 'left-pad'
 import Vue from 'vue'
 import _ from 'lodash'
 import assert from 'assert';
+import querystring from 'querystring';
 
 var authAjax = require('./login').authAjax;
 import {watch} from './loading-overlay';
@@ -160,6 +161,7 @@ module.exports = {
 
     computed: {
         startPoint() {
+          if (!google) return {};
           return {
             url: 'img/routeStartMarker.png',
             size: new google.maps.Size(50, 40),
@@ -168,6 +170,7 @@ module.exports = {
           };
         },
         endPoint() {
+          if (!google) return {};
           return {
             url: 'img/routeEndMarker.png',
             size: new google.maps.Size(50, 40),
@@ -244,18 +247,19 @@ module.exports = {
 
             // Pings of other drivers who also
             // claimed this trip id
-            var pingsPromise = authAjax(`/trips/${this.service}/pingsByTripId`, {
-              data: {
+            var pingsPromise = authAjax(`/trips/${this.service}/pingsByTripId?` + querystring.stringify({
                 startTime: startTime.getTime(),
                 limit: 100000,
-              }
-            })
-            .then((data) => {
-              this.otherPings = _.groupBy(data, 'driverId');
+              })
+            )
+            .then((response) => {
+              this.otherPings = _.groupBy(response.json(), 'driverId');
             })
 
-            var tripPromise = authAjax(`/trips/${this.service}`);
-            var passengersPromise = authAjax(`/trips/${this.service}/passengers`);
+            var tripPromise = authAjax(`/trips/${this.service}`)
+              .then(result => result.json());
+            var passengersPromise = authAjax(`/trips/${this.service}/passengers`)
+            .then(result => result.json());
 
             Promise.all([tripPromise, passengersPromise])
             .then(([stopData, passengerData]) => {

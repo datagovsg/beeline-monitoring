@@ -365,6 +365,7 @@ module.exports = {
     methods: {
         requeryTrips() {
             return authAjax(`/monitoring`)
+            .then(result => result.json())
             .then((status) => {
               this.trip = _.values(status)
                   .find(t => t.trip.id == this.tripId)
@@ -378,7 +379,8 @@ module.exports = {
             })
         },
         requery: function () {
-            return authAjax(`/trips/${this.tripId}/get_passengers`)
+            return authAjax(`/trips/${this.tripId}/passengers`)
+            .then(result => result.json())
             .then((passengers) => {
               this.passengers = passengers
             })
@@ -398,7 +400,7 @@ module.exports = {
 
             authAjax(`/trips/${this.tripId}/messagePassengers`, {
                 method: 'POST',
-                data: {
+                body: {
                     message: this.sms.message,
                 }
             })
@@ -424,10 +426,11 @@ module.exports = {
 
             watch(authAjax(`/trips/${this.tripId}/statuses?messagePassengers=true`, {
                 method: 'POST',
-                data: {
+                body: {
                   status: 'cancelled'
                 }
             })
+            .then(result => result.json())
             .then(() => {
                 this.requery();
                 alert("Trip cancelled! The route list will be updated shortly.");

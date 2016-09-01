@@ -1,21 +1,27 @@
-var Vue = require('vue');
-var Overview = require('./overview.vue');
-var Map = require('./route-map.vue');
-var Navi = require('./nav.vue');
-var PassengerList = require('./route-passengers.vue');
-var VueRouter = require('vue-router');
+import Vue from 'vue';
+import Overview from './overview.vue';
+import Map from './route-map.vue';
+import Navi from './nav.vue';
+import PassengerList from './route-passengers.vue';
+import VueRouter from 'vue-router';
+import VueResource from 'vue-resource';
 import {load} from 'vue-google-maps'
 import LoadingOverlay from './loading-overlay.vue';
-var Login = require('./login');
+import * as Login from './login';
 
-Vue.use(VueRouter);
+Vue.use(VueResource);
+
+Login.initAuth0();
+
 Vue.component('navi', Navi);
 Vue.component('loadingOverlay', LoadingOverlay);
 
 window.Login = Login;
 window.ServiceData = { services: {} };
 
-$(document).ready( function () {
+Vue.use(VueRouter);
+
+window.addEventListener('DOMContentLoaded', function () {
     load({
         key: 'AIzaSyDC38zMc2TIj1-fvtLUdzNsgOQmTBb3N5M'
     });
@@ -39,10 +45,9 @@ $(document).ready( function () {
     /* Load once... */
     Login.authAjax('/monitoring', {
         method: 'GET',
-        dataType: 'json',
     })
-    .done(function (s) {
-        window.ServiceData.services = self.services = s;
+    .then(function (result) {
+        window.ServiceData.services = self.services = result.json();
     })
 
     router.start(Vue.extend({
