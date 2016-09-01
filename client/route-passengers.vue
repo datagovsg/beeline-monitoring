@@ -55,9 +55,7 @@
         v-show="stop.canBoard"
         track-by="id">
         <h3 :class="{'show-passengers': stop.showPassengers}"
-            @click="togglePassengers(stop)">{{$index + 1}}. {{stop.stop.description}} - {{stop.stop.road}}</h3>
-        <h4 :class="{'show-passengers': stop.showPassengers}"
-            @click="togglePassengers(stop)">Boarding time: {{stop.time | formatTime}}</h4>
+            @click="togglePassengers(stop)">({{stop.time | formatTime}}) {{$index + 1}}.   {{stop.stop.description}} - {{stop.stop.road}}</h3>
         <div v-for="passenger in stop.passengers"
             :class="{passenger: true, 'animate-hide': !stop.showPassengers}"
             track-by="id"
@@ -184,19 +182,14 @@ h3:not(.show-passengers)::before {
   content: "[ + ] ";
 }
 
-h4,
 h3 {
     background-color: #ebeff2;
-    margin: 0;
+    margin: 1px 0 0 0;
     padding: 5px;
-}
-h3 {
+    font-size: 80%;
+    color: #888;
     white-space: nowrap;
     overflow-x: auto;
-}
-
-h4 {
-    border-bottom: solid 1px #999;
 }
 
 td.boarding {
@@ -345,7 +338,7 @@ module.exports = {
       var queryAgain = () => {
         this.$queryTimeout = null;
         this.requery()
-        .always(() => {
+        .finally(() => {
           if (this.$queryTimeout === null) {
             this.$queryTimeout = setTimeout(queryAgain, 30000);
           }
