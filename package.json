@@ -6,7 +6,7 @@
     "webpack-watch": "webpack --watch -d",
     "start": "http-server -p 8100 static/",
     "watch": "./generate-env.sh && npm run start & npm run webpack-watch",
-    "deploy": "npm run build && git add static && git commit && git subtree push --prefix static/ origin gh-pages"
+    "deploy": "./build-wrs.sh && git add static && git commit && git subtree push --prefix static/ origin gh-pages"
   },
   "dependencies": {
     "babel-core": "^6.4.0",
