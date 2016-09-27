@@ -58,7 +58,9 @@
             >
               {{selectedPing.time | formatTime}}
               <br/>
-              <i>Driver Id #{{selectedPing.driverId}}</i>
+              <span v-if="driversById && driversById[selectedPing.driverId]">
+                By: <b>{{driversById[selectedPing.driverId].transportCompanies[0].driverCompany.name}}</b>
+              </span>
             </gmap-infowindow>
 
             <ping-line :pings="pings" :options="pingOptions" :sample-rate="5"></ping-line>
@@ -111,6 +113,8 @@ module.exports = {
             zoom: 12,
 
             service: null,
+            trip: {},
+            driversById: {},
             pings: [],
             otherPings: {},
             stops: [],
@@ -238,6 +242,13 @@ module.exports = {
                 this.setBounds()
             }));
         },
+
+        'trip.transportCompanyId'(companyId) {
+          authAjax(`/companies/${companyId}/drivers`)
+          .then((result) => {
+            this.driversById = _.keyBy(result.json(), 'id')
+          })
+        }
     },
 
     methods: {
@@ -262,8 +273,8 @@ module.exports = {
             .then(result => result.json());
 
             Promise.all([tripPromise, passengersPromise])
-            .then(([stopData, passengerData]) => {
-                var stops = stopData.tripStops;
+            .then(([trip, passengerData]) => {
+                var stops = trip.tripStops;
                 var passengers = passengerData;
 
                 var passengersByStopId = _.groupBy(passengers, p => p.boardStopId)
@@ -272,6 +283,7 @@ module.exports = {
                     stops[i].passengers = passengersByStopId[stops[i].id] || [];
                 }
 
+                this.trip = trip;
                 this.stops = stops;
             });
 
