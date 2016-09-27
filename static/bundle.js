@@ -36890,7 +36890,7 @@
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndiv.sec-map .map {\n    position: absolute;\n    left: 0px;\n    width: 100%;\n    bottom: 0px;\n    border: solid 2px red;\n    top: 0px;\n}\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndiv.sec-map .map {\n    position: absolute;\n    left: 0px;\n    width: 100%;\n    bottom: 0px;\n    border: solid 2px red;\n    top: 0px;\n}\n", ""]);
 
 	// exports
 
@@ -36961,7 +36961,9 @@
 	//             >
 	//               {{selectedPing.time | formatTime}}
 	//               <br/>
-	//               <i>Driver Id #{{selectedPing.driverId}}</i>
+	//               <span v-if="driversById && driversById[selectedPing.driverId]">
+	//                 By: <b>{{driversById[selectedPing.driverId].transportCompanies[0].driverCompany.name}}</b>
+	//               </span>
 	//             </gmap-infowindow>
 	//
 	//             <ping-line :pings="pings" :options="pingOptions" :sample-rate="5"></ping-line>
@@ -37036,6 +37038,8 @@
 	      zoom: 12,
 
 	      service: null,
+	      trip: {},
+	      driversById: {},
 	      pings: [],
 	      otherPings: {},
 	      stops: [],
@@ -37164,12 +37168,20 @@
 	      (0, _loadingOverlay.watch)(this.requery().then(function () {
 	        _this3.setBounds();
 	      }));
+	    },
+
+	    'trip.transportCompanyId': function tripTransportCompanyId(companyId) {
+	      var _this4 = this;
+
+	      authAjax('/companies/' + companyId + '/drivers').then(function (result) {
+	        _this4.driversById = _lodash2.default.keyBy(result.json(), 'id');
+	      });
 	    }
 	  },
 
 	  methods: {
 	    requery: function requery() {
-	      var _this4 = this;
+	      var _this5 = this;
 
 	      var startTime = new Date();
 	      startTime.setHours(0, 0, 0, 0);
@@ -37180,7 +37192,7 @@
 	        startTime: startTime.getTime(),
 	        limit: 100000
 	      })).then(function (response) {
-	        _this4.otherPings = _lodash2.default.groupBy(response.json(), 'driverId');
+	        _this5.otherPings = _lodash2.default.groupBy(response.json(), 'driverId');
 	      });
 
 	      var tripPromise = authAjax('/trips/' + this.service).then(function (result) {
@@ -37193,10 +37205,10 @@
 	      Promise.all([tripPromise, passengersPromise]).then(function (_ref) {
 	        var _ref2 = _slicedToArray(_ref, 2);
 
-	        var stopData = _ref2[0];
+	        var trip = _ref2[0];
 	        var passengerData = _ref2[1];
 
-	        var stops = stopData.tripStops;
+	        var stops = trip.tripStops;
 	        var passengers = passengerData;
 
 	        var passengersByStopId = _lodash2.default.groupBy(passengers, function (p) {
@@ -37207,7 +37219,8 @@
 	          stops[i].passengers = passengersByStopId[stops[i].id] || [];
 	        }
 
-	        _this4.stops = stops;
+	        _this5.trip = trip;
+	        _this5.stops = stops;
 	      });
 
 	      return Promise.all([tripPromise, passengersPromise, pingsPromise]);
@@ -39775,7 +39788,7 @@
 /* 334 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div class=\"sec-map\">\n    <navi :service=\"service\"></navi>\n    <div class=\"contents-with-nav\">\n        <gmap-map\n            v-ref:gmap\n            class=\"sec-map\"\n            :center=\"{lng: 103.8, lat: 1.38}\"\n            :zoom=\"12\"\n            >\n            <!-- Start and end markers -->\n            <gmap-marker\n                v-if=\"pings.length > 0\"\n                :position=\"{\n                    lat: pings[pings.length - 1].coordinates.coordinates[1],\n                    lng: pings[pings.length - 1].coordinates.coordinates[0],\n                }\"\n                :icon=\"startPoint\"\n                :title=\"Start\"\n                >\n            </gmap-marker>\n            <gmap-marker\n                v-if=\"pings.length > 0\"\n                :position=\"{\n                    lat: pings[0].coordinates.coordinates[1],\n                    lng: pings[0].coordinates.coordinates[0],\n                }\"\n                :icon=\"endPoint\"\n                :title=\"End\"\n                >\n            </gmap-marker>\n\n            <gmap-marker\n                v-for=\"stop in stops\"\n                track-by='$index'\n                :position=\"stop | stopPosition\"\n                :icon=\"stop | stopIcon $index\"\n                @g-mouseover='selectStop(stop)'\n                @g-mouseout='closeWindow'\n                >\n            </gmap-marker>\n\n            <gmap-infowindow\n                v-if=\"selectedStop != null\"\n                :opened='selectedStop != null'\n                :position=\"selectedStop | stopPosition\"\n            >\n                Scheduled: {{selectedStop.time | formatTime}}\n                <div v-if=\"selectedStop.canBoard\">\n                No. of Passengers: {{selectedStop.passengers.length}}\n                </div>\n            </gmap-infowindow>\n\n            <gmap-infowindow\n                v-if=\"selectedPing != null\"\n                :opened=\"selectedPing != null\"\n                :position=\"selectedPing.coordinates | coordinatesToLatLng\"\n            >\n              {{selectedPing.time | formatTime}}\n              <br/>\n              <i>Driver Id #{{selectedPing.driverId}}</i>\n            </gmap-infowindow>\n\n            <ping-line :pings=\"pings\" :options=\"pingOptions\" :sample-rate=\"5\"></ping-line>\n            <ping-line v-for=\"(driverId,driverPings) in otherPings\" :pings=\"driverPings\"\n                :options=\"otherPingOptions\" :sample-rate=\"5\"></ping-line>\n        </gmap-map>\n    </div>\n</div>\n";
+	module.exports = "\n<div class=\"sec-map\">\n    <navi :service=\"service\"></navi>\n    <div class=\"contents-with-nav\">\n        <gmap-map\n            v-ref:gmap\n            class=\"sec-map\"\n            :center=\"{lng: 103.8, lat: 1.38}\"\n            :zoom=\"12\"\n            >\n            <!-- Start and end markers -->\n            <gmap-marker\n                v-if=\"pings.length > 0\"\n                :position=\"{\n                    lat: pings[pings.length - 1].coordinates.coordinates[1],\n                    lng: pings[pings.length - 1].coordinates.coordinates[0],\n                }\"\n                :icon=\"startPoint\"\n                :title=\"Start\"\n                >\n            </gmap-marker>\n            <gmap-marker\n                v-if=\"pings.length > 0\"\n                :position=\"{\n                    lat: pings[0].coordinates.coordinates[1],\n                    lng: pings[0].coordinates.coordinates[0],\n                }\"\n                :icon=\"endPoint\"\n                :title=\"End\"\n                >\n            </gmap-marker>\n\n            <gmap-marker\n                v-for=\"stop in stops\"\n                track-by='$index'\n                :position=\"stop | stopPosition\"\n                :icon=\"stop | stopIcon $index\"\n                @g-mouseover='selectStop(stop)'\n                @g-mouseout='closeWindow'\n                >\n            </gmap-marker>\n\n            <gmap-infowindow\n                v-if=\"selectedStop != null\"\n                :opened='selectedStop != null'\n                :position=\"selectedStop | stopPosition\"\n            >\n                Scheduled: {{selectedStop.time | formatTime}}\n                <div v-if=\"selectedStop.canBoard\">\n                No. of Passengers: {{selectedStop.passengers.length}}\n                </div>\n            </gmap-infowindow>\n\n            <gmap-infowindow\n                v-if=\"selectedPing != null\"\n                :opened=\"selectedPing != null\"\n                :position=\"selectedPing.coordinates | coordinatesToLatLng\"\n            >\n              {{selectedPing.time | formatTime}}\n              <br/>\n              <span v-if=\"driversById && driversById[selectedPing.driverId]\">\n                By: <b>{{driversById[selectedPing.driverId].transportCompanies[0].driverCompany.name}}</b>\n              </span>\n            </gmap-infowindow>\n\n            <ping-line :pings=\"pings\" :options=\"pingOptions\" :sample-rate=\"5\"></ping-line>\n            <ping-line v-for=\"(driverId,driverPings) in otherPings\" :pings=\"driverPings\"\n                :options=\"otherPingOptions\" :sample-rate=\"5\"></ping-line>\n        </gmap-map>\n    </div>\n</div>\n";
 
 /***/ },
 /* 335 */
