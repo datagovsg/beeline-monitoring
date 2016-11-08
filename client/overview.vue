@@ -22,7 +22,7 @@
         track-by='trip.route.id'
         :class="{
             emergency: service.trip.status === 'cancelled',
-            nobody: service.nobody,
+            nobody: service.nobody && (service.trip.route.tags.indexOf('notify-when-empty') === -1),
         }"
         >
         <td data-column="route">
@@ -35,7 +35,7 @@
             <div style="float: left">
               {{service.trip.route.from}}<br/>
               {{service.trip.route.to}}
-              </div>
+          </div>
         </td>
         <td data-column="led">
             <div :class="{
