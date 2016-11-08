@@ -260,7 +260,7 @@ module.exports = {
             // claimed this trip id
             var pingsPromise = authAjax(`/trips/${this.service}/pingsByTripId?` + querystring.stringify({
                 startTime: startTime.getTime(),
-                limit: 100000,
+                limit: 800,
               })
             )
             .then((response) => {
