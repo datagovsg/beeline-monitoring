@@ -1,24 +1,31 @@
 <template>
-  <!-- Pings -->
-  <gmap-marker v-if="pings"
-                v-for="ping in pings | everyN"
-                track-by="$index"
-                :position="{
-                    lat: ping.coordinates.coordinates[1],
-                    lng: ping.coordinates.coordinates[0],
-                }"
-                :icon="pingPoint"
-                @g-mouseover="selectPing(ping)"
-                >
-  </gmap-marker>
+<!-- Pings -->
+  <template v-if="pings">
+    <gmap-marker
+                  v-for="ping in pings | everyN"
+                  track-by="$index"
+                  :position="{
+                      lat: ping.coordinates.coordinates[1],
+                      lng: ping.coordinates.coordinates[0],
+                  }"
+                  :icon="pingPoint"
+                  @g-mouseover="selectPing(ping)"
+                  >
+    </gmap-marker>
+  </template>
 
   <gmap-polyline v-if="pings" :options="polylineOptions" :path="pingPath">
   </gmap-polyline>
 </template>
 
 <script>
-
-import {Map, load, InfoWindow, Polyline, Marker} from 'vue-google-maps'
+import {
+  Map,
+  load,
+  InfoWindow,
+  Polyline,
+  Marker
+} from 'vue-google-maps'
 import leftPad from 'left-pad'
 import Vue from 'vue'
 import _ from 'lodash'
@@ -40,8 +47,8 @@ export default {
     pingPoint() {
       return {
         url: 'img/routePtMarker.png',
-        size: new google.maps.Size(15,15),
-        origin: new google.maps.Point(0,0),
+        size: new google.maps.Size(15, 15),
+        origin: new google.maps.Point(0, 0),
         anchor: new google.maps.Point(7, 7)
       };
     },
@@ -72,6 +79,4 @@ export default {
     },
   }
 }
-
-
 </script>
