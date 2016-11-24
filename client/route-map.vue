@@ -1,10 +1,19 @@
 <template>
-<div class="sec-map">
+<div>
   <navi :service="service"></navi>
   <div class="contents-with-nav">
+    <div v-if="$route.query.time" class="filter-message">
+      Showing known positions between
+      {{startTime | formatTime}} and
+      {{endTime | formatTime}}.
+
+      <a v-link="{path: '/map/' + service, query: {}}">
+        Clear Filter
+      </a>
+    </div>
     <gmap-map v-ref:gmap class="sec-map" :center="{lng: 103.8, lat: 1.38}" :zoom="12">
 
-      <gmap-marker v-for="stop in stops" track-by='$index' :position="stop | stopPosition" :icon="stop | stopIcon $index" @g-mouseover='selectStop(stop)' @g-mouseout='closeWindow'>
+      <gmap-marker v-for="stop in stops.slice(0,15)" track-by='$index' :position="stop | stopPosition" :icon="stop | stopIcon $index" @g-mouseover='selectStop(stop)' @g-mouseout='closeWindow'>
       </gmap-marker>
 
       <gmap-infowindow v-if="selectedStop != null" :opened='selectedStop != null' :position="selectedStop | stopPosition">
@@ -42,14 +51,22 @@
 </div>
 </template>
 
-<style>
-div.sec-map .map {
-  position: absolute;
+<style scoped>
+.contents-with-nav {
+  display: flex;
+  flex-direction: column;
+}
+.filter-message {
+  padding: 0.5em;
+  border: solid 1px #888;
+}
+.sec-map {
+  flex: 1 1 auto;
   left: 0px;
   width: 100%;
   bottom: 0px;
-  border: solid 2px red;
   top: 0px;
+  position: relative;
 }
 </style>
 
@@ -101,6 +118,10 @@ module.exports = {
       stops: [],
       bounds: null,
 
+      query: {
+        time: null
+      },
+
       selectedStop: null,
       selectedPing: null,
     };
@@ -108,8 +129,6 @@ module.exports = {
 
   route: {
     activate() {
-      this.service = this.$route.params.svc;
-
       // Trigger map change
       Vue.nextTick(() => {
         if (!this.$refs.gmap.mapObject) {
@@ -118,6 +137,11 @@ module.exports = {
         this.$broadcast('g-resize-map')
       });
     },
+    data() {
+      this.service = this.$route.params.svc;
+      this.query.time = this.$route.query.time;
+      this.requery();
+    }
   },
 
   ready: function() {
@@ -176,6 +200,17 @@ module.exports = {
           strokeOpacity: 1.0,
         }
       }
+    },
+
+    startTime() {
+      if (!this.query.time) return null;
+      let time = new Date(this.query.time);
+      return time.getTime() - 15 * 60000
+    },
+    endTime() {
+      if (!this.query.time) return null;
+      let time = new Date(this.query.time);
+      return time.getTime() + 15 * 60000
     }
   },
 
@@ -238,13 +273,25 @@ module.exports = {
 
       // Pings of other drivers who also
       // claimed this trip id
-      var pingsPromise = authAjax(`/trips/${this.service}/pingsByTripId?` + querystring.stringify({
-          startTime: startTime.getTime(),
-          limit: 800,
-        }))
-        .then((response) => {
-          this.otherPings = _.groupBy(response.json(), 'driverId');
-        })
+      var pingsPromise;
+      if (this.$route.query && this.$route.query.time) {
+        let time = new Date(this.$route.query.time);
+
+        pingsPromise = authAjax(`/trips/${this.service}/pingsByTripId?` +
+          querystring.stringify({
+            startTime: this.startTime,
+            endTime: this.endTime,
+          }))
+      } else {
+        pingsPromise = authAjax(`/trips/${this.service}/pingsByTripId?` +
+          querystring.stringify({
+            startTime: startTime.getTime(),
+            limit: 800,
+          }))
+      }
+      pingsPromise = pingsPromise.then((response) => {
+        this.otherPings = _.groupBy(response.json(), 'driverId');
+      })
 
       var tripPromise = authAjax(`/trips/${this.service}`)
         .then(result => result.json());

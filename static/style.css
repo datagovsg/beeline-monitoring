@@ -52,7 +52,7 @@ h4 {
     line-height: 1;
     box-sizing: border-box;
 }
-.backButton, 
+.backButton,
 .backButton a {
     position: absolute;
     display: block;
@@ -62,6 +62,12 @@ h4 {
     top: 0;
     color: #FFFFFF;
     text-decoration: none;
+}
+
+.vue-map-container {
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .contents-with-nav {
@@ -89,5 +95,3 @@ h4 {
 .hide {
     display: none;
 }
-
-

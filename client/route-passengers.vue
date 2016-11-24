@@ -28,8 +28,12 @@
             <th>Scheduled</th>
             <td v-for="tripStop in arrivalInfo"
                 v-show="tripStop.canBoard">
-                <span v-if="tripStop.canBoard">
-                {{ tripStop.time | takeLocalTime }}
+                <a v-link="{
+                    path: '/map/' + tripId,
+                    query: {time: tripStop.time}
+                  }" v-if="tripStop.canBoard">
+                  {{ tripStop.time | takeLocalTime }}
+                </a>
             </td>
         </tr>
         <tr>
