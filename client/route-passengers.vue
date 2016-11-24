@@ -49,65 +49,70 @@
         </tr>
     </table>
 
-
-    <h1>Passenger List</h1>
-    <div v-for="stop in arrivalInfo"
-        v-show="stop.canBoard"
-        track-by="id">
-        <h3 :class="{'show-passengers': stop.showPassengers}"
-            @click="togglePassengers(stop)">({{stop.time | formatTime}}) {{$index + 1}}.   {{stop.stop.description}} - {{stop.stop.road}}</h3>
-        <div v-for="passenger in stop.passengers"
-            :class="{passenger: true, 'animate-hide': !stop.showPassengers}"
-            track-by="id"
-            >
-            {{passenger.index + 1}}.
-            {{passenger.name}}
-            &mdash;
-            {{passenger.telephone}}
-            &mdash;
-            {{passenger.email}}
-        </div>
-    </div>
-
-
-    <h1>Cancel Trip</h1>
-    <form class="cancel-form"
-        method="POST"
-        @submit="confirmAndCancel"
-        >
-        <div v-if="trip.status !== 'cancelled'">
-          <b>Warning</b>: This will cancel the trip, and passengers will be notified
-          via SMS. This action is irreversible.
-
-          <button class="danger-button" type="submit">Cancel Trip</button>
-        </div>
-        <div v-else>
-          This trip has been cancelled.
-        </div>
-    </form>
-
-    <h1>Send message to passengers</h1>
-    <form action="/send_message"
-        method="POST"
-        @submit="confirmAndSend"
-        >
-        <label>
-          Use template:
-          <select v-model="sms.message">
-           <option v-for="mt in messageTemplates"
-              :value="mt[1]"
+    <template v-if="isPublicRoute">
+      <h1>Passenger List</h1>
+      <div v-for="stop in arrivalInfo"
+          v-show="stop.canBoard"
+          track-by="id">
+          <h3 :class="{'show-passengers': stop.showPassengers}"
+              @click="togglePassengers(stop)">({{stop.time | formatTime}}) {{$index + 1}}.   {{stop.stop.description}} - {{stop.stop.road}}</h3>
+          <div v-for="passenger in stop.passengers"
+              :class="{passenger: true, 'animate-hide': !stop.showPassengers}"
+              track-by="id"
               >
-              {{mt[0]}}
-           </option>
-          </select>
-        </label>
-        <input type="hidden" name="session_token" value="{{sessionToken}}" />
-        <input type="hidden" name="service" value="{{service}}" />
-        <textarea v-model="sms.message"
-            style="display: block; width: 100%; height: 100px"
-            name="message"></textarea>
-        <button class="message-button" type="submit">Submit</button>
-    </form>
+              {{passenger.index + 1}}.
+              {{passenger.name}}
+              &mdash;
+              {{passenger.telephone}}
+              &mdash;
+              {{passenger.email}}
+          </div>
+      </div>
+
+      <h1>Cancel Trip</h1>
+      <form class="cancel-form"
+          method="POST"
+          @submit="confirmAndCancel"
+          >
+          <div v-if="trip.status !== 'cancelled'">
+            <b>Warning</b>: This will cancel the trip, and passengers will be notified
+            via SMS. This action is irreversible.
+
+            <button class="danger-button" type="submit">Cancel Trip</button>
+          </div>
+          <div v-else>
+            This trip has been cancelled.
+          </div>
+      </form>
+
+      <h1>Send message to passengers</h1>
+      <form method="POST" @submit="confirmAndSend">
+          <label>
+            Use template:
+            <select v-model="sms.message">
+             <option v-for="mt in messageTemplates"
+                :value="mt[1]"
+                >
+                {{mt[0]}}
+             </option>
+            </select>
+          </label>
+          <input type="hidden" name="session_token" value="{{sessionToken}}" />
+          <input type="hidden" name="service" value="{{service}}" />
+          <textarea v-model="sms.message"
+              style="display: block; width: 100%; height: 100px"
+              name="message"></textarea>
+          <button class="message-button" type="submit">Submit</button>
+      </form>
+    </template>
+
+    <template v-if="isTrackingRoute">
+      <h1>Update Route Announcements</h1>
+      <route-announcement-form :trip-id="tripId">
+      </route-announcement-form>
+    </template>
+
+    <!-- space for the user to scroll down -->
     <br/>
     <br/>
     <br/>
@@ -261,9 +266,7 @@ module.exports = {
             ServiceData: window.ServiceData,
 
             trip: {
-              trip: {
-                tripStops: [],
-              }
+              tripStops: [],
             },
             passengers: [],
 
@@ -271,6 +274,10 @@ module.exports = {
                 message: MessageTemplates[0][1]
             }
         };
+    },
+
+    components: {
+      'RouteAnnouncementForm': require('./route-announcement-form.vue')
     },
 
     route: {
@@ -320,8 +327,15 @@ module.exports = {
             }
           }
 
-          console.log(stops.map(s => _.assign({}, s)))
           return stops;
+        },
+        isPublicRoute() {
+          let routeTags = _.get(this.trip, 'route.tags', [])
+          return routeTags.indexOf('public') != -1
+        },
+        isTrackingRoute() {
+          let routeTags = _.get(this.trip, 'route.tags', [])
+          return routeTags.indexOf('lite') != -1
         }
     },
 
