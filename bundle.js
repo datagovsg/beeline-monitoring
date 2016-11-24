@@ -36871,8 +36871,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-map.vue", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-map.vue");
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-234e7b63&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-map.vue", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-234e7b63&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-map.vue");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -36890,7 +36890,7 @@
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndiv.sec-map .map {\n  position: absolute;\n  left: 0px;\n  width: 100%;\n  bottom: 0px;\n  border: solid 2px red;\n  top: 0px;\n}\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.contents-with-nav[_v-234e7b63] {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n}\n.filter-message[_v-234e7b63] {\n  padding: 0.5em;\n  border: solid 1px #888;\n}\n.sec-map[_v-234e7b63] {\n  -webkit-box-flex: 1;\n      -ms-flex: 1 1 auto;\n          flex: 1 1 auto;\n  left: 0px;\n  width: 100%;\n  bottom: 0px;\n  top: 0px;\n  position: relative;\n}\n", ""]);
 
 	// exports
 
@@ -36902,12 +36902,21 @@
 	'use strict';
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); // <template>
-	// <div class="sec-map">
+	// <div>
 	//   <navi :service="service"></navi>
 	//   <div class="contents-with-nav">
+	//     <div v-if="$route.query.time" class="filter-message">
+	//       Showing known positions between
+	//       {{startTime | formatTime}} and
+	//       {{endTime | formatTime}}.
+	//
+	//       <a v-link="{path: '/map/' + service, query: {}}">
+	//         Clear Filter
+	//       </a>
+	//     </div>
 	//     <gmap-map v-ref:gmap class="sec-map" :center="{lng: 103.8, lat: 1.38}" :zoom="12">
 	//
-	//       <gmap-marker v-for="stop in stops" track-by='$index' :position="stop | stopPosition" :icon="stop | stopIcon $index" @g-mouseover='selectStop(stop)' @g-mouseout='closeWindow'>
+	//       <gmap-marker v-for="stop in stops.slice(0,15)" track-by='$index' :position="stop | stopPosition" :icon="stop | stopIcon $index" @g-mouseover='selectStop(stop)' @g-mouseout='closeWindow'>
 	//       </gmap-marker>
 	//
 	//       <gmap-infowindow v-if="selectedStop != null" :opened='selectedStop != null' :position="selectedStop | stopPosition">
@@ -36945,14 +36954,22 @@
 	// </div>
 	// </template>
 	//
-	// <style>
-	// div.sec-map .map {
-	//   position: absolute;
+	// <style scoped>
+	// .contents-with-nav {
+	//   display: flex;
+	//   flex-direction: column;
+	// }
+	// .filter-message {
+	//   padding: 0.5em;
+	//   border: solid 1px #888;
+	// }
+	// .sec-map {
+	//   flex: 1 1 auto;
 	//   left: 0px;
 	//   width: 100%;
 	//   bottom: 0px;
-	//   border: solid 2px red;
 	//   top: 0px;
+	//   position: relative;
 	// }
 	// </style>
 	//
@@ -37020,6 +37037,10 @@
 	      stops: [],
 	      bounds: null,
 
+	      query: {
+	        time: null
+	      },
+
 	      selectedStop: null,
 	      selectedPing: null
 	    };
@@ -37030,8 +37051,6 @@
 	    activate: function activate() {
 	      var _this = this;
 
-	      this.service = this.$route.params.svc;
-
 	      // Trigger map change
 	      _vue2.default.nextTick(function () {
 	        if (!_this.$refs.gmap.mapObject) {
@@ -37039,6 +37058,11 @@
 	        }
 	        _this.$broadcast('g-resize-map');
 	      });
+	    },
+	    data: function data() {
+	      this.service = this.$route.params.svc;
+	      this.query.time = this.$route.query.time;
+	      this.requery();
 	    }
 	  },
 
@@ -37101,6 +37125,16 @@
 	          strokeOpacity: 1.0
 	        }
 	      };
+	    },
+	    startTime: function startTime() {
+	      if (!this.query.time) return null;
+	      var time = new Date(this.query.time);
+	      return time.getTime() - 15 * 60000;
+	    },
+	    endTime: function endTime() {
+	      if (!this.query.time) return null;
+	      var time = new Date(this.query.time);
+	      return time.getTime() + 15 * 60000;
 	    }
 	  },
 
@@ -37162,10 +37196,21 @@
 
 	      // Pings of other drivers who also
 	      // claimed this trip id
-	      var pingsPromise = authAjax('/trips/' + this.service + '/pingsByTripId?' + _querystring2.default.stringify({
-	        startTime: startTime.getTime(),
-	        limit: 800
-	      })).then(function (response) {
+	      var pingsPromise;
+	      if (this.$route.query && this.$route.query.time) {
+	        var time = new Date(this.$route.query.time);
+
+	        pingsPromise = authAjax('/trips/' + this.service + '/pingsByTripId?' + _querystring2.default.stringify({
+	          startTime: this.startTime,
+	          endTime: this.endTime
+	        }));
+	      } else {
+	        pingsPromise = authAjax('/trips/' + this.service + '/pingsByTripId?' + _querystring2.default.stringify({
+	          startTime: startTime.getTime(),
+	          limit: 800
+	        }));
+	      }
+	      pingsPromise = pingsPromise.then(function (response) {
 	        _this5.otherPings = _lodash2.default.groupBy(response.json(), 'driverId');
 	      });
 
@@ -39773,7 +39818,7 @@
 /* 334 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div class=\"sec-map\">\n  <navi :service=\"service\"></navi>\n  <div class=\"contents-with-nav\">\n    <gmap-map v-ref:gmap class=\"sec-map\" :center=\"{lng: 103.8, lat: 1.38}\" :zoom=\"12\">\n\n      <gmap-marker v-for=\"stop in stops\" track-by='$index' :position=\"stop | stopPosition\" :icon=\"stop | stopIcon $index\" @g-mouseover='selectStop(stop)' @g-mouseout='closeWindow'>\n      </gmap-marker>\n\n      <gmap-infowindow v-if=\"selectedStop != null\" :opened='selectedStop != null' :position=\"selectedStop | stopPosition\">\n        Scheduled: {{selectedStop.time | formatTime}}\n        <div v-if=\"selectedStop.canBoard\">\n          No. of Passengers: {{selectedStop.passengers.length}}\n        </div>\n      </gmap-infowindow>\n\n      <gmap-infowindow v-if=\"selectedPing != null\" :opened=\"selectedPing != null\" :position=\"selectedPing.coordinates | coordinatesToLatLng\">\n        {{selectedPing.time | formatTime}}\n        <br/>\n        <span v-if=\"driversById && driversById[selectedPing.driverId]\">\n                By: <b>{{driversById[selectedPing.driverId].transportCompanies[0].driverCompany.name}}</b>\n              </span>\n      </gmap-infowindow>\n\n      <!-- <ping-line :pings=\"pings\" :options=\"pingOptions\" :sample-rate=\"5\"></ping-line> -->\n\n      <!-- Start and end markers -->\n      <template v-for=\"(driverId,driverPings) in otherPings\">\n        <gmap-marker :position=\"firstPing(driverPings)\"\n          :icon=\"startPoint\" :title=\"Start\">\n        </gmap-marker>\n\n        <gmap-marker :position=\"lastPing(driverPings)\"\n          :icon=\"endPoint\" :title=\"End\">\n        </gmap-marker>\n\n        <ping-line :pings=\"driverPings\" :options=\"otherPingOptions\" :sample-rate=\"5\">\n        </ping-line>\n      </template>\n    </gmap-map>\n  </div>\n</div>\n";
+	module.exports = "\n<div _v-234e7b63=\"\">\n  <navi :service=\"service\" _v-234e7b63=\"\"></navi>\n  <div class=\"contents-with-nav\" _v-234e7b63=\"\">\n    <div v-if=\"$route.query.time\" class=\"filter-message\" _v-234e7b63=\"\">\n      Showing known positions between\n      {{startTime | formatTime}} and\n      {{endTime | formatTime}}.\n\n      <a v-link=\"{path: '/map/' + service, query: {}}\" _v-234e7b63=\"\">\n        Clear Filter\n      </a>\n    </div>\n    <gmap-map v-ref:gmap=\"\" class=\"sec-map\" :center=\"{lng: 103.8, lat: 1.38}\" :zoom=\"12\" _v-234e7b63=\"\">\n\n      <gmap-marker v-for=\"stop in stops.slice(0,15)\" track-by=\"$index\" :position=\"stop | stopPosition\" :icon=\"stop | stopIcon $index\" @g-mouseover=\"selectStop(stop)\" @g-mouseout=\"closeWindow\" _v-234e7b63=\"\">\n      </gmap-marker>\n\n      <gmap-infowindow v-if=\"selectedStop != null\" :opened=\"selectedStop != null\" :position=\"selectedStop | stopPosition\" _v-234e7b63=\"\">\n        Scheduled: {{selectedStop.time | formatTime}}\n        <div v-if=\"selectedStop.canBoard\" _v-234e7b63=\"\">\n          No. of Passengers: {{selectedStop.passengers.length}}\n        </div>\n      </gmap-infowindow>\n\n      <gmap-infowindow v-if=\"selectedPing != null\" :opened=\"selectedPing != null\" :position=\"selectedPing.coordinates | coordinatesToLatLng\" _v-234e7b63=\"\">\n        {{selectedPing.time | formatTime}}\n        <br _v-234e7b63=\"\">\n        <span v-if=\"driversById &amp;&amp; driversById[selectedPing.driverId]\" _v-234e7b63=\"\">\n                By: <b _v-234e7b63=\"\">{{driversById[selectedPing.driverId].transportCompanies[0].driverCompany.name}}</b>\n              </span>\n      </gmap-infowindow>\n\n      <!-- <ping-line :pings=\"pings\" :options=\"pingOptions\" :sample-rate=\"5\"></ping-line> -->\n\n      <!-- Start and end markers -->\n      <template v-for=\"(driverId,driverPings) in otherPings\">\n        <gmap-marker :position=\"firstPing(driverPings)\" :icon=\"startPoint\" :title=\"Start\" _v-234e7b63=\"\">\n        </gmap-marker>\n\n        <gmap-marker :position=\"lastPing(driverPings)\" :icon=\"endPoint\" :title=\"End\" _v-234e7b63=\"\">\n        </gmap-marker>\n\n        <ping-line :pings=\"driverPings\" :options=\"otherPingOptions\" :sample-rate=\"5\" _v-234e7b63=\"\">\n        </ping-line>\n      </template>\n    </gmap-map>\n  </div>\n</div>\n";
 
 /***/ },
 /* 335 */
@@ -39970,7 +40015,7 @@
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nform[_v-d6983e3c] {\n    padding: 1em;\n    width: 100%;\n    border: solid 1px #888;\n}\nlabel select[_v-d6983e3c]{\n    margin: 1em;\n}\nbutton.message-button[_v-d6983e3c] {\n    padding: 10px 30px;\n    display: block;\n    margin: 10px auto;\n    width: 80%;\n\n    border: solid 1px black;\n    background-color: #ccc;\n}\ntable.arrivalInfo[_v-d6983e3c] {\n    border-collapse: collapse;\n    border-spacing: 0px;\n}\n\n.arrivalInfo th[_v-d6983e3c] {\n    background-color: #ebeff2;\n}\n.arrivalInfo th[_v-d6983e3c],\n.arrivalInfo td[_v-d6983e3c] {\n    min-width: 50px;\n    border: solid 1px #CCCCCC;\n    padding: 5px;\n}\n\n.passenger[_v-d6983e3c] {\n    padding: 5px;\n}\n.passenger[_v-d6983e3c]:nth-child(even) {\n  background-color: #FFF;\n}\n.passenger[_v-d6983e3c]:nth-child(odd) {\n  background-color: #EEE;\n}\n\n.passenger.animate-hide[_v-d6983e3c] {\n  max-height: 0;\n  padding-top: 0;\n  padding-bottom: 0;\n  -webkit-transition: 0.1s linear all;\n  transition: 0.1s linear all;\n  overflow: hidden;\n}\n.passenger[_v-d6983e3c]:not(.animate-hide) {\n  max-height: 100px;\n  padding-top: 5px;\n  padding-bottom: 5px;\n  -webkit-transition: 0.1s linear all;\n  transition: 0.1s linear all;\n}\n\nh3.show-passengers[_v-d6983e3c]::before {\n  content: \"[ - ] \";\n}\nh3[_v-d6983e3c]:not(.show-passengers)::before {\n  content: \"[ + ] \";\n}\n\nh3[_v-d6983e3c] {\n    background-color: #ebeff2;\n    margin: 1px 0 0 0;\n    padding: 5px;\n    font-size: 80%;\n    color: #888;\n    white-space: nowrap;\n    overflow-x: auto;\n}\n\ntd.boarding[_v-d6983e3c] {\n    background-color: #19c3a5;\n}\ntd.alighting[_v-d6983e3c]:not(.boarding) {\n    background-color: #ff7070;\n}\n\n.cancel-form[_v-d6983e3c] {\n  background-color: #FFDDDD;\n}\n.danger-button[_v-d6983e3c] {\n  background-color: #FF0000;\n  color: #FFFFFF;\n}\n\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nform[_v-d6983e3c] {\n    padding: 1em;\n    width: 100%;\n    border: solid 1px #888;\n}\nlabel select[_v-d6983e3c]{\n    margin: 1em;\n}\nbutton.message-button[_v-d6983e3c] {\n    padding: 10px 30px;\n    display: block;\n    margin: 10px auto;\n    width: 80%;\n\n    border: solid 1px black;\n    background-color: #ccc;\n}\ntable.arrivalInfo[_v-d6983e3c] {\n    border-collapse: collapse;\n    border-spacing: 0px;\n}\n\n.arrivalInfo th[_v-d6983e3c] {\n    background-color: #ebeff2;\n}\n.arrivalInfo th[_v-d6983e3c],\n.arrivalInfo td[_v-d6983e3c] {\n    min-width: 50px;\n    border: solid 1px #CCCCCC;\n    padding: 5px;\n}\n\n.passenger[_v-d6983e3c] {\n    padding: 5px;\n}\n.passenger[_v-d6983e3c]:nth-child(even) {\n  background-color: #FFF;\n}\n.passenger[_v-d6983e3c]:nth-child(odd) {\n  background-color: #EEE;\n}\n\n.passenger.animate-hide[_v-d6983e3c] {\n  max-height: 0;\n  padding-top: 0;\n  padding-bottom: 0;\n  -webkit-transition: 0.1s linear all;\n  transition: 0.1s linear all;\n  overflow: hidden;\n}\n.passenger[_v-d6983e3c]:not(.animate-hide) {\n  max-height: 100px;\n  padding-top: 5px;\n  padding-bottom: 5px;\n  -webkit-transition: 0.1s linear all;\n  transition: 0.1s linear all;\n}\n\nh3.show-passengers[_v-d6983e3c]::before {\n  content: \"[ - ] \";\n}\nh3[_v-d6983e3c]:not(.show-passengers)::before {\n  content: \"[ + ] \";\n}\n\nh3[_v-d6983e3c] {\n    background-color: #ebeff2;\n    margin: 1px 0 0 0;\n    padding: 5px;\n    font-size: 80%;\n    color: #888;\n    white-space: nowrap;\n    overflow-x: auto;\n}\n\ntd.boarding[_v-d6983e3c] {\n    background-color: #19c3a5;\n}\ntd.alighting[_v-d6983e3c]:not(.boarding) {\n    background-color: #ff7070;\n}\n\n.cancel-form[_v-d6983e3c] {\n  background-color: #FFDDDD;\n}\n.danger-button[_v-d6983e3c] {\n  background-color: #FF0000;\n  color: #FFFFFF;\n}\n\n", ""]);
 
 	// exports
 
@@ -40000,6 +40045,7 @@
 	//             <td v-for="tripStop in arrivalInfo"
 	//                 :class="{ boarding: tripStop.canBoard,
 	//                           alighting: tripStop.canAlight }"
+	//                 title="{{tripStop.stop.description}}"
 	//                 v-show="tripStop.canBoard">
 	//                 {{ $index + 1 }}
 	//                 {{ tripStop.canBoard ? '↗' : '↙' }}
@@ -40018,8 +40064,12 @@
 	//             <th>Scheduled</th>
 	//             <td v-for="tripStop in arrivalInfo"
 	//                 v-show="tripStop.canBoard">
-	//                 <span v-if="tripStop.canBoard">
-	//                 {{ tripStop.time | takeLocalTime }}
+	//                 <a v-link="{
+	//                     path: '/map/' + tripId,
+	//                     query: {time: tripStop.time}
+	//                   }" v-if="tripStop.canBoard">
+	//                   {{ tripStop.time | takeLocalTime }}
+	//                 </a>
 	//             </td>
 	//         </tr>
 	//         <tr>
@@ -40617,7 +40667,7 @@
 /* 348 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div _v-d6983e3c=\"\">\n    <navi :service=\"tripId\" _v-d6983e3c=\"\"></navi>\n    <div class=\"contents-with-nav\" _v-d6983e3c=\"\">\n    <h2 _v-d6983e3c=\"\">Boarding stops</h2>\n    <table class=\"arrivalInfo\" _v-d6983e3c=\"\">\n        <tbody _v-d6983e3c=\"\"><tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Stop number</th>\n            <td v-for=\"tripStop in arrivalInfo\" :class=\"{ boarding: tripStop.canBoard,\n                          alighting: tripStop.canAlight }\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ $index + 1 }}\n                {{ tripStop.canBoard ? '↗' : '↙' }}\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Pax boarding</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                  {{ tripStop.passengers.length  }}\n                </span>\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Scheduled</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.time | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Actual</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Diff (mins)</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | minsDiff tripStop.time }}\n            </span></td>\n        </tr>\n    </tbody></table>\n\n    <template v-if=\"isPublicRoute\">\n      <h1 _v-d6983e3c=\"\">Passenger List</h1>\n      <div v-for=\"stop in arrivalInfo\" v-show=\"stop.canBoard\" track-by=\"id\" _v-d6983e3c=\"\">\n          <h3 :class=\"{'show-passengers': stop.showPassengers}\" @click=\"togglePassengers(stop)\" _v-d6983e3c=\"\">({{stop.time | formatTime}}) {{$index + 1}}.   {{stop.stop.description}} - {{stop.stop.road}}</h3>\n          <div v-for=\"passenger in stop.passengers\" :class=\"{passenger: true, 'animate-hide': !stop.showPassengers}\" track-by=\"id\" _v-d6983e3c=\"\">\n              {{passenger.index + 1}}.\n              {{passenger.name}}\n              —\n              {{passenger.telephone}}\n              —\n              {{passenger.email}}\n          </div>\n      </div>\n\n      <h1 _v-d6983e3c=\"\">Cancel Trip</h1>\n      <form class=\"cancel-form\" method=\"POST\" @submit=\"confirmAndCancel\" _v-d6983e3c=\"\">\n          <div v-if=\"trip.status !== 'cancelled'\" _v-d6983e3c=\"\">\n            <b _v-d6983e3c=\"\">Warning</b>: This will cancel the trip, and passengers will be notified\n            via SMS. This action is irreversible.\n\n            <button class=\"danger-button\" type=\"submit\" _v-d6983e3c=\"\">Cancel Trip</button>\n          </div>\n          <div v-else=\"\" _v-d6983e3c=\"\">\n            This trip has been cancelled.\n          </div>\n      </form>\n\n      <h1 _v-d6983e3c=\"\">Send message to passengers</h1>\n      <form method=\"POST\" @submit=\"confirmAndSend\" _v-d6983e3c=\"\">\n          <label _v-d6983e3c=\"\">\n            Use template:\n            <select v-model=\"sms.message\" _v-d6983e3c=\"\">\n             <option v-for=\"mt in messageTemplates\" :value=\"mt[1]\" _v-d6983e3c=\"\">\n                {{mt[0]}}\n             </option>\n            </select>\n          </label>\n          <input type=\"hidden\" name=\"session_token\" value=\"{{sessionToken}}\" _v-d6983e3c=\"\">\n          <input type=\"hidden\" name=\"service\" value=\"{{service}}\" _v-d6983e3c=\"\">\n          <textarea v-model=\"sms.message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-d6983e3c=\"\"></textarea>\n          <button class=\"message-button\" type=\"submit\" _v-d6983e3c=\"\">Submit</button>\n      </form>\n    </template>\n\n    <template v-if=\"isTrackingRoute\">\n      <h1 _v-d6983e3c=\"\">Update Route Announcements</h1>\n      <route-announcement-form :trip-id=\"tripId\" _v-d6983e3c=\"\">\n      </route-announcement-form>\n    </template>\n\n    <!-- space for the user to scroll down -->\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n\n    </div>\n</div>\n";
+	module.exports = "\n<div _v-d6983e3c=\"\">\n    <navi :service=\"tripId\" _v-d6983e3c=\"\"></navi>\n    <div class=\"contents-with-nav\" _v-d6983e3c=\"\">\n    <h2 _v-d6983e3c=\"\">Boarding stops</h2>\n    <table class=\"arrivalInfo\" _v-d6983e3c=\"\">\n        <tbody _v-d6983e3c=\"\"><tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Stop number</th>\n            <td v-for=\"tripStop in arrivalInfo\" :class=\"{ boarding: tripStop.canBoard,\n                          alighting: tripStop.canAlight }\" title=\"{{tripStop.stop.description}}\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ $index + 1 }}\n                {{ tripStop.canBoard ? '↗' : '↙' }}\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Pax boarding</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                  {{ tripStop.passengers.length  }}\n                </span>\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Scheduled</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <a v-link=\"{\n                    path: '/map/' + tripId,\n                    query: {time: tripStop.time}\n                  }\" v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                  {{ tripStop.time | takeLocalTime }}\n                </a>\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Actual</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Diff (mins)</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | minsDiff tripStop.time }}\n            </span></td>\n        </tr>\n    </tbody></table>\n\n    <template v-if=\"isPublicRoute\">\n      <h1 _v-d6983e3c=\"\">Passenger List</h1>\n      <div v-for=\"stop in arrivalInfo\" v-show=\"stop.canBoard\" track-by=\"id\" _v-d6983e3c=\"\">\n          <h3 :class=\"{'show-passengers': stop.showPassengers}\" @click=\"togglePassengers(stop)\" _v-d6983e3c=\"\">({{stop.time | formatTime}}) {{$index + 1}}.   {{stop.stop.description}} - {{stop.stop.road}}</h3>\n          <div v-for=\"passenger in stop.passengers\" :class=\"{passenger: true, 'animate-hide': !stop.showPassengers}\" track-by=\"id\" _v-d6983e3c=\"\">\n              {{passenger.index + 1}}.\n              {{passenger.name}}\n              —\n              {{passenger.telephone}}\n              —\n              {{passenger.email}}\n          </div>\n      </div>\n\n      <h1 _v-d6983e3c=\"\">Cancel Trip</h1>\n      <form class=\"cancel-form\" method=\"POST\" @submit=\"confirmAndCancel\" _v-d6983e3c=\"\">\n          <div v-if=\"trip.status !== 'cancelled'\" _v-d6983e3c=\"\">\n            <b _v-d6983e3c=\"\">Warning</b>: This will cancel the trip, and passengers will be notified\n            via SMS. This action is irreversible.\n\n            <button class=\"danger-button\" type=\"submit\" _v-d6983e3c=\"\">Cancel Trip</button>\n          </div>\n          <div v-else=\"\" _v-d6983e3c=\"\">\n            This trip has been cancelled.\n          </div>\n      </form>\n\n      <h1 _v-d6983e3c=\"\">Send message to passengers</h1>\n      <form method=\"POST\" @submit=\"confirmAndSend\" _v-d6983e3c=\"\">\n          <label _v-d6983e3c=\"\">\n            Use template:\n            <select v-model=\"sms.message\" _v-d6983e3c=\"\">\n             <option v-for=\"mt in messageTemplates\" :value=\"mt[1]\" _v-d6983e3c=\"\">\n                {{mt[0]}}\n             </option>\n            </select>\n          </label>\n          <input type=\"hidden\" name=\"session_token\" value=\"{{sessionToken}}\" _v-d6983e3c=\"\">\n          <input type=\"hidden\" name=\"service\" value=\"{{service}}\" _v-d6983e3c=\"\">\n          <textarea v-model=\"sms.message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-d6983e3c=\"\"></textarea>\n          <button class=\"message-button\" type=\"submit\" _v-d6983e3c=\"\">Submit</button>\n      </form>\n    </template>\n\n    <template v-if=\"isTrackingRoute\">\n      <h1 _v-d6983e3c=\"\">Update Route Announcements</h1>\n      <route-announcement-form :trip-id=\"tripId\" _v-d6983e3c=\"\">\n      </route-announcement-form>\n    </template>\n\n    <!-- space for the user to scroll down -->\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n\n    </div>\n</div>\n";
 
 /***/ },
 /* 349 */
