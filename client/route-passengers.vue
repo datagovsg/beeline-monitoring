@@ -9,6 +9,7 @@
             <td v-for="tripStop in arrivalInfo"
                 :class="{ boarding: tripStop.canBoard,
                           alighting: tripStop.canAlight }"
+                title="{{tripStop.stop.description}}"
                 v-show="tripStop.canBoard">
                 {{ $index + 1 }}
                 {{ tripStop.canBoard ? '↗' : '↙' }}
