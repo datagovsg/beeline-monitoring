@@ -8140,17 +8140,17 @@
 
 	var _routePassengers2 = _interopRequireDefault(_routePassengers);
 
-	var _vueRouter = __webpack_require__(349);
+	var _vueRouter = __webpack_require__(351);
 
 	var _vueRouter2 = _interopRequireDefault(_vueRouter);
 
-	var _vueResource = __webpack_require__(350);
+	var _vueResource = __webpack_require__(352);
 
 	var _vueResource2 = _interopRequireDefault(_vueResource);
 
 	var _vueGoogleMaps = __webpack_require__(324);
 
-	var _loadingOverlay = __webpack_require__(351);
+	var _loadingOverlay = __webpack_require__(353);
 
 	var _loadingOverlay2 = _interopRequireDefault(_loadingOverlay);
 
@@ -39962,7 +39962,7 @@
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/route-passengers.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(348)
+	__vue_template__ = __webpack_require__(350)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -40579,12 +40579,13 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(346)
+	__webpack_require__(346)
+	__vue_script__ = __webpack_require__(348)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/route-announcement-form.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(347)
+	__vue_template__ = __webpack_require__(349)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -40606,19 +40607,87 @@
 /* 346 */
 /***/ function(module, exports, __webpack_require__) {
 
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(347);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(305)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-44387651&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-announcement-form.vue", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-44387651&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-announcement-form.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 347 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(304)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.message-box[_v-44387651] {\n  border: solid 1px #888;\n  background-color: #FFD;\n  padding: 0.5em;\n  font-size: 120%;\n  display: inline-block;\n}\nlabel[_v-44387651] {\n  display: block;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 348 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	// <template>
+	//   <div>
+	//     <b>Current Message:</b>
+	//     <i v-if="currentMessage === null">Loading...</i>
+	//     <i v-if="currentMessage === ''">(none)</i>
+	//     <span class="message-box" v-if="currentMessage">
+	//       {{currentMessage}}
+	//     </span>
+	//   </div>
 	//   <form @submit="updateRouteAnnouncements">
-	//       <textarea v-model="message"
-	//           style="display: block; width: 100%; height: 100px"
-	//           name="message"></textarea>
+	//     <div>
+	//       <label>
+	//         New message (leave blank to clear the message)<br/>
+	//         <textarea v-model="message"
+	//             style="display: block; width: 100%; height: 100px"
+	//             name="message"></textarea>
+	//       </label>
+	//     </div>
+	//     <div>
 	//       <button class="message-button" type="submit">Submit</button>
+	//     </div>
 	//   </form>
 	// </template>
+	//
+	// <style scoped>
+	// .message-box {
+	//   border: solid 1px #888;
+	//   background-color: #FFD;
+	//   padding: 0.5em;
+	//   font-size: 120%;
+	//   display: inline-block;
+	// }
+	// label {
+	//   display: block;
+	// }
+	// </style>
 	//
 	// <script>
 
@@ -40629,14 +40698,40 @@
 	  props: ['tripId'],
 
 	  data: function data() {
+	    this.requery();
 	    return {
-	      message: ''
+	      message: '',
+	      currentMessage: null
 	    };
 	  },
 
 
+	  watch: {
+	    tripId: function tripId() {
+	      this.requery();
+	    }
+	  },
+
 	  methods: {
+	    requery: function requery() {
+	      var _this = this;
+
+	      if (this.tripId) {
+	        authAjax('/trips/' + this.tripId + '/statuses', {
+	          method: 'GET'
+	        }).then(function (r) {
+	          return r.json();
+	        }).then(function (result) {
+	          // Get and show the one with the latest time
+	          if (result.length === 0) _this.currentMessage = '';else _this.currentMessage = _.maxBy(result, 'createdAt').message;
+	        }).then(function () {});
+	      } else {
+	        this.currentMessage = null;
+	      }
+	    },
 	    updateRouteAnnouncements: function updateRouteAnnouncements($event) {
+	      var _this2 = this;
+
 	      event.preventDefault();
 
 	      authAjax('/trips/' + this.tripId + '/statuses', {
@@ -40645,8 +40740,10 @@
 	          status: 'normal',
 	          message: this.message
 	        }
-	      }).then(function () {
-	        alert("Announcement updated!");
+	      }).then(function (r) {
+	        return r.json();
+	      }).then(function (result) {
+	        _this2.requery();
 	      }).then(null, function (err) {
 	        alert("There was an error updating the announcements");
 	      });
@@ -40658,19 +40755,19 @@
 	// </script>
 
 /***/ },
-/* 347 */
+/* 349 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<form @submit=\"updateRouteAnnouncements\">\n    <textarea v-model=\"message\"\n        style=\"display: block; width: 100%; height: 100px\"\n        name=\"message\"></textarea>\n    <button class=\"message-button\" type=\"submit\">Submit</button>\n</form>\n";
+	module.exports = "\n<div _v-44387651=\"\">\n  <b _v-44387651=\"\">Current Message:</b>\n  <i v-if=\"currentMessage === null\" _v-44387651=\"\">Loading...</i>\n  <i v-if=\"currentMessage === ''\" _v-44387651=\"\">(none)</i>\n  <span class=\"message-box\" v-if=\"currentMessage\" _v-44387651=\"\">\n    {{currentMessage}}\n  </span>\n</div>\n<form @submit=\"updateRouteAnnouncements\" _v-44387651=\"\">\n  <div _v-44387651=\"\">\n    <label _v-44387651=\"\">\n      New message (leave blank to clear the message)<br _v-44387651=\"\">\n      <textarea v-model=\"message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-44387651=\"\"></textarea>\n    </label>\n  </div>\n  <div _v-44387651=\"\">\n    <button class=\"message-button\" type=\"submit\" _v-44387651=\"\">Submit</button>\n  </div>\n</form>\n";
 
 /***/ },
-/* 348 */
+/* 350 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<div _v-d6983e3c=\"\">\n    <navi :service=\"tripId\" _v-d6983e3c=\"\"></navi>\n    <div class=\"contents-with-nav\" _v-d6983e3c=\"\">\n    <h2 _v-d6983e3c=\"\">Boarding stops</h2>\n    <table class=\"arrivalInfo\" _v-d6983e3c=\"\">\n        <tbody _v-d6983e3c=\"\"><tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Stop number</th>\n            <td v-for=\"tripStop in arrivalInfo\" :class=\"{ boarding: tripStop.canBoard,\n                          alighting: tripStop.canAlight }\" title=\"{{tripStop.stop.description}}\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ $index + 1 }}\n                {{ tripStop.canBoard ? '↗' : '↙' }}\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Pax boarding</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                  {{ tripStop.passengers.length  }}\n                </span>\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Scheduled</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <a v-link=\"{\n                    path: '/map/' + tripId,\n                    query: {time: tripStop.time}\n                  }\" v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                  {{ tripStop.time | takeLocalTime }}\n                </a>\n            </td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Actual</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-d6983e3c=\"\">\n            <th _v-d6983e3c=\"\">Diff (mins)</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-d6983e3c=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | minsDiff tripStop.time }}\n            </span></td>\n        </tr>\n    </tbody></table>\n\n    <template v-if=\"isPublicRoute\">\n      <h1 _v-d6983e3c=\"\">Passenger List</h1>\n      <div v-for=\"stop in arrivalInfo\" v-show=\"stop.canBoard\" track-by=\"id\" _v-d6983e3c=\"\">\n          <h3 :class=\"{'show-passengers': stop.showPassengers}\" @click=\"togglePassengers(stop)\" _v-d6983e3c=\"\">({{stop.time | formatTime}}) {{$index + 1}}.   {{stop.stop.description}} - {{stop.stop.road}}</h3>\n          <div v-for=\"passenger in stop.passengers\" :class=\"{passenger: true, 'animate-hide': !stop.showPassengers}\" track-by=\"id\" _v-d6983e3c=\"\">\n              {{passenger.index + 1}}.\n              {{passenger.name}}\n              —\n              {{passenger.telephone}}\n              —\n              {{passenger.email}}\n          </div>\n      </div>\n\n      <h1 _v-d6983e3c=\"\">Cancel Trip</h1>\n      <form class=\"cancel-form\" method=\"POST\" @submit=\"confirmAndCancel\" _v-d6983e3c=\"\">\n          <div v-if=\"trip.status !== 'cancelled'\" _v-d6983e3c=\"\">\n            <b _v-d6983e3c=\"\">Warning</b>: This will cancel the trip, and passengers will be notified\n            via SMS. This action is irreversible.\n\n            <button class=\"danger-button\" type=\"submit\" _v-d6983e3c=\"\">Cancel Trip</button>\n          </div>\n          <div v-else=\"\" _v-d6983e3c=\"\">\n            This trip has been cancelled.\n          </div>\n      </form>\n\n      <h1 _v-d6983e3c=\"\">Send message to passengers</h1>\n      <form method=\"POST\" @submit=\"confirmAndSend\" _v-d6983e3c=\"\">\n          <label _v-d6983e3c=\"\">\n            Use template:\n            <select v-model=\"sms.message\" _v-d6983e3c=\"\">\n             <option v-for=\"mt in messageTemplates\" :value=\"mt[1]\" _v-d6983e3c=\"\">\n                {{mt[0]}}\n             </option>\n            </select>\n          </label>\n          <input type=\"hidden\" name=\"session_token\" value=\"{{sessionToken}}\" _v-d6983e3c=\"\">\n          <input type=\"hidden\" name=\"service\" value=\"{{service}}\" _v-d6983e3c=\"\">\n          <textarea v-model=\"sms.message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-d6983e3c=\"\"></textarea>\n          <button class=\"message-button\" type=\"submit\" _v-d6983e3c=\"\">Submit</button>\n      </form>\n    </template>\n\n    <template v-if=\"isTrackingRoute\">\n      <h1 _v-d6983e3c=\"\">Update Route Announcements</h1>\n      <route-announcement-form :trip-id=\"tripId\" _v-d6983e3c=\"\">\n      </route-announcement-form>\n    </template>\n\n    <!-- space for the user to scroll down -->\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n    <br _v-d6983e3c=\"\">\n\n    </div>\n</div>\n";
 
 /***/ },
-/* 349 */
+/* 351 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*!
@@ -43384,7 +43481,7 @@
 	}));
 
 /***/ },
-/* 350 */
+/* 352 */
 /***/ function(module, exports) {
 
 	/*!
@@ -44701,16 +44798,16 @@
 	module.exports = plugin;
 
 /***/ },
-/* 351 */
+/* 353 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(352)
+	__vue_script__ = __webpack_require__(354)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] client/loading-overlay.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(353)
+	__vue_template__ = __webpack_require__(355)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -44729,7 +44826,7 @@
 	})()}
 
 /***/ },
-/* 352 */
+/* 354 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44776,7 +44873,7 @@
 	// </script>
 
 /***/ },
-/* 353 */
+/* 355 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<div v-bind:class=\"{hide: hide}\">\n  <img src=\"img/spinner.svg\">\n</div>\n";
