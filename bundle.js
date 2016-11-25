@@ -40638,7 +40638,7 @@
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.message-box[_v-44387651] {\n  border: solid 1px #888;\n  background-color: #FFD;\n  padding: 0.5em;\n  font-size: 120%;\n  display: inline-block;\n}\nlabel[_v-44387651] {\n  display: block;\n}\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.message-box[_v-44387651] {\n  border: solid 1px #888;\n  background-color: #FFD;\n  padding: 0.5em;\n  font-size: 120%;\n  display: inline-block;\n}\nlabel[_v-44387651] {\n  display: block;\n}\n", ""]);
 
 	// exports
 
@@ -40659,6 +40659,10 @@
 	//     <i v-if="currentMessage === ''">(none)</i>
 	//     <span class="message-box" v-if="currentMessage">
 	//       {{currentMessage}}
+	//
+	//
+	//       <button class="message-button" type="button"
+	//         @click="clearMessage">Clear message</button>
 	//     </span>
 	//   </div>
 	//   <form @submit="updateRouteAnnouncements">
@@ -40671,7 +40675,8 @@
 	//       </label>
 	//     </div>
 	//     <div>
-	//       <button class="message-button" type="submit">Submit</button>
+	//       <button class="message-button" type="submit"
+	//         :disabled="!message">Submit</button>
 	//     </div>
 	//   </form>
 	// </template>
@@ -40748,6 +40753,25 @@
 	        alert("There was an error updating the announcements");
 	      });
 	      return false;
+	    },
+	    clearMessage: function clearMessage($event) {
+	      var _this3 = this;
+
+	      event.preventDefault();
+
+	      authAjax('/trips/' + this.tripId + '/statuses', {
+	        method: 'POST',
+	        body: {
+	          status: 'normal',
+	          message: ''
+	        }
+	      }).then(function (r) {
+	        return r.json();
+	      }).then(function (result) {
+	        _this3.requery();
+	      }).then(null, function (err) {
+	        alert("There was an error updating the announcements");
+	      });
 	    }
 	  }
 	};
@@ -40758,7 +40782,7 @@
 /* 349 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div _v-44387651=\"\">\n  <b _v-44387651=\"\">Current Message:</b>\n  <i v-if=\"currentMessage === null\" _v-44387651=\"\">Loading...</i>\n  <i v-if=\"currentMessage === ''\" _v-44387651=\"\">(none)</i>\n  <span class=\"message-box\" v-if=\"currentMessage\" _v-44387651=\"\">\n    {{currentMessage}}\n  </span>\n</div>\n<form @submit=\"updateRouteAnnouncements\" _v-44387651=\"\">\n  <div _v-44387651=\"\">\n    <label _v-44387651=\"\">\n      New message (leave blank to clear the message)<br _v-44387651=\"\">\n      <textarea v-model=\"message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-44387651=\"\"></textarea>\n    </label>\n  </div>\n  <div _v-44387651=\"\">\n    <button class=\"message-button\" type=\"submit\" _v-44387651=\"\">Submit</button>\n  </div>\n</form>\n";
+	module.exports = "\n<div _v-44387651=\"\">\n  <b _v-44387651=\"\">Current Message:</b>\n  <i v-if=\"currentMessage === null\" _v-44387651=\"\">Loading...</i>\n  <i v-if=\"currentMessage === ''\" _v-44387651=\"\">(none)</i>\n  <span class=\"message-box\" v-if=\"currentMessage\" _v-44387651=\"\">\n    {{currentMessage}}\n\n\n    <button class=\"message-button\" type=\"button\" @click=\"clearMessage\" _v-44387651=\"\">Clear message</button>\n  </span>\n</div>\n<form @submit=\"updateRouteAnnouncements\" _v-44387651=\"\">\n  <div _v-44387651=\"\">\n    <label _v-44387651=\"\">\n      New message (leave blank to clear the message)<br _v-44387651=\"\">\n      <textarea v-model=\"message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-44387651=\"\"></textarea>\n    </label>\n  </div>\n  <div _v-44387651=\"\">\n    <button class=\"message-button\" type=\"submit\" :disabled=\"!message\" _v-44387651=\"\">Submit</button>\n  </div>\n</form>\n";
 
 /***/ },
 /* 350 */
