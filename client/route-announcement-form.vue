@@ -5,6 +5,10 @@
     <i v-if="currentMessage === ''">(none)</i>
     <span class="message-box" v-if="currentMessage">
       {{currentMessage}}
+
+
+      <button class="message-button" type="button"
+        @click="clearMessage">Clear message</button>
     </span>
   </div>
   <form @submit="updateRouteAnnouncements">
@@ -17,7 +21,8 @@
       </label>
     </div>
     <div>
-      <button class="message-button" type="submit">Submit</button>
+      <button class="message-button" type="submit"
+        :disabled="!message">Submit</button>
     </div>
   </form>
 </template>
@@ -94,6 +99,24 @@ export default {
           alert("There was an error updating the announcements");
       })
       return false
+    },
+    clearMessage($event) {
+      event.preventDefault();
+
+      authAjax(`/trips/${this.tripId}/statuses`, {
+          method: 'POST',
+          body: {
+            status: 'normal',
+            message: '',
+          }
+      })
+      .then(r => r.json())
+      .then((result) => {
+          this.requery();
+      })
+      .then(null, (err) => {
+          alert("There was an error updating the announcements");
+      })
     }
   }
 }
