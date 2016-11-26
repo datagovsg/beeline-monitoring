@@ -336,7 +336,8 @@ module.exports = {
         },
         isPublicRoute() {
           let routeTags = _.get(this.trip, 'route.tags', [])
-          return routeTags.indexOf('public') != -1
+          return routeTags.indexOf('public') != -1 ||
+            routeTags.indexOf('mandai') != -1
         },
         isTrackingRoute() {
           let routeTags = _.get(this.trip, 'route.tags', [])
