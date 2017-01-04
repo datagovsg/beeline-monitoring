@@ -226,7 +226,7 @@ module.exports = {
       return {
         url: 'img/stop' +
           (stop.canBoard ? 'Board' : 'Alight') +
-          (index + 1) + '.png',
+          leftPad(index + 1, 3, '0') + '.png',
         size: new google.maps.Size(100, 100),
         origin: new google.maps.Point(0, 0),
         anchor: new google.maps.Point(20, 20),
