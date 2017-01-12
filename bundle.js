@@ -37789,7 +37789,7 @@
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.contents-with-nav[_v-53b4839c] {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n}\n.filter-message[_v-53b4839c] {\n  padding: 0.5em;\n  border: solid 1px #888;\n}\n.sec-map[_v-53b4839c] {\n  -webkit-box-flex: 1;\n      -ms-flex: 1 1 auto;\n          flex: 1 1 auto;\n  left: 0px;\n  width: 100%;\n  bottom: 0px;\n  top: 0px;\n  position: relative;\n}\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.contents-with-nav[_v-53b4839c] {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n}\n.filter-message[_v-53b4839c] {\n  padding: 0.5em;\n  border: solid 1px #888;\n}\n.sec-map[_v-53b4839c] {\n  -webkit-box-flex: 1;\n      -ms-flex: 1 1 auto;\n          flex: 1 1 auto;\n  left: 0px;\n  width: 100%;\n  bottom: 0px;\n  top: 0px;\n  position: relative;\n}\n", ""]);
 
 	// exports
 
@@ -37815,7 +37815,8 @@
 	//     </div>
 	//     <gmap-map v-ref:gmap class="sec-map" :center="{lng: 103.8, lat: 1.38}" :zoom="12">
 	//
-	//       <gmap-marker v-for="stop in stops.slice(0,15)" track-by='$index' :position="stop | stopPosition" :icon="stop | stopIcon $index" @g-mouseover='selectStop(stop)' @g-mouseout='closeWindow'>
+	//       <gmap-marker v-for="stop in uniqueStops" track-by='$index' :position="stop | stopPosition"
+	//         :icon="stop | stopIcon $index" @g-mouseover='selectStop(stop)' @g-mouseout='closeWindow'>
 	//       </gmap-marker>
 	//
 	//       <gmap-infowindow v-if="selectedStop != null" :opened='selectedStop != null' :position="selectedStop | stopPosition">
@@ -38034,6 +38035,9 @@
 	      if (!this.query.time) return null;
 	      var time = new Date(this.query.time);
 	      return time.getTime() + 15 * 60000;
+	    },
+	    uniqueStops: function uniqueStops() {
+	      return _lodash2.default.uniqBy(this.stops, 'stopId');
 	    }
 	  },
 
@@ -40723,7 +40727,7 @@
 /* 333 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div _v-53b4839c=\"\">\n  <navi :service=\"service\" _v-53b4839c=\"\"></navi>\n  <div class=\"contents-with-nav\" _v-53b4839c=\"\">\n    <div v-if=\"$route.query.time\" class=\"filter-message\" _v-53b4839c=\"\">\n      Showing known positions between\n      {{startTime | formatTime}} and\n      {{endTime | formatTime}}.\n\n      <a v-link=\"{path: '/map/' + service, query: {}}\" _v-53b4839c=\"\">\n        Clear Filter\n      </a>\n    </div>\n    <gmap-map v-ref:gmap=\"\" class=\"sec-map\" :center=\"{lng: 103.8, lat: 1.38}\" :zoom=\"12\" _v-53b4839c=\"\">\n\n      <gmap-marker v-for=\"stop in stops.slice(0,15)\" track-by=\"$index\" :position=\"stop | stopPosition\" :icon=\"stop | stopIcon $index\" @g-mouseover=\"selectStop(stop)\" @g-mouseout=\"closeWindow\" _v-53b4839c=\"\">\n      </gmap-marker>\n\n      <gmap-infowindow v-if=\"selectedStop != null\" :opened=\"selectedStop != null\" :position=\"selectedStop | stopPosition\" _v-53b4839c=\"\">\n        Scheduled: {{selectedStop.time | formatTime}}\n        <div v-if=\"selectedStop.canBoard\" _v-53b4839c=\"\">\n          No. of Passengers: {{selectedStop.passengers.length}}\n        </div>\n      </gmap-infowindow>\n\n      <gmap-infowindow v-if=\"selectedPing != null\" :opened=\"selectedPing != null\" :position=\"selectedPing.coordinates | coordinatesToLatLng\" _v-53b4839c=\"\">\n        {{selectedPing.time | formatTime}}\n        <br _v-53b4839c=\"\">\n        <span v-if=\"driversById &amp;&amp; driversById[selectedPing.driverId]\" _v-53b4839c=\"\">\n                By: <b _v-53b4839c=\"\">{{driversById[selectedPing.driverId].transportCompanies[0].driverCompany.name}}</b>\n              </span>\n      </gmap-infowindow>\n\n      <!-- <ping-line :pings=\"pings\" :options=\"pingOptions\" :sample-rate=\"5\"></ping-line> -->\n\n      <!-- Start and end markers -->\n      <template v-for=\"(driverId,driverPings) in otherPings\">\n        <gmap-marker :position=\"firstPing(driverPings)\" :icon=\"startPoint\" :title=\"Start\" _v-53b4839c=\"\">\n        </gmap-marker>\n\n        <gmap-marker :position=\"lastPing(driverPings)\" :icon=\"endPoint\" :title=\"End\" _v-53b4839c=\"\">\n        </gmap-marker>\n\n        <ping-line :pings=\"driverPings\" :options=\"otherPingOptions\" :sample-rate=\"5\" _v-53b4839c=\"\">\n        </ping-line>\n      </template>\n    </gmap-map>\n  </div>\n</div>\n";
+	module.exports = "\n<div _v-53b4839c=\"\">\n  <navi :service=\"service\" _v-53b4839c=\"\"></navi>\n  <div class=\"contents-with-nav\" _v-53b4839c=\"\">\n    <div v-if=\"$route.query.time\" class=\"filter-message\" _v-53b4839c=\"\">\n      Showing known positions between\n      {{startTime | formatTime}} and\n      {{endTime | formatTime}}.\n\n      <a v-link=\"{path: '/map/' + service, query: {}}\" _v-53b4839c=\"\">\n        Clear Filter\n      </a>\n    </div>\n    <gmap-map v-ref:gmap=\"\" class=\"sec-map\" :center=\"{lng: 103.8, lat: 1.38}\" :zoom=\"12\" _v-53b4839c=\"\">\n\n      <gmap-marker v-for=\"stop in uniqueStops\" track-by=\"$index\" :position=\"stop | stopPosition\" :icon=\"stop | stopIcon $index\" @g-mouseover=\"selectStop(stop)\" @g-mouseout=\"closeWindow\" _v-53b4839c=\"\">\n      </gmap-marker>\n\n      <gmap-infowindow v-if=\"selectedStop != null\" :opened=\"selectedStop != null\" :position=\"selectedStop | stopPosition\" _v-53b4839c=\"\">\n        Scheduled: {{selectedStop.time | formatTime}}\n        <div v-if=\"selectedStop.canBoard\" _v-53b4839c=\"\">\n          No. of Passengers: {{selectedStop.passengers.length}}\n        </div>\n      </gmap-infowindow>\n\n      <gmap-infowindow v-if=\"selectedPing != null\" :opened=\"selectedPing != null\" :position=\"selectedPing.coordinates | coordinatesToLatLng\" _v-53b4839c=\"\">\n        {{selectedPing.time | formatTime}}\n        <br _v-53b4839c=\"\">\n        <span v-if=\"driversById &amp;&amp; driversById[selectedPing.driverId]\" _v-53b4839c=\"\">\n                By: <b _v-53b4839c=\"\">{{driversById[selectedPing.driverId].transportCompanies[0].driverCompany.name}}</b>\n              </span>\n      </gmap-infowindow>\n\n      <!-- <ping-line :pings=\"pings\" :options=\"pingOptions\" :sample-rate=\"5\"></ping-line> -->\n\n      <!-- Start and end markers -->\n      <template v-for=\"(driverId,driverPings) in otherPings\">\n        <gmap-marker :position=\"firstPing(driverPings)\" :icon=\"startPoint\" :title=\"Start\" _v-53b4839c=\"\">\n        </gmap-marker>\n\n        <gmap-marker :position=\"lastPing(driverPings)\" :icon=\"endPoint\" :title=\"End\" _v-53b4839c=\"\">\n        </gmap-marker>\n\n        <ping-line :pings=\"driverPings\" :options=\"otherPingOptions\" :sample-rate=\"5\" _v-53b4839c=\"\">\n        </ping-line>\n      </template>\n    </gmap-map>\n  </div>\n</div>\n";
 
 /***/ },
 /* 334 */
