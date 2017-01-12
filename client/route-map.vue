@@ -13,7 +13,8 @@
     </div>
     <gmap-map v-ref:gmap class="sec-map" :center="{lng: 103.8, lat: 1.38}" :zoom="12">
 
-      <gmap-marker v-for="stop in stops.slice(0,15)" track-by='$index' :position="stop | stopPosition" :icon="stop | stopIcon $index" @g-mouseover='selectStop(stop)' @g-mouseout='closeWindow'>
+      <gmap-marker v-for="stop in uniqueStops" track-by='$index' :position="stop | stopPosition"
+        :icon="stop | stopIcon $index" @g-mouseover='selectStop(stop)' @g-mouseout='closeWindow'>
       </gmap-marker>
 
       <gmap-infowindow v-if="selectedStop != null" :opened='selectedStop != null' :position="selectedStop | stopPosition">
@@ -211,6 +212,10 @@ module.exports = {
       if (!this.query.time) return null;
       let time = new Date(this.query.time);
       return time.getTime() + 15 * 60000
+    },
+
+    uniqueStops() {
+      return _.uniqBy(this.stops, 'stopId');
     }
   },
 
