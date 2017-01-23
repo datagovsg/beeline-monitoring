@@ -3,6 +3,14 @@
     <b>Current Message:</b>
     <i v-if="currentMessage === null">Loading...</i>
     <i v-if="currentMessage === ''">(none)</i>
+    <label>
+      Use template:
+      <select v-model="message">
+        <option v-for="template in announcementTemplates" :value="template[1]">
+          {{ template[0] }}
+        </option>
+      </select>
+    </label>
     <span class="message-box" v-if="currentMessage">
       {{currentMessage}}
 
@@ -42,6 +50,7 @@ label {
 
 <script>
 const {authAjax} = require('./login');
+import AnnouncementTemplates from './announcement-templates'
 
 export default {
   props: ['tripId'],
@@ -49,7 +58,7 @@ export default {
   data() {
     this.requery();
     return {
-      message: '',
+      message: AnnouncementTemplates[0][1],
       currentMessage: null,
     }
   },
@@ -57,6 +66,12 @@ export default {
   watch: {
     tripId() {
       this.requery();
+    }
+  },
+
+  computed: {
+    announcementTemplates(){
+      return AnnouncementTemplates
     }
   },
 
