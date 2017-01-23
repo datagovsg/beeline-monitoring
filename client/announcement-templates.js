@@ -1,14 +1,11 @@
 export default [
     [
-      'Bus is going to be more than 15 mins late',
-      '(DO NOT REPLY) Attention: Service for today will be delayed. The bus is still on its way to your stop. Sorry for the inconvenience.'
+      'Bus Replacement',
+      'Bus no, <license plate number>, has replaced one of our regular buses. \nPlease look out for a different bus for today.  For enquiries, call <Operator Name> at <Contact Number>.'
     ],
     [
-      'Driver App is unavailable',
-      '(DO NOT REPLY) Attention: The location tracking on the app is not working today. The bus is still on its way to your stop. We sincerely apologise for the inconvenience caused to all our commuters.'
+      'No Bus Replacement',
+      'The bus at <route time> is not running for today due to <reason e.g. bus breakdown>. \nPlease look out for a different bus for today. For enquiries, call <Operator Name> at <Contact Number>.'
     ],
-    [
-      'Cancelled trip',
-      '(DO NOT REPLY) Attention: The service for today has been cancelled due to unforeseen circumstances. Please make alternative transport arrangements. Today\'s fare will be refunded and we sincerely apologise for the inconvenience caused to all our commuters.'
-    ]
+
 ]
