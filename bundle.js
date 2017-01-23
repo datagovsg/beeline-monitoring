@@ -7298,7 +7298,8 @@
 	!(function(global) {
 	  "use strict";
 
-	  var hasOwn = Object.prototype.hasOwnProperty;
+	  var Op = Object.prototype;
+	  var hasOwn = Op.hasOwnProperty;
 	  var undefined; // More compressible than void 0.
 	  var $Symbol = typeof Symbol === "function" ? Symbol : {};
 	  var iteratorSymbol = $Symbol.iterator || "@@iterator";
@@ -7370,10 +7371,29 @@
 	  function GeneratorFunction() {}
 	  function GeneratorFunctionPrototype() {}
 
-	  var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype;
+	  // This is a polyfill for %IteratorPrototype% for environments that
+	  // don't natively support it.
+	  var IteratorPrototype = {};
+	  IteratorPrototype[iteratorSymbol] = function () {
+	    return this;
+	  };
+
+	  var getProto = Object.getPrototypeOf;
+	  var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+	  if (NativeIteratorPrototype &&
+	      NativeIteratorPrototype !== Op &&
+	      hasOwn.call(NativeIteratorPrototype, iteratorSymbol)) {
+	    // This environment has a native %IteratorPrototype%; use it instead
+	    // of the polyfill.
+	    IteratorPrototype = NativeIteratorPrototype;
+	  }
+
+	  var Gp = GeneratorFunctionPrototype.prototype =
+	    Generator.prototype = Object.create(IteratorPrototype);
 	  GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
 	  GeneratorFunctionPrototype.constructor = GeneratorFunction;
-	  GeneratorFunctionPrototype[toStringTagSymbol] = GeneratorFunction.displayName = "GeneratorFunction";
+	  GeneratorFunctionPrototype[toStringTagSymbol] =
+	    GeneratorFunction.displayName = "GeneratorFunction";
 
 	  // Helper for defining the .next, .throw, and .return methods of the
 	  // Iterator interface in terms of a single ._invoke method.
@@ -7410,16 +7430,11 @@
 
 	  // Within the body of any async function, `await x` is transformed to
 	  // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
-	  // `value instanceof AwaitArgument` to determine if the yielded value is
-	  // meant to be awaited. Some may consider the name of this method too
-	  // cutesy, but they are curmudgeons.
+	  // `hasOwn.call(value, "__await")` to determine if the yielded value is
+	  // meant to be awaited.
 	  runtime.awrap = function(arg) {
-	    return new AwaitArgument(arg);
+	    return { __await: arg };
 	  };
-
-	  function AwaitArgument(arg) {
-	    this.arg = arg;
-	  }
 
 	  function AsyncIterator(generator) {
 	    function invoke(method, arg, resolve, reject) {
@@ -7429,8 +7444,10 @@
 	      } else {
 	        var result = record.arg;
 	        var value = result.value;
-	        if (value instanceof AwaitArgument) {
-	          return Promise.resolve(value.arg).then(function(value) {
+	        if (value &&
+	            typeof value === "object" &&
+	            hasOwn.call(value, "__await")) {
+	          return Promise.resolve(value.__await).then(function(value) {
 	            invoke("next", value, resolve, reject);
 	          }, function(err) {
 	            invoke("throw", err, resolve, reject);
@@ -7499,6 +7516,7 @@
 	  }
 
 	  defineIteratorMethods(AsyncIterator.prototype);
+	  runtime.AsyncIterator = AsyncIterator;
 
 	  // Note that simple async functions are implemented on top of
 	  // AsyncIterator objects; they just return a Promise for the value of
@@ -7658,10 +7676,6 @@
 	  // Define Generator.prototype.{next,throw,return} in terms of the
 	  // unified ._invoke helper method.
 	  defineIteratorMethods(Gp);
-
-	  Gp[iteratorSymbol] = function() {
-	    return this;
-	  };
 
 	  Gp[toStringTagSymbol] = "Generator";
 
@@ -8192,25 +8206,25 @@
 
 	var _routeMap2 = _interopRequireDefault(_routeMap);
 
-	var _nav = __webpack_require__(334);
+	var _nav = __webpack_require__(335);
 
 	var _nav2 = _interopRequireDefault(_nav);
 
-	var _routePassengers = __webpack_require__(339);
+	var _routePassengers = __webpack_require__(340);
 
 	var _routePassengers2 = _interopRequireDefault(_routePassengers);
 
-	var _vueRouter = __webpack_require__(350);
+	var _vueRouter = __webpack_require__(352);
 
 	var _vueRouter2 = _interopRequireDefault(_vueRouter);
 
-	var _vueResource = __webpack_require__(351);
+	var _vueResource = __webpack_require__(353);
 
 	var _vueResource2 = _interopRequireDefault(_vueResource);
 
 	var _vueGoogleMaps = __webpack_require__(323);
 
-	var _loadingOverlay = __webpack_require__(352);
+	var _loadingOverlay = __webpack_require__(354);
 
 	var _loadingOverlay2 = _interopRequireDefault(_loadingOverlay);
 
@@ -18526,7 +18540,7 @@
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] client\\overview.vue: named exports in *.vue files are ignored.")}
+	  console.warn("[vue-loader] client/overview.vue: named exports in *.vue files are ignored.")}
 	__vue_template__ = __webpack_require__(318)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
@@ -18543,7 +18557,7 @@
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), false)
 	  if (!hotAPI.compatible) return
-	  var id = "_v-e3ea2e36/overview.vue"
+	  var id = "_v-2d1b03a9/overview.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -18567,8 +18581,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-e3ea2e36&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./overview.vue", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-e3ea2e36&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./overview.vue");
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-2d1b03a9&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./overview.vue", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-2d1b03a9&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./overview.vue");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -18586,7 +18600,7 @@
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntable[_v-e3ea2e36] {\n    width: 100%;\n    border-collapse: collapse;\n    border-spacing: 0;\n}\nth[_v-e3ea2e36] {\n    background-color: #EBEFF2;\n    color: #493761;\n    font-size: 80%;\n    height: 30px;\n}\n\ntr.emergency td[_v-e3ea2e36] {\n    background-color: #FFECEC;\n}\n\ntr.nobody td[_v-e3ea2e36]{\n    opacity: 0.3;\n    background-color: #ccc;\n}\n\nth[_v-e3ea2e36],\ntd[_v-e3ea2e36] {\n    border-bottom: solid 1px #CCC;\n}\n\nth[data-column=\"route\"][_v-e3ea2e36],\ntd[data-column=\"route\"][_v-e3ea2e36] {\n    min-width: 60px;\n}\nth[data-column=\"led\"][_v-e3ea2e36],\ntd[data-column=\"led\"][_v-e3ea2e36] {\n    width: 60px;\n}\nth[data-column=\"next\"][_v-e3ea2e36],\ntd[data-column=\"next\"][_v-e3ea2e36] {\n    width: 20px;\n    position: relative;\n}\ntd[data-column=\"next\"][_v-e3ea2e36]:hover {\n    background-color: #dddddd;\n}\n\n.service_name[_v-e3ea2e36] {\n    color: #666;\n    font-size: 80%;\n}\n.led[_v-e3ea2e36] {\n    min-width: 50px;\n    min-height: 50px;\n    border-radius: 25px;\n    box-sizing: border-box;\n    margin: 10px;\n    text-align: center;\n    overflow: visible;\n    font-size: 80%;\n    line-height: 1.3;\n    padding-top: 0.4em;\n}\n\n.led.sU[_v-e3ea2e36] {\n    background-color: #c9c9c9;\n}\n\n.led.s0[_v-e3ea2e36], .led.s1[_v-e3ea2e36] {\n    background-color: #14c3a6;\n}\n.led.s2[_v-e3ea2e36], .led.s3[_v-e3ea2e36] {\n    background-color: #ff6f6f;\n}\n\n.details_button[_v-e3ea2e36] {\n    display: block;\n    width: 100%;\n    position: absolute;\n    top: 0px;\n    bottom: 0px;\n    left: 0px;\n}\n\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntable[_v-2d1b03a9] {\n    width: 100%;\n    border-collapse: collapse;\n    border-spacing: 0;\n}\nth[_v-2d1b03a9] {\n    background-color: #EBEFF2;\n    color: #493761;\n    font-size: 80%;\n    height: 30px;\n}\n\ntr.emergency td[_v-2d1b03a9] {\n    background-color: #FFECEC;\n}\n\ntr.nobody td[_v-2d1b03a9]{\n    opacity: 0.3;\n    background-color: #ccc;\n}\n\nth[_v-2d1b03a9],\ntd[_v-2d1b03a9] {\n    border-bottom: solid 1px #CCC;\n}\n\nth[data-column=\"route\"][_v-2d1b03a9],\ntd[data-column=\"route\"][_v-2d1b03a9] {\n    min-width: 60px;\n}\nth[data-column=\"led\"][_v-2d1b03a9],\ntd[data-column=\"led\"][_v-2d1b03a9] {\n    width: 60px;\n}\nth[data-column=\"next\"][_v-2d1b03a9],\ntd[data-column=\"next\"][_v-2d1b03a9] {\n    width: 20px;\n    position: relative;\n}\ntd[data-column=\"next\"][_v-2d1b03a9]:hover {\n    background-color: #dddddd;\n}\n\n.service_name[_v-2d1b03a9] {\n    color: #666;\n    font-size: 80%;\n}\n.led[_v-2d1b03a9] {\n    min-width: 50px;\n    min-height: 50px;\n    border-radius: 25px;\n    box-sizing: border-box;\n    margin: 10px;\n    text-align: center;\n    overflow: visible;\n    font-size: 80%;\n    line-height: 1.3;\n    padding-top: 0.4em;\n}\n\n.led.sU[_v-2d1b03a9] {\n    background-color: #c9c9c9;\n}\n\n.led.s0[_v-2d1b03a9], .led.s1[_v-2d1b03a9] {\n    background-color: #14c3a6;\n}\n.led.s2[_v-2d1b03a9], .led.s3[_v-2d1b03a9] {\n    background-color: #ff6f6f;\n}\n\n.details_button[_v-2d1b03a9] {\n    display: block;\n    width: 100%;\n    position: absolute;\n    top: 0px;\n    bottom: 0px;\n    left: 0px;\n}\n\n", ""]);
 
 	// exports
 
@@ -20373,7 +20387,7 @@
 	  var undefined;
 
 	  /** Used as the semantic version number. */
-	  var VERSION = '4.17.2';
+	  var VERSION = '4.17.4';
 
 	  /** Used as the size to enable large array optimizations. */
 	  var LARGE_ARRAY_SIZE = 200;
@@ -21928,9 +21942,9 @@
 	     * Shortcut fusion is an optimization to merge iteratee calls; this avoids
 	     * the creation of intermediate arrays and can greatly reduce the number of
 	     * iteratee executions. Sections of a chain sequence qualify for shortcut
-	     * fusion if the section is applied to an array of at least `200` elements
-	     * and any iteratees accept only one argument. The heuristic for whether a
-	     * section qualifies for shortcut fusion is subject to change.
+	     * fusion if the section is applied to an array and iteratees accept only
+	     * one argument. The heuristic for whether a section qualifies for shortcut
+	     * fusion is subject to change.
 	     *
 	     * Chaining is supported in custom builds as long as the `_#value` method is
 	     * directly or indirectly included in the build.
@@ -22089,8 +22103,8 @@
 
 	    /**
 	     * By default, the template delimiters used by lodash are like those in
-	     * embedded Ruby (ERB). Change the following template settings to use
-	     * alternative delimiters.
+	     * embedded Ruby (ERB) as well as ES2015 template strings. Change the
+	     * following template settings to use alternative delimiters.
 	     *
 	     * @static
 	     * @memberOf _
@@ -22237,8 +22251,7 @@
 	          resIndex = 0,
 	          takeCount = nativeMin(length, this.__takeCount__);
 
-	      if (!isArr || arrLength < LARGE_ARRAY_SIZE ||
-	          (arrLength == length && takeCount == length)) {
+	      if (!isArr || (!isRight && arrLength == length && takeCount == length)) {
 	        return baseWrapperValue(array, this.__actions__);
 	      }
 	      var result = [];
@@ -22352,7 +22365,7 @@
 	     */
 	    function hashHas(key) {
 	      var data = this.__data__;
-	      return nativeCreate ? data[key] !== undefined : hasOwnProperty.call(data, key);
+	      return nativeCreate ? (data[key] !== undefined) : hasOwnProperty.call(data, key);
 	    }
 
 	    /**
@@ -22823,24 +22836,6 @@
 	     */
 	    function arrayShuffle(array) {
 	      return shuffleSelf(copyArray(array));
-	    }
-
-	    /**
-	     * Used by `_.defaults` to customize its `_.assignIn` use.
-	     *
-	     * @private
-	     * @param {*} objValue The destination value.
-	     * @param {*} srcValue The source value.
-	     * @param {string} key The key of the property to assign.
-	     * @param {Object} object The parent object of `objValue`.
-	     * @returns {*} Returns the value to assign.
-	     */
-	    function assignInDefaults(objValue, srcValue, key, object) {
-	      if (objValue === undefined ||
-	          (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) {
-	        return srcValue;
-	      }
-	      return objValue;
 	    }
 
 	    /**
@@ -23455,8 +23450,7 @@
 	      if (value == null) {
 	        return value === undefined ? undefinedTag : nullTag;
 	      }
-	      value = Object(value);
-	      return (symToStringTag && symToStringTag in value)
+	      return (symToStringTag && symToStringTag in Object(value))
 	        ? getRawTag(value)
 	        : objectToString(value);
 	    }
@@ -23660,7 +23654,7 @@
 	      if (value === other) {
 	        return true;
 	      }
-	      if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
+	      if (value == null || other == null || (!isObjectLike(value) && !isObjectLike(other))) {
 	        return value !== value && other !== other;
 	      }
 	      return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack);
@@ -23683,17 +23677,12 @@
 	    function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
 	      var objIsArr = isArray(object),
 	          othIsArr = isArray(other),
-	          objTag = arrayTag,
-	          othTag = arrayTag;
+	          objTag = objIsArr ? arrayTag : getTag(object),
+	          othTag = othIsArr ? arrayTag : getTag(other);
 
-	      if (!objIsArr) {
-	        objTag = getTag(object);
-	        objTag = objTag == argsTag ? objectTag : objTag;
-	      }
-	      if (!othIsArr) {
-	        othTag = getTag(other);
-	        othTag = othTag == argsTag ? objectTag : othTag;
-	      }
+	      objTag = objTag == argsTag ? objectTag : objTag;
+	      othTag = othTag == argsTag ? objectTag : othTag;
+
 	      var objIsObj = objTag == objectTag,
 	          othIsObj = othTag == objectTag,
 	          isSameTag = objTag == othTag;
@@ -24141,7 +24130,6 @@
 	     * @returns {Object} Returns the new object.
 	     */
 	    function basePick(object, paths) {
-	      object = Object(object);
 	      return basePickBy(object, paths, function(value, path) {
 	        return hasIn(object, path);
 	      });
@@ -25534,8 +25522,7 @@
 	          var args = arguments,
 	              value = args[0];
 
-	          if (wrapper && args.length == 1 &&
-	              isArray(value) && value.length >= LARGE_ARRAY_SIZE) {
+	          if (wrapper && args.length == 1 && isArray(value)) {
 	            return wrapper.plant(value).value();
 	          }
 	          var index = 0,
@@ -25842,7 +25829,7 @@
 	      var func = Math[methodName];
 	      return function(number, precision) {
 	        number = toNumber(number);
-	        precision = nativeMin(toInteger(precision), 292);
+	        precision = precision == null ? 0 : nativeMin(toInteger(precision), 292);
 	        if (precision) {
 	          // Shift with exponential notation to avoid floating-point issues.
 	          // See [MDN](https://mdn.io/round#Examples) for more details.
@@ -25947,7 +25934,7 @@
 	      thisArg = newData[2];
 	      partials = newData[3];
 	      holders = newData[4];
-	      arity = newData[9] = newData[9] == null
+	      arity = newData[9] = newData[9] === undefined
 	        ? (isBindKey ? 0 : func.length)
 	        : nativeMax(newData[9] - length, 0);
 
@@ -25965,6 +25952,63 @@
 	      }
 	      var setter = data ? baseSetData : setData;
 	      return setWrapToString(setter(result, newData), func, bitmask);
+	    }
+
+	    /**
+	     * Used by `_.defaults` to customize its `_.assignIn` use to assign properties
+	     * of source objects to the destination object for all destination properties
+	     * that resolve to `undefined`.
+	     *
+	     * @private
+	     * @param {*} objValue The destination value.
+	     * @param {*} srcValue The source value.
+	     * @param {string} key The key of the property to assign.
+	     * @param {Object} object The parent object of `objValue`.
+	     * @returns {*} Returns the value to assign.
+	     */
+	    function customDefaultsAssignIn(objValue, srcValue, key, object) {
+	      if (objValue === undefined ||
+	          (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) {
+	        return srcValue;
+	      }
+	      return objValue;
+	    }
+
+	    /**
+	     * Used by `_.defaultsDeep` to customize its `_.merge` use to merge source
+	     * objects into destination objects that are passed thru.
+	     *
+	     * @private
+	     * @param {*} objValue The destination value.
+	     * @param {*} srcValue The source value.
+	     * @param {string} key The key of the property to merge.
+	     * @param {Object} object The parent object of `objValue`.
+	     * @param {Object} source The parent object of `srcValue`.
+	     * @param {Object} [stack] Tracks traversed source values and their merged
+	     *  counterparts.
+	     * @returns {*} Returns the value to assign.
+	     */
+	    function customDefaultsMerge(objValue, srcValue, key, object, source, stack) {
+	      if (isObject(objValue) && isObject(srcValue)) {
+	        // Recursively merge objects and arrays (susceptible to call stack limits).
+	        stack.set(srcValue, objValue);
+	        baseMerge(objValue, srcValue, undefined, customDefaultsMerge, stack);
+	        stack['delete'](srcValue);
+	      }
+	      return objValue;
+	    }
+
+	    /**
+	     * Used by `_.omit` to customize its `_.cloneDeep` use to only clone plain
+	     * objects.
+	     *
+	     * @private
+	     * @param {*} value The value to inspect.
+	     * @param {string} key The key of the property to inspect.
+	     * @returns {*} Returns the uncloned value or `undefined` to defer cloning to `_.cloneDeep`.
+	     */
+	    function customOmitClone(value) {
+	      return isPlainObject(value) ? undefined : value;
 	    }
 
 	    /**
@@ -26138,9 +26182,9 @@
 	     */
 	    function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
 	      var isPartial = bitmask & COMPARE_PARTIAL_FLAG,
-	          objProps = keys(object),
+	          objProps = getAllKeys(object),
 	          objLength = objProps.length,
-	          othProps = keys(other),
+	          othProps = getAllKeys(other),
 	          othLength = othProps.length;
 
 	      if (objLength != othLength && !isPartial) {
@@ -26378,7 +26422,15 @@
 	     * @param {Object} object The object to query.
 	     * @returns {Array} Returns the array of symbols.
 	     */
-	    var getSymbols = nativeGetSymbols ? overArg(nativeGetSymbols, Object) : stubArray;
+	    var getSymbols = !nativeGetSymbols ? stubArray : function(object) {
+	      if (object == null) {
+	        return [];
+	      }
+	      object = Object(object);
+	      return arrayFilter(nativeGetSymbols(object), function(symbol) {
+	        return propertyIsEnumerable.call(object, symbol);
+	      });
+	    };
 
 	    /**
 	     * Creates an array of the own and inherited enumerable symbols of `object`.
@@ -26862,29 +26914,6 @@
 	      data[1] = newBitmask;
 
 	      return data;
-	    }
-
-	    /**
-	     * Used by `_.defaultsDeep` to customize its `_.merge` use.
-	     *
-	     * @private
-	     * @param {*} objValue The destination value.
-	     * @param {*} srcValue The source value.
-	     * @param {string} key The key of the property to merge.
-	     * @param {Object} object The parent object of `objValue`.
-	     * @param {Object} source The parent object of `srcValue`.
-	     * @param {Object} [stack] Tracks traversed source values and their merged
-	     *  counterparts.
-	     * @returns {*} Returns the value to assign.
-	     */
-	    function mergeDefaults(objValue, srcValue, key, object, source, stack) {
-	      if (isObject(objValue) && isObject(srcValue)) {
-	        // Recursively merge objects and arrays (susceptible to call stack limits).
-	        stack.set(srcValue, objValue);
-	        baseMerge(objValue, srcValue, undefined, mergeDefaults, stack);
-	        stack['delete'](srcValue);
-	      }
-	      return objValue;
 	    }
 
 	    /**
@@ -28629,7 +28658,7 @@
 	     *
 	     * var users = [
 	     *   { 'user': 'barney',  'active': false },
-	     *   { 'user': 'fred',    'active': false},
+	     *   { 'user': 'fred',    'active': false },
 	     *   { 'user': 'pebbles', 'active': true }
 	     * ];
 	     *
@@ -31198,7 +31227,7 @@
 	      if (typeof func != 'function') {
 	        throw new TypeError(FUNC_ERROR_TEXT);
 	      }
-	      start = start === undefined ? 0 : nativeMax(toInteger(start), 0);
+	      start = start == null ? 0 : nativeMax(toInteger(start), 0);
 	      return baseRest(function(args) {
 	        var array = args[start],
 	            otherArgs = castSlice(args, 0, start);
@@ -31868,7 +31897,7 @@
 	     * date objects, error objects, maps, numbers, `Object` objects, regexes,
 	     * sets, strings, symbols, and typed arrays. `Object` objects are compared
 	     * by their own, not inherited, enumerable properties. Functions and DOM
-	     * nodes are **not** supported.
+	     * nodes are compared by strict equality, i.e. `===`.
 	     *
 	     * @static
 	     * @memberOf _
@@ -32888,7 +32917,9 @@
 	     * // => 3
 	     */
 	    function toSafeInteger(value) {
-	      return baseClamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER);
+	      return value
+	        ? baseClamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER)
+	        : (value === 0 ? value : 0);
 	    }
 
 	    /**
@@ -33142,7 +33173,7 @@
 	     * // => { 'a': 1, 'b': 2 }
 	     */
 	    var defaults = baseRest(function(args) {
-	      args.push(undefined, assignInDefaults);
+	      args.push(undefined, customDefaultsAssignIn);
 	      return apply(assignInWith, undefined, args);
 	    });
 
@@ -33166,7 +33197,7 @@
 	     * // => { 'a': { 'b': 2, 'c': 3 } }
 	     */
 	    var defaultsDeep = baseRest(function(args) {
-	      args.push(undefined, mergeDefaults);
+	      args.push(undefined, customDefaultsMerge);
 	      return apply(mergeWith, undefined, args);
 	    });
 
@@ -33828,7 +33859,7 @@
 	      });
 	      copyObject(object, getAllKeysIn(object), result);
 	      if (isDeep) {
-	        result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG);
+	        result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG, customOmitClone);
 	      }
 	      var length = paths.length;
 	      while (length--) {
@@ -34977,7 +35008,10 @@
 	     */
 	    function startsWith(string, target, position) {
 	      string = toString(string);
-	      position = baseClamp(toInteger(position), 0, string.length);
+	      position = position == null
+	        ? 0
+	        : baseClamp(toInteger(position), 0, string.length);
+
 	      target = baseToString(target);
 	      return string.slice(position, position + target.length) == target;
 	    }
@@ -35096,9 +35130,9 @@
 	        options = undefined;
 	      }
 	      string = toString(string);
-	      options = assignInWith({}, options, settings, assignInDefaults);
+	      options = assignInWith({}, options, settings, customDefaultsAssignIn);
 
-	      var imports = assignInWith({}, options.imports, settings.imports, assignInDefaults),
+	      var imports = assignInWith({}, options.imports, settings.imports, customDefaultsAssignIn),
 	          importsKeys = keys(imports),
 	          importsValues = baseValues(imports, importsKeys);
 
@@ -37182,14 +37216,13 @@
 	    // Add `LazyWrapper` methods for `_.drop` and `_.take` variants.
 	    arrayEach(['drop', 'take'], function(methodName, index) {
 	      LazyWrapper.prototype[methodName] = function(n) {
-	        var filtered = this.__filtered__;
-	        if (filtered && !index) {
-	          return new LazyWrapper(this);
-	        }
 	        n = n === undefined ? 1 : nativeMax(toInteger(n), 0);
 
-	        var result = this.clone();
-	        if (filtered) {
+	        var result = (this.__filtered__ && !index)
+	          ? new LazyWrapper(this)
+	          : this.clone();
+
+	        if (result.__filtered__) {
 	          result.__takeCount__ = nativeMin(n, result.__takeCount__);
 	        } else {
 	          result.__views__.push({
@@ -37716,7 +37749,7 @@
 /* 318 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n{{date}}\n<table _v-e3ea2e36=\"\">\n    <thead _v-e3ea2e36=\"\">\n    <tr _v-e3ea2e36=\"\">\n        <th data-column=\"route\" _v-e3ea2e36=\"\">Route</th>\n        <th data-column=\"led\" _v-e3ea2e36=\"\">App is on</th>\n        <th data-column=\"led\" _v-e3ea2e36=\"\">ETA (1<sup _v-e3ea2e36=\"\">st</sup> stop)</th>\n        <th data-column=\"next\" _v-e3ea2e36=\"\"></th>\n    </tr>\n    </thead>\n    <tbody _v-e3ea2e36=\"\">\n    <tr v-if=\"servicesByStartTime.length == 0\" _v-e3ea2e36=\"\">\n        <td colspan=\"4\" _v-e3ea2e36=\"\">\n            You have no bus services today.\n            You might not be authorized to view the bus service status.\n            Please contact the Beeline team if this is incorrect.\n        </td>\n    </tr>\n    <tr v-for=\"service in servicesByStartTime\" track-by=\"trip.route.id\" :class=\"{\n            emergency: service.trip.status === 'cancelled',\n            nobody: service.nobody &amp;&amp; (service.trip.route.tags.indexOf('notify-when-empty') === -1),\n        }\" _v-e3ea2e36=\"\">\n        <td data-column=\"route\" _v-e3ea2e36=\"\">\n            <h4 style=\"float: left; margin: 0 10px 0 10px\" _v-e3ea2e36=\"\">{{service.trip.route.label}}\n            <div class=\"service_name\" _v-e3ea2e36=\"\">{{service.trip.route.id}}</div>\n            </h4>\n            <h4 style=\"float: left; margin: 0 10px 0 10px\" _v-e3ea2e36=\"\">\n              {{service.trip.tripStops[0].time | takeTime}}\n            </h4>\n            <div style=\"float: left\" _v-e3ea2e36=\"\">\n              {{service.trip.route.from}}<br _v-e3ea2e36=\"\">\n              {{service.trip.route.to}}\n          </div>\n        </td>\n        <td data-column=\"led\" _v-e3ea2e36=\"\">\n            <div :class=\"{\n                led: true,\n                s0 : service.status.ping == 0,\n                s1 : service.status.ping == 1,\n                s2 : service.status.ping == 2,\n                s3 : service.status.ping >= 3,\n                sU : service.status.ping == -1,\n            }\" _v-e3ea2e36=\"\">\n                <span v-if=\"service.firstPing\" _v-e3ea2e36=\"\">\n                    1<sup _v-e3ea2e36=\"\">st</sup>: {{service.firstPing.createdAt | takeTime}}\n                </span>\n                <template v-if=\"service.status.arrivalTime\">\n                    (arrived)\n                </template>\n                <template v-else=\"\">\n                    <template v-if=\"service.lastPing\">\n                        L<sup _v-e3ea2e36=\"\">ast</sup>: {{service.lastPing | minutesSince}} <br _v-e3ea2e36=\"\"> mins ago\n                    </template>\n                </template>\n            </div>\n        </td>\n        <td data-column=\"led\" _v-e3ea2e36=\"\">\n            <div :class=\"{\n                led: true,\n                s0 : service.status.distance == 0,\n                s1 : service.status.distance == 1,\n                s2 : service.status.distance == 2,\n                s3 : service.status.distance >= 3,\n                sU : service.status.distance == -1,\n            }\" _v-e3ea2e36=\"\">\n                <template v-if=\"service.status.arrivalTime\">\n                    {{service.status.arrivalTime | takeTime}} (arrived)\n                </template>\n                <template v-else=\"\">\n                    {{service.status.eta | takeTime}} (est)\n                </template>\n            </div>\n        </td>\n        <td data-column=\"next\" _v-e3ea2e36=\"\">\n        <a v-link=\"{path: '/map/' + service.trip.id}\" class=\"details_button\" _v-e3ea2e36=\"\">\n        &gt;&gt;\n        </a>\n        </td>\n    </tr>\n    </tbody>\n</table>\n\n";
+	module.exports = "\n\n{{date}}\n<table _v-2d1b03a9=\"\">\n    <thead _v-2d1b03a9=\"\">\n    <tr _v-2d1b03a9=\"\">\n        <th data-column=\"route\" _v-2d1b03a9=\"\">Route</th>\n        <th data-column=\"led\" _v-2d1b03a9=\"\">App is on</th>\n        <th data-column=\"led\" _v-2d1b03a9=\"\">ETA (1<sup _v-2d1b03a9=\"\">st</sup> stop)</th>\n        <th data-column=\"next\" _v-2d1b03a9=\"\"></th>\n    </tr>\n    </thead>\n    <tbody _v-2d1b03a9=\"\">\n    <tr v-if=\"servicesByStartTime.length == 0\" _v-2d1b03a9=\"\">\n        <td colspan=\"4\" _v-2d1b03a9=\"\">\n            You have no bus services today.\n            You might not be authorized to view the bus service status.\n            Please contact the Beeline team if this is incorrect.\n        </td>\n    </tr>\n    <tr v-for=\"service in servicesByStartTime\" track-by=\"trip.route.id\" :class=\"{\n            emergency: service.trip.status === 'cancelled',\n            nobody: service.nobody &amp;&amp; (service.trip.route.tags.indexOf('notify-when-empty') === -1),\n        }\" _v-2d1b03a9=\"\">\n        <td data-column=\"route\" _v-2d1b03a9=\"\">\n            <h4 style=\"float: left; margin: 0 10px 0 10px\" _v-2d1b03a9=\"\">{{service.trip.route.label}}\n            <div class=\"service_name\" _v-2d1b03a9=\"\">{{service.trip.route.id}}</div>\n            </h4>\n            <h4 style=\"float: left; margin: 0 10px 0 10px\" _v-2d1b03a9=\"\">\n              {{service.trip.tripStops[0].time | takeTime}}\n            </h4>\n            <div style=\"float: left\" _v-2d1b03a9=\"\">\n              {{service.trip.route.from}}<br _v-2d1b03a9=\"\">\n              {{service.trip.route.to}}\n          </div>\n        </td>\n        <td data-column=\"led\" _v-2d1b03a9=\"\">\n            <div :class=\"{\n                led: true,\n                s0 : service.status.ping == 0,\n                s1 : service.status.ping == 1,\n                s2 : service.status.ping == 2,\n                s3 : service.status.ping >= 3,\n                sU : service.status.ping == -1,\n            }\" _v-2d1b03a9=\"\">\n                <span v-if=\"service.firstPing\" _v-2d1b03a9=\"\">\n                    1<sup _v-2d1b03a9=\"\">st</sup>: {{service.firstPing.createdAt | takeTime}}\n                </span>\n                <template v-if=\"service.status.arrivalTime\">\n                    (arrived)\n                </template>\n                <template v-else=\"\">\n                    <template v-if=\"service.lastPing\">\n                        L<sup _v-2d1b03a9=\"\">ast</sup>: {{service.lastPing | minutesSince}} <br _v-2d1b03a9=\"\"> mins ago\n                    </template>\n                </template>\n            </div>\n        </td>\n        <td data-column=\"led\" _v-2d1b03a9=\"\">\n            <div :class=\"{\n                led: true,\n                s0 : service.status.distance == 0,\n                s1 : service.status.distance == 1,\n                s2 : service.status.distance == 2,\n                s3 : service.status.distance >= 3,\n                sU : service.status.distance == -1,\n            }\" _v-2d1b03a9=\"\">\n                <template v-if=\"service.status.arrivalTime\">\n                    {{service.status.arrivalTime | takeTime}} (arrived)\n                </template>\n                <template v-else=\"\">\n                    {{service.status.eta | takeTime}} (est)\n                </template>\n            </div>\n        </td>\n        <td data-column=\"next\" _v-2d1b03a9=\"\">\n        <a v-link=\"{path: '/map/' + service.trip.id}\" class=\"details_button\" _v-2d1b03a9=\"\">\n        &gt;&gt;\n        </a>\n        </td>\n    </tr>\n    </tbody>\n</table>\n\n";
 
 /***/ },
 /* 319 */
@@ -37729,8 +37762,8 @@
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] client\\route-map.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(333)
+	  console.warn("[vue-loader] client/route-map.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(334)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	var __vue_options__ = typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports
@@ -37746,7 +37779,7 @@
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), false)
 	  if (!hotAPI.compatible) return
-	  var id = "_v-53b4839c/route-map.vue"
+	  var id = "_v-d2b07d50/route-map.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -37770,8 +37803,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-53b4839c&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-map.vue", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-53b4839c&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-map.vue");
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-d2b07d50&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-map.vue", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-d2b07d50&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-map.vue");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -37789,7 +37822,7 @@
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.contents-with-nav[_v-53b4839c] {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n}\n.filter-message[_v-53b4839c] {\n  padding: 0.5em;\n  border: solid 1px #888;\n}\n.sec-map[_v-53b4839c] {\n  -webkit-box-flex: 1;\n      -ms-flex: 1 1 auto;\n          flex: 1 1 auto;\n  left: 0px;\n  width: 100%;\n  bottom: 0px;\n  top: 0px;\n  position: relative;\n}\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.contents-with-nav[_v-d2b07d50] {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n}\n.filter-message[_v-d2b07d50] {\n  padding: 0.5em;\n  border: solid 1px #888;\n}\n.sec-map[_v-d2b07d50] {\n  -webkit-box-flex: 1;\n      -ms-flex: 1 1 auto;\n          flex: 1 1 auto;\n  left: 0px;\n  width: 100%;\n  bottom: 0px;\n  top: 0px;\n  position: relative;\n}\n", ""]);
 
 	// exports
 
@@ -37878,11 +37911,11 @@
 
 	var _vueGoogleMaps = __webpack_require__(323);
 
-	var _pingLine = __webpack_require__(326);
+	var _pingLine = __webpack_require__(327);
 
 	var _pingLine2 = _interopRequireDefault(_pingLine);
 
-	var _leftPad = __webpack_require__(328);
+	var _leftPad = __webpack_require__(329);
 
 	var _leftPad2 = _interopRequireDefault(_leftPad);
 
@@ -37898,7 +37931,7 @@
 
 	var _assert2 = _interopRequireDefault(_assert);
 
-	var _querystring = __webpack_require__(330);
+	var _querystring = __webpack_require__(331);
 
 	var _querystring2 = _interopRequireDefault(_querystring);
 
@@ -40277,11 +40310,7 @@
 /* 325 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(294).nextTick;
 	var apply = Function.prototype.apply;
-	var slice = Array.prototype.slice;
-	var immediateIds = {};
-	var nextImmediateId = 0;
 
 	// DOM APIs, for completeness
 
@@ -40292,7 +40321,11 @@
 	  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
 	};
 	exports.clearTimeout =
-	exports.clearInterval = function(timeout) { timeout.close(); };
+	exports.clearInterval = function(timeout) {
+	  if (timeout) {
+	    timeout.close();
+	  }
+	};
 
 	function Timeout(id, clearFn) {
 	  this._id = id;
@@ -40326,47 +40359,217 @@
 	  }
 	};
 
-	// That's not how node.js implements it but the exposed api is the same.
-	exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
-	  var id = nextImmediateId++;
-	  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
+	// setimmediate attaches itself to the global object
+	__webpack_require__(326);
+	exports.setImmediate = setImmediate;
+	exports.clearImmediate = clearImmediate;
 
-	  immediateIds[id] = true;
-
-	  nextTick(function onNextTick() {
-	    if (immediateIds[id]) {
-	      // fn.call() is faster so we optimize for the common use-case
-	      // @see http://jsperf.com/call-apply-segu
-	      if (args) {
-	        fn.apply(null, args);
-	      } else {
-	        fn.call(null);
-	      }
-	      // Prevent ids from leaking
-	      exports.clearImmediate(id);
-	    }
-	  });
-
-	  return id;
-	};
-
-	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
-	  delete immediateIds[id];
-	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(325).setImmediate, __webpack_require__(325).clearImmediate))
 
 /***/ },
 /* 326 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
+	    "use strict";
+
+	    if (global.setImmediate) {
+	        return;
+	    }
+
+	    var nextHandle = 1; // Spec says greater than zero
+	    var tasksByHandle = {};
+	    var currentlyRunningATask = false;
+	    var doc = global.document;
+	    var registerImmediate;
+
+	    function setImmediate(callback) {
+	      // Callback can either be a function or a string
+	      if (typeof callback !== "function") {
+	        callback = new Function("" + callback);
+	      }
+	      // Copy function arguments
+	      var args = new Array(arguments.length - 1);
+	      for (var i = 0; i < args.length; i++) {
+	          args[i] = arguments[i + 1];
+	      }
+	      // Store and register the task
+	      var task = { callback: callback, args: args };
+	      tasksByHandle[nextHandle] = task;
+	      registerImmediate(nextHandle);
+	      return nextHandle++;
+	    }
+
+	    function clearImmediate(handle) {
+	        delete tasksByHandle[handle];
+	    }
+
+	    function run(task) {
+	        var callback = task.callback;
+	        var args = task.args;
+	        switch (args.length) {
+	        case 0:
+	            callback();
+	            break;
+	        case 1:
+	            callback(args[0]);
+	            break;
+	        case 2:
+	            callback(args[0], args[1]);
+	            break;
+	        case 3:
+	            callback(args[0], args[1], args[2]);
+	            break;
+	        default:
+	            callback.apply(undefined, args);
+	            break;
+	        }
+	    }
+
+	    function runIfPresent(handle) {
+	        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
+	        // So if we're currently running a task, we'll need to delay this invocation.
+	        if (currentlyRunningATask) {
+	            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
+	            // "too much recursion" error.
+	            setTimeout(runIfPresent, 0, handle);
+	        } else {
+	            var task = tasksByHandle[handle];
+	            if (task) {
+	                currentlyRunningATask = true;
+	                try {
+	                    run(task);
+	                } finally {
+	                    clearImmediate(handle);
+	                    currentlyRunningATask = false;
+	                }
+	            }
+	        }
+	    }
+
+	    function installNextTickImplementation() {
+	        registerImmediate = function(handle) {
+	            process.nextTick(function () { runIfPresent(handle); });
+	        };
+	    }
+
+	    function canUsePostMessage() {
+	        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
+	        // where `global.postMessage` means something completely different and can't be used for this purpose.
+	        if (global.postMessage && !global.importScripts) {
+	            var postMessageIsAsynchronous = true;
+	            var oldOnMessage = global.onmessage;
+	            global.onmessage = function() {
+	                postMessageIsAsynchronous = false;
+	            };
+	            global.postMessage("", "*");
+	            global.onmessage = oldOnMessage;
+	            return postMessageIsAsynchronous;
+	        }
+	    }
+
+	    function installPostMessageImplementation() {
+	        // Installs an event handler on `global` for the `message` event: see
+	        // * https://developer.mozilla.org/en/DOM/window.postMessage
+	        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+
+	        var messagePrefix = "setImmediate$" + Math.random() + "$";
+	        var onGlobalMessage = function(event) {
+	            if (event.source === global &&
+	                typeof event.data === "string" &&
+	                event.data.indexOf(messagePrefix) === 0) {
+	                runIfPresent(+event.data.slice(messagePrefix.length));
+	            }
+	        };
+
+	        if (global.addEventListener) {
+	            global.addEventListener("message", onGlobalMessage, false);
+	        } else {
+	            global.attachEvent("onmessage", onGlobalMessage);
+	        }
+
+	        registerImmediate = function(handle) {
+	            global.postMessage(messagePrefix + handle, "*");
+	        };
+	    }
+
+	    function installMessageChannelImplementation() {
+	        var channel = new MessageChannel();
+	        channel.port1.onmessage = function(event) {
+	            var handle = event.data;
+	            runIfPresent(handle);
+	        };
+
+	        registerImmediate = function(handle) {
+	            channel.port2.postMessage(handle);
+	        };
+	    }
+
+	    function installReadyStateChangeImplementation() {
+	        var html = doc.documentElement;
+	        registerImmediate = function(handle) {
+	            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+	            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+	            var script = doc.createElement("script");
+	            script.onreadystatechange = function () {
+	                runIfPresent(handle);
+	                script.onreadystatechange = null;
+	                html.removeChild(script);
+	                script = null;
+	            };
+	            html.appendChild(script);
+	        };
+	    }
+
+	    function installSetTimeoutImplementation() {
+	        registerImmediate = function(handle) {
+	            setTimeout(runIfPresent, 0, handle);
+	        };
+	    }
+
+	    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
+	    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
+	    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
+
+	    // Don't get fooled by e.g. browserify environments.
+	    if ({}.toString.call(global.process) === "[object process]") {
+	        // For Node.js before 0.9
+	        installNextTickImplementation();
+
+	    } else if (canUsePostMessage()) {
+	        // For non-IE10 modern browsers
+	        installPostMessageImplementation();
+
+	    } else if (global.MessageChannel) {
+	        // For web workers, where supported
+	        installMessageChannelImplementation();
+
+	    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
+	        // For IE 6–8
+	        installReadyStateChangeImplementation();
+
+	    } else {
+	        // For older browsers
+	        installSetTimeoutImplementation();
+	    }
+
+	    attachTo.setImmediate = setImmediate;
+	    attachTo.clearImmediate = clearImmediate;
+	}(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(294)))
+
+/***/ },
+/* 327 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var __vue_script__, __vue_template__
 	var __vue_styles__ = {}
-	__vue_script__ = __webpack_require__(327)
+	__vue_script__ = __webpack_require__(328)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] client\\ping-line.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(329)
+	  console.warn("[vue-loader] client/ping-line.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(330)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	var __vue_options__ = typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports
@@ -40382,7 +40585,7 @@
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), false)
 	  if (!hotAPI.compatible) return
-	  var id = "_v-31f5c7b3/ping-line.vue"
+	  var id = "_v-74e9056f/ping-line.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -40391,7 +40594,7 @@
 	})()}
 
 /***/ },
-/* 327 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40402,7 +40605,7 @@
 
 	var _vueGoogleMaps = __webpack_require__(323);
 
-	var _leftPad = __webpack_require__(328);
+	var _leftPad = __webpack_require__(329);
 
 	var _leftPad2 = _interopRequireDefault(_leftPad);
 
@@ -40494,7 +40697,7 @@
 	// </script>
 
 /***/ },
-/* 328 */
+/* 329 */
 /***/ function(module, exports) {
 
 	/* This program is free software. It comes without any warranty, to
@@ -40552,23 +40755,23 @@
 
 
 /***/ },
-/* 329 */
+/* 330 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<!-- Pings -->\n  <template v-if=\"pings\">\n    <gmap-marker\n                  v-for=\"ping in pings | everyN\"\n                  track-by=\"$index\"\n                  :position=\"{\n                      lat: ping.coordinates.coordinates[1],\n                      lng: ping.coordinates.coordinates[0],\n                  }\"\n                  :icon=\"pingPoint\"\n                  @g-mouseover=\"selectPing(ping)\"\n                  >\n    </gmap-marker>\n  </template>\n\n  <gmap-polyline v-if=\"pings\" :options=\"polylineOptions\" :path=\"pingPath\">\n  </gmap-polyline>\n";
 
 /***/ },
-/* 330 */
+/* 331 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	exports.decode = exports.parse = __webpack_require__(331);
-	exports.encode = exports.stringify = __webpack_require__(332);
+	exports.decode = exports.parse = __webpack_require__(332);
+	exports.encode = exports.stringify = __webpack_require__(333);
 
 
 /***/ },
-/* 331 */
+/* 332 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -40654,7 +40857,7 @@
 
 
 /***/ },
-/* 332 */
+/* 333 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -40724,24 +40927,24 @@
 
 
 /***/ },
-/* 333 */
+/* 334 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div _v-53b4839c=\"\">\n  <navi :service=\"service\" _v-53b4839c=\"\"></navi>\n  <div class=\"contents-with-nav\" _v-53b4839c=\"\">\n    <div v-if=\"$route.query.time\" class=\"filter-message\" _v-53b4839c=\"\">\n      Showing known positions between\n      {{startTime | formatTime}} and\n      {{endTime | formatTime}}.\n\n      <a v-link=\"{path: '/map/' + service, query: {}}\" _v-53b4839c=\"\">\n        Clear Filter\n      </a>\n    </div>\n    <gmap-map v-ref:gmap=\"\" class=\"sec-map\" :center=\"{lng: 103.8, lat: 1.38}\" :zoom=\"12\" _v-53b4839c=\"\">\n\n      <gmap-marker v-for=\"stop in uniqueStops\" track-by=\"$index\" :position=\"stop | stopPosition\" :icon=\"stop | stopIcon $index\" @g-mouseover=\"selectStop(stop)\" @g-mouseout=\"closeWindow\" _v-53b4839c=\"\">\n      </gmap-marker>\n\n      <gmap-infowindow v-if=\"selectedStop != null\" :opened=\"selectedStop != null\" :position=\"selectedStop | stopPosition\" _v-53b4839c=\"\">\n        Scheduled: {{selectedStop.time | formatTime}}\n        <div v-if=\"selectedStop.canBoard\" _v-53b4839c=\"\">\n          No. of Passengers: {{selectedStop.passengers.length}}\n        </div>\n      </gmap-infowindow>\n\n      <gmap-infowindow v-if=\"selectedPing != null\" :opened=\"selectedPing != null\" :position=\"selectedPing.coordinates | coordinatesToLatLng\" _v-53b4839c=\"\">\n        {{selectedPing.time | formatTime}}\n        <br _v-53b4839c=\"\">\n        <span v-if=\"driversById &amp;&amp; driversById[selectedPing.driverId]\" _v-53b4839c=\"\">\n                By: <b _v-53b4839c=\"\">{{driversById[selectedPing.driverId].transportCompanies[0].driverCompany.name}}</b>\n              </span>\n      </gmap-infowindow>\n\n      <!-- <ping-line :pings=\"pings\" :options=\"pingOptions\" :sample-rate=\"5\"></ping-line> -->\n\n      <!-- Start and end markers -->\n      <template v-for=\"(driverId,driverPings) in otherPings\">\n        <gmap-marker :position=\"firstPing(driverPings)\" :icon=\"startPoint\" :title=\"Start\" _v-53b4839c=\"\">\n        </gmap-marker>\n\n        <gmap-marker :position=\"lastPing(driverPings)\" :icon=\"endPoint\" :title=\"End\" _v-53b4839c=\"\">\n        </gmap-marker>\n\n        <ping-line :pings=\"driverPings\" :options=\"otherPingOptions\" :sample-rate=\"5\" _v-53b4839c=\"\">\n        </ping-line>\n      </template>\n    </gmap-map>\n  </div>\n</div>\n";
+	module.exports = "\n<div _v-d2b07d50=\"\">\n  <navi :service=\"service\" _v-d2b07d50=\"\"></navi>\n  <div class=\"contents-with-nav\" _v-d2b07d50=\"\">\n    <div v-if=\"$route.query.time\" class=\"filter-message\" _v-d2b07d50=\"\">\n      Showing known positions between\n      {{startTime | formatTime}} and\n      {{endTime | formatTime}}.\n\n      <a v-link=\"{path: '/map/' + service, query: {}}\" _v-d2b07d50=\"\">\n        Clear Filter\n      </a>\n    </div>\n    <gmap-map v-ref:gmap=\"\" class=\"sec-map\" :center=\"{lng: 103.8, lat: 1.38}\" :zoom=\"12\" _v-d2b07d50=\"\">\n\n      <gmap-marker v-for=\"stop in uniqueStops\" track-by=\"$index\" :position=\"stop | stopPosition\" :icon=\"stop | stopIcon $index\" @g-mouseover=\"selectStop(stop)\" @g-mouseout=\"closeWindow\" _v-d2b07d50=\"\">\n      </gmap-marker>\n\n      <gmap-infowindow v-if=\"selectedStop != null\" :opened=\"selectedStop != null\" :position=\"selectedStop | stopPosition\" _v-d2b07d50=\"\">\n        Scheduled: {{selectedStop.time | formatTime}}\n        <div v-if=\"selectedStop.canBoard\" _v-d2b07d50=\"\">\n          No. of Passengers: {{selectedStop.passengers.length}}\n        </div>\n      </gmap-infowindow>\n\n      <gmap-infowindow v-if=\"selectedPing != null\" :opened=\"selectedPing != null\" :position=\"selectedPing.coordinates | coordinatesToLatLng\" _v-d2b07d50=\"\">\n        {{selectedPing.time | formatTime}}\n        <br _v-d2b07d50=\"\">\n        <span v-if=\"driversById &amp;&amp; driversById[selectedPing.driverId]\" _v-d2b07d50=\"\">\n                By: <b _v-d2b07d50=\"\">{{driversById[selectedPing.driverId].transportCompanies[0].driverCompany.name}}</b>\n              </span>\n      </gmap-infowindow>\n\n      <!-- <ping-line :pings=\"pings\" :options=\"pingOptions\" :sample-rate=\"5\"></ping-line> -->\n\n      <!-- Start and end markers -->\n      <template v-for=\"(driverId,driverPings) in otherPings\">\n        <gmap-marker :position=\"firstPing(driverPings)\" :icon=\"startPoint\" :title=\"Start\" _v-d2b07d50=\"\">\n        </gmap-marker>\n\n        <gmap-marker :position=\"lastPing(driverPings)\" :icon=\"endPoint\" :title=\"End\" _v-d2b07d50=\"\">\n        </gmap-marker>\n\n        <ping-line :pings=\"driverPings\" :options=\"otherPingOptions\" :sample-rate=\"5\" _v-d2b07d50=\"\">\n        </ping-line>\n      </template>\n    </gmap-map>\n  </div>\n</div>\n";
 
 /***/ },
-/* 334 */
+/* 335 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
 	var __vue_styles__ = {}
-	__webpack_require__(335)
-	__vue_script__ = __webpack_require__(337)
+	__webpack_require__(336)
+	__vue_script__ = __webpack_require__(338)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] client\\nav.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(338)
+	  console.warn("[vue-loader] client/nav.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(339)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	var __vue_options__ = typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports
@@ -40757,7 +40960,7 @@
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), false)
 	  if (!hotAPI.compatible) return
-	  var id = "_v-474e6067/nav.vue"
+	  var id = "_v-cbfcc9ba/nav.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -40766,13 +40969,13 @@
 	})()}
 
 /***/ },
-/* 335 */
+/* 336 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(336);
+	var content = __webpack_require__(337);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(304)(content, {});
@@ -40781,8 +40984,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-474e6067&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./nav.vue", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-474e6067&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./nav.vue");
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-cbfcc9ba&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./nav.vue", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-cbfcc9ba&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./nav.vue");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -40792,7 +40995,7 @@
 	}
 
 /***/ },
-/* 336 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(303)();
@@ -40800,13 +41003,13 @@
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\nul[_v-474e6067] {\n    padding: 0;\n    margin: 0;\n    position: absolute;\n    height: 40px;\n    background: #FFF;\n    width: 100%;\n    border: none;\n    top: 0;\n    left: 0;\n    right: 0;\n}\nul li[_v-474e6067] {\n    display: block;\n    float: left;\n    position: relative;\n    border: none;\n    height: 40px;\n    width: 50%;\n    text-align: center;\n    padding: 10px;\n    border-right: solid 1px #999;\n    border-bottom: solid 1px #999;\n}\nul li a[_v-474e6067] {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    box-sizing: border-box;\n    background-color: #ebeff2;\n    padding: 10px;\n}\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\nul[_v-cbfcc9ba] {\n    padding: 0;\n    margin: 0;\n    position: absolute;\n    height: 40px;\n    background: #FFF;\n    width: 100%;\n    border: none;\n    top: 0;\n    left: 0;\n    right: 0;\n}\nul li[_v-cbfcc9ba] {\n    display: block;\n    float: left;\n    position: relative;\n    border: none;\n    height: 40px;\n    width: 50%;\n    text-align: center;\n    padding: 10px;\n    border-right: solid 1px #999;\n    border-bottom: solid 1px #999;\n}\nul li a[_v-cbfcc9ba] {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    box-sizing: border-box;\n    background-color: #ebeff2;\n    padding: 10px;\n}\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 337 */
+/* 338 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -40862,24 +41065,24 @@
 	// </script>
 
 /***/ },
-/* 338 */
+/* 339 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<ul _v-474e6067=\"\">\n    <li _v-474e6067=\"\"><a v-link=\"{ path: '/map/' + service}\" _v-474e6067=\"\">Map</a></li>\n    <li _v-474e6067=\"\"><a v-link=\"{ path: '/passengers/' + service}\" _v-474e6067=\"\">Passenger List</a></li>\n</ul>\n";
+	module.exports = "\n<ul _v-cbfcc9ba=\"\">\n    <li _v-cbfcc9ba=\"\"><a v-link=\"{ path: '/map/' + service}\" _v-cbfcc9ba=\"\">Map</a></li>\n    <li _v-cbfcc9ba=\"\"><a v-link=\"{ path: '/passengers/' + service}\" _v-cbfcc9ba=\"\">Passenger List</a></li>\n</ul>\n";
 
 /***/ },
-/* 339 */
+/* 340 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
 	var __vue_styles__ = {}
-	__webpack_require__(340)
-	__vue_script__ = __webpack_require__(342)
+	__webpack_require__(341)
+	__vue_script__ = __webpack_require__(343)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] client\\route-passengers.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(349)
+	  console.warn("[vue-loader] client/route-passengers.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(351)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	var __vue_options__ = typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports
@@ -40895,7 +41098,7 @@
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), false)
 	  if (!hotAPI.compatible) return
-	  var id = "_v-7017d689/route-passengers.vue"
+	  var id = "_v-76d2ed4d/route-passengers.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -40904,13 +41107,13 @@
 	})()}
 
 /***/ },
-/* 340 */
+/* 341 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(341);
+	var content = __webpack_require__(342);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(304)(content, {});
@@ -40919,8 +41122,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-7017d689&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-passengers.vue", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-7017d689&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-passengers.vue");
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-76d2ed4d&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-passengers.vue", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-76d2ed4d&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-passengers.vue");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -40930,7 +41133,7 @@
 	}
 
 /***/ },
-/* 341 */
+/* 342 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(303)();
@@ -40938,18 +41141,18 @@
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nform[_v-7017d689] {\n    padding: 1em;\n    width: 100%;\n    border: solid 1px #888;\n}\nlabel select[_v-7017d689]{\n    margin: 1em;\n}\nbutton.message-button[_v-7017d689] {\n    padding: 10px 30px;\n    display: block;\n    margin: 10px auto;\n    width: 80%;\n\n    border: solid 1px black;\n    background-color: #ccc;\n}\ntable.arrivalInfo[_v-7017d689] {\n    border-collapse: collapse;\n    border-spacing: 0px;\n}\n\n.arrivalInfo th[_v-7017d689] {\n    background-color: #ebeff2;\n}\n.arrivalInfo th[_v-7017d689],\n.arrivalInfo td[_v-7017d689] {\n    min-width: 50px;\n    border: solid 1px #CCCCCC;\n    padding: 5px;\n}\n\n.passenger[_v-7017d689] {\n    padding: 5px;\n}\n.passenger[_v-7017d689]:nth-child(even) {\n  background-color: #FFF;\n}\n.passenger[_v-7017d689]:nth-child(odd) {\n  background-color: #EEE;\n}\n\n.passenger.animate-hide[_v-7017d689] {\n  max-height: 0;\n  padding-top: 0;\n  padding-bottom: 0;\n  -webkit-transition: 0.1s linear all;\n  transition: 0.1s linear all;\n  overflow: hidden;\n}\n.passenger[_v-7017d689]:not(.animate-hide) {\n  max-height: 100px;\n  padding-top: 5px;\n  padding-bottom: 5px;\n  -webkit-transition: 0.1s linear all;\n  transition: 0.1s linear all;\n}\n\nh3.show-passengers[_v-7017d689]::before {\n  content: \"[ - ] \";\n}\nh3[_v-7017d689]:not(.show-passengers)::before {\n  content: \"[ + ] \";\n}\n\nh3[_v-7017d689] {\n    background-color: #ebeff2;\n    margin: 1px 0 0 0;\n    padding: 5px;\n    font-size: 80%;\n    color: #888;\n    white-space: nowrap;\n    overflow-x: auto;\n}\n\ntd.boarding[_v-7017d689] {\n    background-color: #19c3a5;\n}\ntd.alighting[_v-7017d689]:not(.boarding) {\n    background-color: #ff7070;\n}\n\n.cancel-form[_v-7017d689] {\n  background-color: #FFDDDD;\n}\n.danger-button[_v-7017d689] {\n  background-color: #FF0000;\n  color: #FFFFFF;\n}\n\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nform[_v-76d2ed4d] {\n    padding: 1em;\n    width: 100%;\n    border: solid 1px #888;\n}\nlabel select[_v-76d2ed4d]{\n    margin: 1em;\n}\nbutton.message-button[_v-76d2ed4d] {\n    padding: 10px 30px;\n    display: block;\n    margin: 10px auto;\n    width: 80%;\n\n    border: solid 1px black;\n    background-color: #ccc;\n}\ntable.arrivalInfo[_v-76d2ed4d] {\n    border-collapse: collapse;\n    border-spacing: 0px;\n}\n\n.arrivalInfo th[_v-76d2ed4d] {\n    background-color: #ebeff2;\n}\n.arrivalInfo th[_v-76d2ed4d],\n.arrivalInfo td[_v-76d2ed4d] {\n    min-width: 50px;\n    border: solid 1px #CCCCCC;\n    padding: 5px;\n}\n\n.passenger[_v-76d2ed4d] {\n    padding: 5px;\n}\n.passenger[_v-76d2ed4d]:nth-child(even) {\n  background-color: #FFF;\n}\n.passenger[_v-76d2ed4d]:nth-child(odd) {\n  background-color: #EEE;\n}\n\n.passenger.animate-hide[_v-76d2ed4d] {\n  max-height: 0;\n  padding-top: 0;\n  padding-bottom: 0;\n  -webkit-transition: 0.1s linear all;\n  transition: 0.1s linear all;\n  overflow: hidden;\n}\n.passenger[_v-76d2ed4d]:not(.animate-hide) {\n  max-height: 100px;\n  padding-top: 5px;\n  padding-bottom: 5px;\n  -webkit-transition: 0.1s linear all;\n  transition: 0.1s linear all;\n}\n\nh3.show-passengers[_v-76d2ed4d]::before {\n  content: \"[ - ] \";\n}\nh3[_v-76d2ed4d]:not(.show-passengers)::before {\n  content: \"[ + ] \";\n}\n\nh3[_v-76d2ed4d] {\n    background-color: #ebeff2;\n    margin: 1px 0 0 0;\n    padding: 5px;\n    font-size: 80%;\n    color: #888;\n    white-space: nowrap;\n    overflow-x: auto;\n}\n\ntd.boarding[_v-76d2ed4d] {\n    background-color: #19c3a5;\n}\ntd.alighting[_v-76d2ed4d]:not(.boarding) {\n    background-color: #ff7070;\n}\n\n.cancel-form[_v-76d2ed4d] {\n  background-color: #FFDDDD;\n}\n.danger-button[_v-76d2ed4d] {\n  background-color: #FF0000;\n  color: #FFFFFF;\n}\n\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 342 */
+/* 343 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _messageTemplates = __webpack_require__(343);
+	var _messageTemplates = __webpack_require__(344);
 
 	var _messageTemplates2 = _interopRequireDefault(_messageTemplates);
 
@@ -41180,7 +41383,7 @@
 	//
 	// <script>
 
-	var leftPad = __webpack_require__(328);
+	var leftPad = __webpack_require__(329);
 	var authAjax = __webpack_require__(313).authAjax;
 	var Vue = __webpack_require__(299);
 	var _ = __webpack_require__(311);
@@ -41238,7 +41441,7 @@
 
 
 	    components: {
-	        'RouteAnnouncementForm': __webpack_require__(344)
+	        'RouteAnnouncementForm': __webpack_require__(345)
 	    },
 
 	    route: {
@@ -41487,7 +41690,7 @@
 	// </script>
 
 /***/ },
-/* 343 */
+/* 344 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -41498,18 +41701,18 @@
 	exports.default = [['Bus is going to be more than 15 mins late', '(DO NOT REPLY) Attention: Service for today will be delayed. The bus is still on its way to your stop. Sorry for the inconvenience.'], ['Driver App is unavailable', '(DO NOT REPLY) Attention: The location tracking on the app is not working today. The bus is still on its way to your stop. We sincerely apologise for the inconvenience caused to all our commuters.'], ['Cancelled trip', '(DO NOT REPLY) Attention: The service for today has been cancelled due to unforeseen circumstances. Please make alternative transport arrangements. Today\'s fare will be refunded and we sincerely apologise for the inconvenience caused to all our commuters.']];
 
 /***/ },
-/* 344 */
+/* 345 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
 	var __vue_styles__ = {}
-	__webpack_require__(345)
-	__vue_script__ = __webpack_require__(347)
+	__webpack_require__(346)
+	__vue_script__ = __webpack_require__(348)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] client\\route-announcement-form.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(348)
+	  console.warn("[vue-loader] client/route-announcement-form.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(350)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	var __vue_options__ = typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports
@@ -41525,7 +41728,7 @@
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), false)
 	  if (!hotAPI.compatible) return
-	  var id = "_v-b169b26c/route-announcement-form.vue"
+	  var id = "_v-eb1ca8f4/route-announcement-form.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -41534,13 +41737,13 @@
 	})()}
 
 /***/ },
-/* 345 */
+/* 346 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(346);
+	var content = __webpack_require__(347);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(304)(content, {});
@@ -41549,8 +41752,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-b169b26c&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-announcement-form.vue", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-b169b26c&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-announcement-form.vue");
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-eb1ca8f4&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-announcement-form.vue", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/vue-loader/lib/style-rewriter.js?id=_v-eb1ca8f4&scoped=true!./../node_modules/vue-loader/lib/selector.js?type=style&index=0!./route-announcement-form.vue");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -41560,7 +41763,7 @@
 	}
 
 /***/ },
-/* 346 */
+/* 347 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(303)();
@@ -41568,13 +41771,13 @@
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.message-box[_v-b169b26c] {\n  border: solid 1px #888;\n  background-color: #FFD;\n  padding: 0.5em;\n  font-size: 120%;\n  display: inline-block;\n}\nlabel[_v-b169b26c] {\n  display: block;\n}\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.message-box[_v-eb1ca8f4] {\n  border: solid 1px #888;\n  background-color: #FFD;\n  padding: 0.5em;\n  font-size: 120%;\n  display: inline-block;\n}\nlabel[_v-eb1ca8f4] {\n  display: block;\n}\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 347 */
+/* 348 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41583,11 +41786,25 @@
 	  value: true
 	});
 
+	var _announcementTemplates = __webpack_require__(349);
+
+	var _announcementTemplates2 = _interopRequireDefault(_announcementTemplates);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 	// <template>
 	//   <div>
 	//     <b>Current Message:</b>
 	//     <i v-if="currentMessage === null">Loading...</i>
 	//     <i v-if="currentMessage === ''">(none)</i>
+	//     <label>
+	//       Use template:
+	//       <select v-model="message">
+	//         <option v-for="template in announcementTemplates" :value="template[1]">
+	//           {{ template[0] }}
+	//         </option>
+	//       </select>
+	//     </label>
 	//     <span class="message-box" v-if="currentMessage">
 	//       {{currentMessage}}
 	//
@@ -41635,7 +41852,7 @@
 	  data: function data() {
 	    this.requery();
 	    return {
-	      message: '',
+	      message: _announcementTemplates2.default[0][1],
 	      currentMessage: null
 	    };
 	  },
@@ -41644,6 +41861,12 @@
 	  watch: {
 	    tripId: function tripId() {
 	      this.requery();
+	    }
+	  },
+
+	  computed: {
+	    announcementTemplates: function announcementTemplates() {
+	      return _announcementTemplates2.default;
 	    }
 	  },
 
@@ -41709,19 +41932,30 @@
 	// </script>
 
 /***/ },
-/* 348 */
-/***/ function(module, exports) {
-
-	module.exports = "\n<div _v-b169b26c=\"\">\n  <b _v-b169b26c=\"\">Current Message:</b>\n  <i v-if=\"currentMessage === null\" _v-b169b26c=\"\">Loading...</i>\n  <i v-if=\"currentMessage === ''\" _v-b169b26c=\"\">(none)</i>\n  <span class=\"message-box\" v-if=\"currentMessage\" _v-b169b26c=\"\">\n    {{currentMessage}}\n\n\n    <button class=\"message-button\" type=\"button\" @click=\"clearMessage\" _v-b169b26c=\"\">Clear message</button>\n  </span>\n</div>\n<form @submit=\"updateRouteAnnouncements\" _v-b169b26c=\"\">\n  <div _v-b169b26c=\"\">\n    <label _v-b169b26c=\"\">\n      New message (leave blank to clear the message)<br _v-b169b26c=\"\">\n      <textarea v-model=\"message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-b169b26c=\"\"></textarea>\n    </label>\n  </div>\n  <div _v-b169b26c=\"\">\n    <button class=\"message-button\" type=\"submit\" :disabled=\"!message\" _v-b169b26c=\"\">Submit</button>\n  </div>\n</form>\n";
-
-/***/ },
 /* 349 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div _v-7017d689=\"\">\n    <navi :service=\"tripId\" _v-7017d689=\"\"></navi>\n    <div class=\"contents-with-nav\" _v-7017d689=\"\">\n    <h2 _v-7017d689=\"\">Boarding stops</h2>\n    <table class=\"arrivalInfo\" _v-7017d689=\"\">\n        <tbody _v-7017d689=\"\"><tr _v-7017d689=\"\">\n            <th _v-7017d689=\"\">Stop number</th>\n            <td v-for=\"tripStop in arrivalInfo\" :class=\"{ boarding: tripStop.canBoard,\n                          alighting: tripStop.canAlight }\" title=\"{{tripStop.stop.description}}\" v-show=\"tripStop.canBoard\" _v-7017d689=\"\">\n                {{ $index + 1 }}\n                {{ tripStop.canBoard ? '↗' : '↙' }}\n            </td>\n        </tr>\n        <tr _v-7017d689=\"\">\n            <th _v-7017d689=\"\">Pax boarding</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-7017d689=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-7017d689=\"\">\n                  {{ tripStop.passengers.length  }}\n                </span>\n            </td>\n        </tr>\n        <tr _v-7017d689=\"\">\n            <th _v-7017d689=\"\">Scheduled</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-7017d689=\"\">\n                <a v-link=\"{\n                    path: '/map/' + tripId,\n                    query: {time: tripStop.time}\n                  }\" v-if=\"tripStop.canBoard\" _v-7017d689=\"\">\n                  {{ tripStop.time | takeLocalTime }}\n                </a>\n            </td>\n        </tr>\n        <tr _v-7017d689=\"\">\n            <th _v-7017d689=\"\">Actual</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-7017d689=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-7017d689=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-7017d689=\"\">\n            <th _v-7017d689=\"\">Diff (mins)</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-7017d689=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-7017d689=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | minsDiff tripStop.time }}\n            </span></td>\n        </tr>\n    </tbody></table>\n\n    <template v-if=\"isPublicRoute\">\n      <h1 _v-7017d689=\"\">Passenger List</h1>\n      <div v-for=\"stop in arrivalInfo\" v-show=\"stop.canBoard\" track-by=\"id\" _v-7017d689=\"\">\n          <h3 :class=\"{'show-passengers': stop.showPassengers}\" @click=\"togglePassengers(stop)\" _v-7017d689=\"\">({{stop.time | formatTime}}) {{$index + 1}}.   {{stop.stop.description}} - {{stop.stop.road}}</h3>\n          <div v-for=\"passenger in stop.passengers\" :class=\"{passenger: true, 'animate-hide': !stop.showPassengers}\" track-by=\"id\" _v-7017d689=\"\">\n              {{passenger.index + 1}}.\n              {{passenger.name}}\n              —\n              {{passenger.telephone}}\n              —\n              {{passenger.email}}\n          </div>\n      </div>\n\n      <h1 _v-7017d689=\"\">Cancel Trip</h1>\n      <form class=\"cancel-form\" method=\"POST\" @submit=\"confirmAndCancel\" _v-7017d689=\"\">\n          <div v-if=\"trip.status !== 'cancelled'\" _v-7017d689=\"\">\n            <b _v-7017d689=\"\">Warning</b>: This will cancel the trip, and passengers will be notified\n            via SMS. This action is irreversible.\n\n            <button class=\"danger-button\" type=\"submit\" _v-7017d689=\"\">Cancel Trip</button>\n          </div>\n          <div v-else=\"\" _v-7017d689=\"\">\n            This trip has been cancelled.\n          </div>\n      </form>\n\n      <h1 _v-7017d689=\"\">Send message to passengers</h1>\n      <form method=\"POST\" @submit=\"confirmAndSend\" _v-7017d689=\"\">\n          <label _v-7017d689=\"\">\n            Use template:\n            <select v-model=\"sms.message\" _v-7017d689=\"\">\n             <option v-for=\"mt in messageTemplates\" :value=\"mt[1]\" _v-7017d689=\"\">\n                {{mt[0]}}\n             </option>\n            </select>\n          </label>\n          <input type=\"hidden\" name=\"session_token\" value=\"{{sessionToken}}\" _v-7017d689=\"\">\n          <input type=\"hidden\" name=\"service\" value=\"{{service}}\" _v-7017d689=\"\">\n          <textarea v-model=\"sms.message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-7017d689=\"\"></textarea>\n          <button class=\"message-button\" type=\"submit\" _v-7017d689=\"\">Submit</button>\n      </form>\n    </template>\n\n    <template v-if=\"isTrackingRoute\">\n      <h1 _v-7017d689=\"\">Update Route Announcements</h1>\n      <route-announcement-form :trip-id=\"tripId\" _v-7017d689=\"\">\n      </route-announcement-form>\n    </template>\n\n    <!-- space for the user to scroll down -->\n    <br _v-7017d689=\"\">\n    <br _v-7017d689=\"\">\n    <br _v-7017d689=\"\">\n    <br _v-7017d689=\"\">\n    <br _v-7017d689=\"\">\n\n    </div>\n</div>\n";
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = [['Bus Replacement', 'Bus no, <license plate number>, has replaced one of our regular buses. \nPlease look out for a different bus for today.  For enquiries, call <Operator Name> at <Contact Number>.'], ['No Bus Replacement', 'The bus at <route time> is not running for today due to <reason e.g. bus breakdown>. \nPlease look out for a different bus for today. For enquiries, call <Operator Name> at <Contact Number>.']];
 
 /***/ },
 /* 350 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<div _v-eb1ca8f4=\"\">\n  <b _v-eb1ca8f4=\"\">Current Message:</b>\n  <i v-if=\"currentMessage === null\" _v-eb1ca8f4=\"\">Loading...</i>\n  <i v-if=\"currentMessage === ''\" _v-eb1ca8f4=\"\">(none)</i>\n  <label _v-eb1ca8f4=\"\">\n    Use template:\n    <select v-model=\"message\" _v-eb1ca8f4=\"\">\n      <option v-for=\"template in announcementTemplates\" :value=\"template[1]\" _v-eb1ca8f4=\"\">\n        {{ template[0] }}\n      </option>\n    </select>\n  </label>\n  <span class=\"message-box\" v-if=\"currentMessage\" _v-eb1ca8f4=\"\">\n    {{currentMessage}}\n\n\n    <button class=\"message-button\" type=\"button\" @click=\"clearMessage\" _v-eb1ca8f4=\"\">Clear message</button>\n  </span>\n</div>\n<form @submit=\"updateRouteAnnouncements\" _v-eb1ca8f4=\"\">\n  <div _v-eb1ca8f4=\"\">\n    <label _v-eb1ca8f4=\"\">\n      New message (leave blank to clear the message)<br _v-eb1ca8f4=\"\">\n      <textarea v-model=\"message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-eb1ca8f4=\"\"></textarea>\n    </label>\n  </div>\n  <div _v-eb1ca8f4=\"\">\n    <button class=\"message-button\" type=\"submit\" :disabled=\"!message\" _v-eb1ca8f4=\"\">Submit</button>\n  </div>\n</form>\n";
+
+/***/ },
+/* 351 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<div _v-76d2ed4d=\"\">\n    <navi :service=\"tripId\" _v-76d2ed4d=\"\"></navi>\n    <div class=\"contents-with-nav\" _v-76d2ed4d=\"\">\n    <h2 _v-76d2ed4d=\"\">Boarding stops</h2>\n    <table class=\"arrivalInfo\" _v-76d2ed4d=\"\">\n        <tbody _v-76d2ed4d=\"\"><tr _v-76d2ed4d=\"\">\n            <th _v-76d2ed4d=\"\">Stop number</th>\n            <td v-for=\"tripStop in arrivalInfo\" :class=\"{ boarding: tripStop.canBoard,\n                          alighting: tripStop.canAlight }\" title=\"{{tripStop.stop.description}}\" v-show=\"tripStop.canBoard\" _v-76d2ed4d=\"\">\n                {{ $index + 1 }}\n                {{ tripStop.canBoard ? '↗' : '↙' }}\n            </td>\n        </tr>\n        <tr _v-76d2ed4d=\"\">\n            <th _v-76d2ed4d=\"\">Pax boarding</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-76d2ed4d=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-76d2ed4d=\"\">\n                  {{ tripStop.passengers.length  }}\n                </span>\n            </td>\n        </tr>\n        <tr _v-76d2ed4d=\"\">\n            <th _v-76d2ed4d=\"\">Scheduled</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-76d2ed4d=\"\">\n                <a v-link=\"{\n                    path: '/map/' + tripId,\n                    query: {time: tripStop.time}\n                  }\" v-if=\"tripStop.canBoard\" _v-76d2ed4d=\"\">\n                  {{ tripStop.time | takeLocalTime }}\n                </a>\n            </td>\n        </tr>\n        <tr _v-76d2ed4d=\"\">\n            <th _v-76d2ed4d=\"\">Actual</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-76d2ed4d=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-76d2ed4d=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | takeLocalTime }}\n            </span></td>\n        </tr>\n        <tr _v-76d2ed4d=\"\">\n            <th _v-76d2ed4d=\"\">Diff (mins)</th>\n            <td v-for=\"tripStop in arrivalInfo\" v-show=\"tripStop.canBoard\" _v-76d2ed4d=\"\">\n                <span v-if=\"tripStop.canBoard\" _v-76d2ed4d=\"\">\n                {{ tripStop.bestPing ? tripStop.bestPing.createdAt : '' | minsDiff tripStop.time }}\n            </span></td>\n        </tr>\n    </tbody></table>\n\n    <template v-if=\"isPublicRoute\">\n      <h1 _v-76d2ed4d=\"\">Passenger List</h1>\n      <div v-for=\"stop in arrivalInfo\" v-show=\"stop.canBoard\" track-by=\"id\" _v-76d2ed4d=\"\">\n          <h3 :class=\"{'show-passengers': stop.showPassengers}\" @click=\"togglePassengers(stop)\" _v-76d2ed4d=\"\">({{stop.time | formatTime}}) {{$index + 1}}.   {{stop.stop.description}} - {{stop.stop.road}}</h3>\n          <div v-for=\"passenger in stop.passengers\" :class=\"{passenger: true, 'animate-hide': !stop.showPassengers}\" track-by=\"id\" _v-76d2ed4d=\"\">\n              {{passenger.index + 1}}.\n              {{passenger.name}}\n              —\n              {{passenger.telephone}}\n              —\n              {{passenger.email}}\n          </div>\n      </div>\n\n      <h1 _v-76d2ed4d=\"\">Cancel Trip</h1>\n      <form class=\"cancel-form\" method=\"POST\" @submit=\"confirmAndCancel\" _v-76d2ed4d=\"\">\n          <div v-if=\"trip.status !== 'cancelled'\" _v-76d2ed4d=\"\">\n            <b _v-76d2ed4d=\"\">Warning</b>: This will cancel the trip, and passengers will be notified\n            via SMS. This action is irreversible.\n\n            <button class=\"danger-button\" type=\"submit\" _v-76d2ed4d=\"\">Cancel Trip</button>\n          </div>\n          <div v-else=\"\" _v-76d2ed4d=\"\">\n            This trip has been cancelled.\n          </div>\n      </form>\n\n      <h1 _v-76d2ed4d=\"\">Send message to passengers</h1>\n      <form method=\"POST\" @submit=\"confirmAndSend\" _v-76d2ed4d=\"\">\n          <label _v-76d2ed4d=\"\">\n            Use template:\n            <select v-model=\"sms.message\" _v-76d2ed4d=\"\">\n             <option v-for=\"mt in messageTemplates\" :value=\"mt[1]\" _v-76d2ed4d=\"\">\n                {{mt[0]}}\n             </option>\n            </select>\n          </label>\n          <input type=\"hidden\" name=\"session_token\" value=\"{{sessionToken}}\" _v-76d2ed4d=\"\">\n          <input type=\"hidden\" name=\"service\" value=\"{{service}}\" _v-76d2ed4d=\"\">\n          <textarea v-model=\"sms.message\" style=\"display: block; width: 100%; height: 100px\" name=\"message\" _v-76d2ed4d=\"\"></textarea>\n          <button class=\"message-button\" type=\"submit\" _v-76d2ed4d=\"\">Submit</button>\n      </form>\n    </template>\n\n    <template v-if=\"isTrackingRoute\">\n      <h1 _v-76d2ed4d=\"\">Update Route Announcements</h1>\n      <route-announcement-form :trip-id=\"tripId\" _v-76d2ed4d=\"\">\n      </route-announcement-form>\n    </template>\n\n    <!-- space for the user to scroll down -->\n    <br _v-76d2ed4d=\"\">\n    <br _v-76d2ed4d=\"\">\n    <br _v-76d2ed4d=\"\">\n    <br _v-76d2ed4d=\"\">\n    <br _v-76d2ed4d=\"\">\n\n    </div>\n</div>\n";
+
+/***/ },
+/* 352 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*!
@@ -44435,7 +44669,7 @@
 	}));
 
 /***/ },
-/* 351 */
+/* 353 */
 /***/ function(module, exports) {
 
 	/*!
@@ -45752,17 +45986,17 @@
 	module.exports = plugin;
 
 /***/ },
-/* 352 */
+/* 354 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
 	var __vue_styles__ = {}
-	__vue_script__ = __webpack_require__(353)
+	__vue_script__ = __webpack_require__(355)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] client\\loading-overlay.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(354)
+	  console.warn("[vue-loader] client/loading-overlay.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(356)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	var __vue_options__ = typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports
@@ -45778,7 +46012,7 @@
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), false)
 	  if (!hotAPI.compatible) return
-	  var id = "_v-58acb403/loading-overlay.vue"
+	  var id = "_v-0e91b4bf/loading-overlay.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -45787,7 +46021,7 @@
 	})()}
 
 /***/ },
-/* 353 */
+/* 355 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45834,7 +46068,7 @@
 	// </script>
 
 /***/ },
-/* 354 */
+/* 356 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<div v-bind:class=\"{hide: hide}\">\n  <img src=\"img/spinner.svg\">\n</div>\n";
