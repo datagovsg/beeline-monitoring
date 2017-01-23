@@ -58,7 +58,7 @@ export default {
   data() {
     this.requery();
     return {
-      message: '',
+      message: AnnouncementTemplates[0][1],
       currentMessage: null,
     }
   },
