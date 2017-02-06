@@ -224,7 +224,9 @@ module.exports = {
       if (!(sdt instanceof Date)) {
         sdt = new Date(sdt);
       }
-      return leftPad(sdt.getHours(), 1, '0') + ':' + leftPad(sdt.getMinutes(), 2, '0');
+      return leftPad(sdt.getHours(), 1, '0') 
+        + ':' + leftPad(sdt.getMinutes(), 2, '0')
+        + ':' + leftPad(sdt.getSeconds(), 2, '0');
     },
 
     stopIcon(stop, index) {
