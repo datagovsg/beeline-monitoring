@@ -38079,7 +38079,7 @@
 	      if (!(sdt instanceof Date)) {
 	        sdt = new Date(sdt);
 	      }
-	      return (0, _leftPad2.default)(sdt.getHours(), 1, '0') + ':' + (0, _leftPad2.default)(sdt.getMinutes(), 2, '0');
+	      return (0, _leftPad2.default)(sdt.getHours(), 1, '0') + ':' + (0, _leftPad2.default)(sdt.getMinutes(), 2, '0') + ':' + (0, _leftPad2.default)(sdt.getSeconds(), 2, '0');
 	    },
 	    stopIcon: function stopIcon(stop, index) {
 	      return {
