@@ -4,7 +4,14 @@
 <table>
     <thead>
     <tr>
-        <th data-column="route">Route</th>
+        <th data-column="label"  @click="sortBy ='label'"
+          style="width: calc(50% - 5em)">
+          Label
+        </th>
+        <th data-column="label"  @click="sortBy ='time'"
+          style="width: calc(50% - 5em)">
+          Time
+        </th>
         <th data-column="led">App is on</th>
         <th data-column="led">ETA (1<sup>st</sup> stop)</th>
         <th data-column="next"></th>
@@ -12,76 +19,80 @@
     </thead>
     <tbody>
     <tr v-if="servicesByStartTime.length == 0">
-        <td colspan="4">
+        <td colspan="5">
             You have no bus services today.
             You might not be authorized to view the bus service status.
             Please contact the Beeline team if this is incorrect.
         </td>
     </tr>
-    <tr v-for="service in servicesByStartTime"
-        track-by='trip.route.id'
-        :class="{
-            emergency: service.trip.status === 'cancelled',
-            nobody: service.nobody && (service.trip.route.tags.indexOf('notify-when-empty') === -1),
-        }"
-        >
-        <td data-column="route">
-            <h4 style="float: left; margin: 0 10px 0 10px">{{service.trip.route.label}}
-            <div class="service_name">{{service.trip.route.id}}</div>
-            </h4>
-            <h4 style="float: left; margin: 0 10px 0 10px">
+    <template v-for="service in servicesByStartTime"
+        track-by='trip.route.id'>
+      <tr  :class="{
+              emergency: service.trip.status === 'cancelled',
+              nobody: service.nobody && (service.trip.route.tags.indexOf('notify-when-empty') === -1),
+          }"
+          >
+          <td style="border-bottom: transparent" colspan="2">
+            <div class="service_name">
+              <big>{{service.trip.route.label}}</big> ({{service.trip.route.id}})
               {{service.trip.tripStops[0].time | takeTime}}
             </h4>
-            <div style="float: left">
-              {{service.trip.route.from}}<br/>
-              {{service.trip.route.to}}
-          </div>
+          </td>
+          <td data-column="led" rowspan="2">
+              <div :class="{
+                  led: true,
+                  s0 : service.status.ping == 0,
+                  s1 : service.status.ping == 1,
+                  s2 : service.status.ping == 2,
+                  s3 : service.status.ping >= 3,
+                  sU : service.status.ping == -1,
+              }">
+                  <span v-if="service.firstPing">
+                      1<sup>st</sup>: {{service.firstPing.createdAt | takeTime}}
+                  </span>
+                  <template v-if="service.status.arrivalTime">
+                      (arrived)
+                  </template>
+                  <template v-else>
+                      <template v-if="service.lastPing">
+                          L<sup>ast</sup>: {{service.lastPing | minutesSince}} <br/> mins ago
+                      </template>
+                  </template>
+              </div>
+          </td>
+          <td data-column="led" rowspan="2">
+              <div :class="{
+                  led: true,
+                  s0 : service.status.distance == 0,
+                  s1 : service.status.distance == 1,
+                  s2 : service.status.distance == 2,
+                  s3 : service.status.distance >= 3,
+                  sU : service.status.distance == -1,
+              }">
+                  <template v-if="service.status.arrivalTime">
+                      {{service.status.arrivalTime | takeTime}} (arrived)
+                  </template>
+                  <template v-else>
+                      {{service.status.eta | takeTime}} (est)
+                  </template>
+              </div>
+          </td>
+          <td data-column="next" rowspan="2">
+            <a v-link="{path: '/map/' + service.trip.id}" class="details_button">
+            &gt;&gt;
+            </a>
+          </td>
+      </tr>
+      <tr  :class="{
+              emergency: service.trip.status === 'cancelled',
+              nobody: service.nobody && (service.trip.route.tags.indexOf('notify-when-empty') === -1),
+          }">
+        <td data-column="route" colspan="2">
+          {{service.trip.route.from}}<br/>
+          {{service.trip.route.to}}
         </td>
-        <td data-column="led">
-            <div :class="{
-                led: true,
-                s0 : service.status.ping == 0,
-                s1 : service.status.ping == 1,
-                s2 : service.status.ping == 2,
-                s3 : service.status.ping >= 3,
-                sU : service.status.ping == -1,
-            }">
-                <span v-if="service.firstPing">
-                    1<sup>st</sup>: {{service.firstPing.createdAt | takeTime}}
-                </span>
-                <template v-if="service.status.arrivalTime">
-                    (arrived)
-                </template>
-                <template v-else>
-                    <template v-if="service.lastPing">
-                        L<sup>ast</sup>: {{service.lastPing | minutesSince}} <br/> mins ago
-                    </template>
-                </template>
-            </div>
-        </td>
-        <td data-column="led">
-            <div :class="{
-                led: true,
-                s0 : service.status.distance == 0,
-                s1 : service.status.distance == 1,
-                s2 : service.status.distance == 2,
-                s3 : service.status.distance >= 3,
-                sU : service.status.distance == -1,
-            }">
-                <template v-if="service.status.arrivalTime">
-                    {{service.status.arrivalTime | takeTime}} (arrived)
-                </template>
-                <template v-else>
-                    {{service.status.eta | takeTime}} (est)
-                </template>
-            </div>
-        </td>
-        <td data-column="next">
-        <a v-link="{path: '/map/' + service.trip.id}" class="details_button">
-        &gt;&gt;
-        </a>
-        </td>
-    </tr>
+      </tr>
+    </template>
     </tbody>
 </table>
 
@@ -154,6 +165,11 @@ module.exports = {
     data() {
         return {
             services: {},
+            sortBy: 'time',
+            sortByTemplates: {
+              time: ['trip.tripStops[0].time', 'trip.route.label'],
+              label: ['trip.route.label', 'trip.tripStops[0].time'],
+            }
         };
     },
     computed: {
@@ -171,7 +187,10 @@ module.exports = {
             var ss = self.services;
 
             ss = _.values(ss)
-            ss = _.sortBy(ss, svc => [svc.trip.tripStops[0].time, svc.trip.route.label])
+            ss = _.orderBy(ss, this.sortByTemplates[this.sortBy]
+              .map(t => s => _.get(s, t))
+            )
+
             return ss;
         },
     },
