@@ -1,6 +1,7 @@
 
 <template>
 {{date}}
+<input type="text" v-model="filter" placeholder="Search for Route">
 <table>
     <thead>
     <tr>
@@ -169,7 +170,8 @@ module.exports = {
             sortByTemplates: {
               time: ['trip.tripStops[0].time', 'trip.route.label'],
               label: ['trip.route.label', 'trip.tripStops[0].time'],
-            }
+            },
+            filter: '',
         };
     },
     computed: {
@@ -190,6 +192,15 @@ module.exports = {
             ss = _.orderBy(ss, this.sortByTemplates[this.sortBy]
               .map(t => s => _.get(s, t))
             )
+            if (this.filter) {
+              ss = ss.filter(s =>
+                s.trip.route.from.toUpperCase().indexOf(this.filter.toUpperCase()) != -1
+                ||
+                s.trip.route.to.toUpperCase().indexOf(this.filter.toUpperCase()) != -1
+                ||
+                s.trip.route.label.toUpperCase().indexOf(this.filter.toUpperCase()) != -1
+              )
+            }
 
             return ss;
         },
