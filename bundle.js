@@ -8236,7 +8236,7 @@
 
 	window.addEventListener('DOMContentLoaded', function () {
 	    (0, _vueGoogleMaps.load)({
-	        client: 'gme-infocommunications'
+	        key: 'AIzaSyDC38zMc2TIj1-fvtLUdzNsgOQmTBb3N5M'
 	    });
 
 	    var router = new _vueRouter2.default({
@@ -18586,7 +18586,7 @@
 
 
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntable[_v-e3ea2e36] {\n    width: 100%;\n    border-collapse: collapse;\n    border-spacing: 0;\n}\nth[_v-e3ea2e36] {\n    background-color: #EBEFF2;\n    color: #493761;\n    font-size: 80%;\n    height: 30px;\n}\n\ntr.emergency td[_v-e3ea2e36] {\n    background-color: #FFECEC;\n}\n\ntr.nobody td[_v-e3ea2e36]{\n    opacity: 0.3;\n    background-color: #ccc;\n}\n\nth[_v-e3ea2e36],\ntd[_v-e3ea2e36] {\n    border-bottom: solid 1px #CCC;\n}\n\nth[data-column=\"route\"][_v-e3ea2e36],\ntd[data-column=\"route\"][_v-e3ea2e36] {\n    min-width: 60px;\n}\nth[data-column=\"led\"][_v-e3ea2e36],\ntd[data-column=\"led\"][_v-e3ea2e36] {\n    width: 60px;\n}\nth[data-column=\"next\"][_v-e3ea2e36],\ntd[data-column=\"next\"][_v-e3ea2e36] {\n    width: 20px;\n    position: relative;\n}\ntd[data-column=\"next\"][_v-e3ea2e36]:hover {\n    background-color: #dddddd;\n}\n\n.service_name[_v-e3ea2e36] {\n    color: #666;\n    font-size: 80%;\n}\n.led[_v-e3ea2e36] {\n    min-width: 50px;\n    min-height: 50px;\n    border-radius: 25px;\n    box-sizing: border-box;\n    margin: 10px;\n    text-align: center;\n    overflow: visible;\n    font-size: 80%;\n    line-height: 1.3;\n    padding-top: 0.4em;\n}\n\n.led.sU[_v-e3ea2e36] {\n    background-color: #c9c9c9;\n}\n\n.led.s0[_v-e3ea2e36], .led.s1[_v-e3ea2e36] {\n    background-color: #14c3a6;\n}\n.led.s2[_v-e3ea2e36], .led.s3[_v-e3ea2e36] {\n    background-color: #ff6f6f;\n}\n\n.details_button[_v-e3ea2e36] {\n    display: block;\n    width: 100%;\n    position: absolute;\n    top: 0px;\n    bottom: 0px;\n    left: 0px;\n}\n\n", ""]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntable[_v-e3ea2e36] {\n    width: 100%;\n    border-collapse: collapse;\n    border-spacing: 0;\n}\nth[_v-e3ea2e36] {\n    background-color: #EBEFF2;\n    color: #493761;\n    font-size: 80%;\n    height: 30px;\n}\n\ntr.emergency td[_v-e3ea2e36] {\n    background-color: #FFECEC;\n}\n\ntr.nobody td[_v-e3ea2e36]{\n    opacity: 0.3;\n    background-color: #ccc;\n}\n\nth[_v-e3ea2e36],\ntd[_v-e3ea2e36] {\n    border-bottom: solid 1px #CCC;\n}\n\nth[data-column=\"route\"][_v-e3ea2e36],\ntd[data-column=\"route\"][_v-e3ea2e36] {\n    min-width: 60px;\n}\nth[data-column=\"led\"][_v-e3ea2e36],\ntd[data-column=\"led\"][_v-e3ea2e36] {\n    width: 60px;\n}\nth[data-column=\"next\"][_v-e3ea2e36],\ntd[data-column=\"next\"][_v-e3ea2e36] {\n    width: 20px;\n    position: relative;\n}\ntd[data-column=\"next\"][_v-e3ea2e36]:hover {\n    background-color: #dddddd;\n}\n\n.service_name[_v-e3ea2e36] {\n    color: #666;\n    font-size: 80%;\n}\n.led[_v-e3ea2e36] {\n    min-width: 50px;\n    min-height: 50px;\n    border-radius: 25px;\n    box-sizing: border-box;\n    margin: 10px;\n    text-align: center;\n    overflow: visible;\n    font-size: 80%;\n    line-height: 1.3;\n    padding-top: 0.4em;\n}\n\n.led.sU[_v-e3ea2e36] {\n    background-color: #c9c9c9;\n}\n\n.led.s0[_v-e3ea2e36], .led.s1[_v-e3ea2e36] {\n    background-color: #14c3a6;\n}\n.led.s2[_v-e3ea2e36], .led.s3[_v-e3ea2e36] {\n    background-color: #ff6f6f;\n}\n\n.details_button[_v-e3ea2e36] {\n    display: block;\n    width: 100%;\n    position: absolute;\n    top: 0px;\n    bottom: 0px;\n    left: 0px;\n}\n\n", ""]);
 
 	// exports
 
@@ -18880,10 +18880,18 @@
 	//
 	// <template>
 	// {{date}}
+	// <input type="text" v-model="filter" placeholder="Search for Route">
 	// <table>
 	//     <thead>
 	//     <tr>
-	//         <th data-column="route">Route</th>
+	//         <th data-column="label"  @click="sortBy ='label'"
+	//           style="width: calc(50% - 5em)">
+	//           Label
+	//         </th>
+	//         <th data-column="label"  @click="sortBy ='time'"
+	//           style="width: calc(50% - 5em)">
+	//           Time
+	//         </th>
 	//         <th data-column="led">App is on</th>
 	//         <th data-column="led">ETA (1<sup>st</sup> stop)</th>
 	//         <th data-column="next"></th>
@@ -18891,76 +18899,80 @@
 	//     </thead>
 	//     <tbody>
 	//     <tr v-if="servicesByStartTime.length == 0">
-	//         <td colspan="4">
+	//         <td colspan="5">
 	//             You have no bus services today.
 	//             You might not be authorized to view the bus service status.
 	//             Please contact the Beeline team if this is incorrect.
 	//         </td>
 	//     </tr>
-	//     <tr v-for="service in servicesByStartTime"
-	//         track-by='trip.route.id'
-	//         :class="{
-	//             emergency: service.trip.status === 'cancelled',
-	//             nobody: service.nobody && (service.trip.route.tags.indexOf('notify-when-empty') === -1),
-	//         }"
-	//         >
-	//         <td data-column="route">
-	//             <h4 style="float: left; margin: 0 10px 0 10px">{{service.trip.route.label}}
-	//             <div class="service_name">{{service.trip.route.id}}</div>
-	//             </h4>
-	//             <h4 style="float: left; margin: 0 10px 0 10px">
+	//     <template v-for="service in servicesByStartTime"
+	//         track-by='trip.route.id'>
+	//       <tr  :class="{
+	//               emergency: service.trip.status === 'cancelled',
+	//               nobody: service.nobody && (service.trip.route.tags.indexOf('notify-when-empty') === -1),
+	//           }"
+	//           >
+	//           <td style="border-bottom: transparent" colspan="2">
+	//             <div class="service_name">
+	//               <big>{{service.trip.route.label}}</big> ({{service.trip.route.id}})
 	//               {{service.trip.tripStops[0].time | takeTime}}
 	//             </h4>
-	//             <div style="float: left">
-	//               {{service.trip.route.from}}<br/>
-	//               {{service.trip.route.to}}
-	//           </div>
+	//           </td>
+	//           <td data-column="led" rowspan="2">
+	//               <div :class="{
+	//                   led: true,
+	//                   s0 : service.status.ping == 0,
+	//                   s1 : service.status.ping == 1,
+	//                   s2 : service.status.ping == 2,
+	//                   s3 : service.status.ping >= 3,
+	//                   sU : service.status.ping == -1,
+	//               }">
+	//                   <span v-if="service.firstPing">
+	//                       1<sup>st</sup>: {{service.firstPing.createdAt | takeTime}}
+	//                   </span>
+	//                   <template v-if="service.status.arrivalTime">
+	//                       (arrived)
+	//                   </template>
+	//                   <template v-else>
+	//                       <template v-if="service.lastPing">
+	//                           L<sup>ast</sup>: {{service.lastPing | minutesSince}} <br/> mins ago
+	//                       </template>
+	//                   </template>
+	//               </div>
+	//           </td>
+	//           <td data-column="led" rowspan="2">
+	//               <div :class="{
+	//                   led: true,
+	//                   s0 : service.status.distance == 0,
+	//                   s1 : service.status.distance == 1,
+	//                   s2 : service.status.distance == 2,
+	//                   s3 : service.status.distance >= 3,
+	//                   sU : service.status.distance == -1,
+	//               }">
+	//                   <template v-if="service.status.arrivalTime">
+	//                       {{service.status.arrivalTime | takeTime}} (arrived)
+	//                   </template>
+	//                   <template v-else>
+	//                       {{service.status.eta | takeTime}} (est)
+	//                   </template>
+	//               </div>
+	//           </td>
+	//           <td data-column="next" rowspan="2">
+	//             <a v-link="{path: '/map/' + service.trip.id}" class="details_button">
+	//             &gt;&gt;
+	//             </a>
+	//           </td>
+	//       </tr>
+	//       <tr  :class="{
+	//               emergency: service.trip.status === 'cancelled',
+	//               nobody: service.nobody && (service.trip.route.tags.indexOf('notify-when-empty') === -1),
+	//           }">
+	//         <td data-column="route" colspan="2">
+	//           {{service.trip.route.from}}<br/>
+	//           {{service.trip.route.to}}
 	//         </td>
-	//         <td data-column="led">
-	//             <div :class="{
-	//                 led: true,
-	//                 s0 : service.status.ping == 0,
-	//                 s1 : service.status.ping == 1,
-	//                 s2 : service.status.ping == 2,
-	//                 s3 : service.status.ping >= 3,
-	//                 sU : service.status.ping == -1,
-	//             }">
-	//                 <span v-if="service.firstPing">
-	//                     1<sup>st</sup>: {{service.firstPing.createdAt | takeTime}}
-	//                 </span>
-	//                 <template v-if="service.status.arrivalTime">
-	//                     (arrived)
-	//                 </template>
-	//                 <template v-else>
-	//                     <template v-if="service.lastPing">
-	//                         L<sup>ast</sup>: {{service.lastPing | minutesSince}} <br/> mins ago
-	//                     </template>
-	//                 </template>
-	//             </div>
-	//         </td>
-	//         <td data-column="led">
-	//             <div :class="{
-	//                 led: true,
-	//                 s0 : service.status.distance == 0,
-	//                 s1 : service.status.distance == 1,
-	//                 s2 : service.status.distance == 2,
-	//                 s3 : service.status.distance >= 3,
-	//                 sU : service.status.distance == -1,
-	//             }">
-	//                 <template v-if="service.status.arrivalTime">
-	//                     {{service.status.arrivalTime | takeTime}} (arrived)
-	//                 </template>
-	//                 <template v-else>
-	//                     {{service.status.eta | takeTime}} (est)
-	//                 </template>
-	//             </div>
-	//         </td>
-	//         <td data-column="next">
-	//         <a v-link="{path: '/map/' + service.trip.id}" class="details_button">
-	//         &gt;&gt;
-	//         </a>
-	//         </td>
-	//     </tr>
+	//       </tr>
+	//     </template>
 	//     </tbody>
 	// </table>
 	//
@@ -19029,7 +19041,13 @@
 	module.exports = {
 	    data: function data() {
 	        return {
-	            services: {}
+	            services: {},
+	            sortBy: 'time',
+	            sortByTemplates: {
+	                time: ['trip.tripStops[0].time', 'trip.route.label'],
+	                label: ['trip.route.label', 'trip.tripStops[0].time']
+	            },
+	            filter: ''
 	        };
 	    },
 
@@ -19041,27 +19059,37 @@
 	        },
 
 	        servicesByStartTime: function servicesByStartTime() {
+	            var _this = this;
+
 	            var rv = [];
 	            var self = this;
 	            var ss = self.services;
 
 	            ss = _.values(ss);
-	            ss = _.sortBy(ss, function (svc) {
-	                return [svc.trip.tripStops[0].time, svc.trip.route.label];
-	            });
+	            ss = _.orderBy(ss, this.sortByTemplates[this.sortBy].map(function (t) {
+	                return function (s) {
+	                    return _.get(s, t);
+	                };
+	            }));
+	            if (this.filter) {
+	                ss = ss.filter(function (s) {
+	                    return s.trip.route.from.toUpperCase().indexOf(_this.filter.toUpperCase()) != -1 || s.trip.route.to.toUpperCase().indexOf(_this.filter.toUpperCase()) != -1 || s.trip.route.label.toUpperCase().indexOf(_this.filter.toUpperCase()) != -1;
+	                });
+	            }
+
 	            return ss;
 	        }
 	    },
 	    ready: function ready() {
-	        var _this = this;
+	        var _this2 = this;
 
 	        var queryAgain = function queryAgain() {
-	            _this.$queryTimeout = null;
-	            return _this.requery().catch(function (err) {
+	            _this2.$queryTimeout = null;
+	            return _this2.requery().catch(function (err) {
 	                return console.error(err);
 	            }).then(function () {
-	                if (_this.$queryTimeout === null) {
-	                    _this.$queryTimeout = setTimeout(queryAgain, 20000);
+	                if (_this2.$queryTimeout === null) {
+	                    _this2.$queryTimeout = setTimeout(queryAgain, 20000);
 	                }
 	            });
 	        };
@@ -37716,7 +37744,7 @@
 /* 318 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n{{date}}\n<table _v-e3ea2e36=\"\">\n    <thead _v-e3ea2e36=\"\">\n    <tr _v-e3ea2e36=\"\">\n        <th data-column=\"route\" _v-e3ea2e36=\"\">Route</th>\n        <th data-column=\"led\" _v-e3ea2e36=\"\">App is on</th>\n        <th data-column=\"led\" _v-e3ea2e36=\"\">ETA (1<sup _v-e3ea2e36=\"\">st</sup> stop)</th>\n        <th data-column=\"next\" _v-e3ea2e36=\"\"></th>\n    </tr>\n    </thead>\n    <tbody _v-e3ea2e36=\"\">\n    <tr v-if=\"servicesByStartTime.length == 0\" _v-e3ea2e36=\"\">\n        <td colspan=\"4\" _v-e3ea2e36=\"\">\n            You have no bus services today.\n            You might not be authorized to view the bus service status.\n            Please contact the Beeline team if this is incorrect.\n        </td>\n    </tr>\n    <tr v-for=\"service in servicesByStartTime\" track-by=\"trip.route.id\" :class=\"{\n            emergency: service.trip.status === 'cancelled',\n            nobody: service.nobody &amp;&amp; (service.trip.route.tags.indexOf('notify-when-empty') === -1),\n        }\" _v-e3ea2e36=\"\">\n        <td data-column=\"route\" _v-e3ea2e36=\"\">\n            <h4 style=\"float: left; margin: 0 10px 0 10px\" _v-e3ea2e36=\"\">{{service.trip.route.label}}\n            <div class=\"service_name\" _v-e3ea2e36=\"\">{{service.trip.route.id}}</div>\n            </h4>\n            <h4 style=\"float: left; margin: 0 10px 0 10px\" _v-e3ea2e36=\"\">\n              {{service.trip.tripStops[0].time | takeTime}}\n            </h4>\n            <div style=\"float: left\" _v-e3ea2e36=\"\">\n              {{service.trip.route.from}}<br _v-e3ea2e36=\"\">\n              {{service.trip.route.to}}\n          </div>\n        </td>\n        <td data-column=\"led\" _v-e3ea2e36=\"\">\n            <div :class=\"{\n                led: true,\n                s0 : service.status.ping == 0,\n                s1 : service.status.ping == 1,\n                s2 : service.status.ping == 2,\n                s3 : service.status.ping >= 3,\n                sU : service.status.ping == -1,\n            }\" _v-e3ea2e36=\"\">\n                <span v-if=\"service.firstPing\" _v-e3ea2e36=\"\">\n                    1<sup _v-e3ea2e36=\"\">st</sup>: {{service.firstPing.createdAt | takeTime}}\n                </span>\n                <template v-if=\"service.status.arrivalTime\">\n                    (arrived)\n                </template>\n                <template v-else=\"\">\n                    <template v-if=\"service.lastPing\">\n                        L<sup _v-e3ea2e36=\"\">ast</sup>: {{service.lastPing | minutesSince}} <br _v-e3ea2e36=\"\"> mins ago\n                    </template>\n                </template>\n            </div>\n        </td>\n        <td data-column=\"led\" _v-e3ea2e36=\"\">\n            <div :class=\"{\n                led: true,\n                s0 : service.status.distance == 0,\n                s1 : service.status.distance == 1,\n                s2 : service.status.distance == 2,\n                s3 : service.status.distance >= 3,\n                sU : service.status.distance == -1,\n            }\" _v-e3ea2e36=\"\">\n                <template v-if=\"service.status.arrivalTime\">\n                    {{service.status.arrivalTime | takeTime}} (arrived)\n                </template>\n                <template v-else=\"\">\n                    {{service.status.eta | takeTime}} (est)\n                </template>\n            </div>\n        </td>\n        <td data-column=\"next\" _v-e3ea2e36=\"\">\n        <a v-link=\"{path: '/map/' + service.trip.id}\" class=\"details_button\" _v-e3ea2e36=\"\">\n        &gt;&gt;\n        </a>\n        </td>\n    </tr>\n    </tbody>\n</table>\n\n";
+	module.exports = "\n\n{{date}}\n<input type=\"text\" v-model=\"filter\" placeholder=\"Search for Route\" _v-e3ea2e36=\"\">\n<table _v-e3ea2e36=\"\">\n    <thead _v-e3ea2e36=\"\">\n    <tr _v-e3ea2e36=\"\">\n        <th data-column=\"label\" @click=\"sortBy ='label'\" style=\"width: calc(50% - 5em)\" _v-e3ea2e36=\"\">\n          Label\n        </th>\n        <th data-column=\"label\" @click=\"sortBy ='time'\" style=\"width: calc(50% - 5em)\" _v-e3ea2e36=\"\">\n          Time\n        </th>\n        <th data-column=\"led\" _v-e3ea2e36=\"\">App is on</th>\n        <th data-column=\"led\" _v-e3ea2e36=\"\">ETA (1<sup _v-e3ea2e36=\"\">st</sup> stop)</th>\n        <th data-column=\"next\" _v-e3ea2e36=\"\"></th>\n    </tr>\n    </thead>\n    <tbody _v-e3ea2e36=\"\">\n    <tr v-if=\"servicesByStartTime.length == 0\" _v-e3ea2e36=\"\">\n        <td colspan=\"5\" _v-e3ea2e36=\"\">\n            You have no bus services today.\n            You might not be authorized to view the bus service status.\n            Please contact the Beeline team if this is incorrect.\n        </td>\n    </tr>\n    <template v-for=\"service in servicesByStartTime\" track-by=\"trip.route.id\">\n      <tr :class=\"{\n              emergency: service.trip.status === 'cancelled',\n              nobody: service.nobody &amp;&amp; (service.trip.route.tags.indexOf('notify-when-empty') === -1),\n          }\" _v-e3ea2e36=\"\">\n          <td style=\"border-bottom: transparent\" colspan=\"2\" _v-e3ea2e36=\"\">\n            <div class=\"service_name\" _v-e3ea2e36=\"\">\n              <big _v-e3ea2e36=\"\">{{service.trip.route.label}}</big> ({{service.trip.route.id}})\n              {{service.trip.tripStops[0].time | takeTime}}\n            \n          </div></td>\n          <td data-column=\"led\" rowspan=\"2\" _v-e3ea2e36=\"\">\n              <div :class=\"{\n                  led: true,\n                  s0 : service.status.ping == 0,\n                  s1 : service.status.ping == 1,\n                  s2 : service.status.ping == 2,\n                  s3 : service.status.ping >= 3,\n                  sU : service.status.ping == -1,\n              }\" _v-e3ea2e36=\"\">\n                  <span v-if=\"service.firstPing\" _v-e3ea2e36=\"\">\n                      1<sup _v-e3ea2e36=\"\">st</sup>: {{service.firstPing.createdAt | takeTime}}\n                  </span>\n                  <template v-if=\"service.status.arrivalTime\">\n                      (arrived)\n                  </template>\n                  <template v-else=\"\">\n                      <template v-if=\"service.lastPing\">\n                          L<sup _v-e3ea2e36=\"\">ast</sup>: {{service.lastPing | minutesSince}} <br _v-e3ea2e36=\"\"> mins ago\n                      </template>\n                  </template>\n              </div>\n          </td>\n          <td data-column=\"led\" rowspan=\"2\" _v-e3ea2e36=\"\">\n              <div :class=\"{\n                  led: true,\n                  s0 : service.status.distance == 0,\n                  s1 : service.status.distance == 1,\n                  s2 : service.status.distance == 2,\n                  s3 : service.status.distance >= 3,\n                  sU : service.status.distance == -1,\n              }\" _v-e3ea2e36=\"\">\n                  <template v-if=\"service.status.arrivalTime\">\n                      {{service.status.arrivalTime | takeTime}} (arrived)\n                  </template>\n                  <template v-else=\"\">\n                      {{service.status.eta | takeTime}} (est)\n                  </template>\n              </div>\n          </td>\n          <td data-column=\"next\" rowspan=\"2\" _v-e3ea2e36=\"\">\n            <a v-link=\"{path: '/map/' + service.trip.id}\" class=\"details_button\" _v-e3ea2e36=\"\">\n            &gt;&gt;\n            </a>\n          </td>\n      </tr>\n      <tr :class=\"{\n              emergency: service.trip.status === 'cancelled',\n              nobody: service.nobody &amp;&amp; (service.trip.route.tags.indexOf('notify-when-empty') === -1),\n          }\" _v-e3ea2e36=\"\">\n        <td data-column=\"route\" colspan=\"2\" _v-e3ea2e36=\"\">\n          {{service.trip.route.from}}<br _v-e3ea2e36=\"\">\n          {{service.trip.route.to}}\n        </td>\n      </tr>\n    </template>\n    </tbody>\n</table>\n\n";
 
 /***/ },
 /* 319 */
