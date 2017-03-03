@@ -37634,7 +37634,7 @@
 /***/ function(module, exports) {
 
 	module.exports = {
-		"BACKEND_URL": "https://api.beeline.sg",
+		"BACKEND_URL": "https://monitoring-api.beeline.sg",
 		"AUTH0_CID": "BslsfnrdKMedsmr9GYkTv7ejJPReMgcE",
 		"AUTH0_DOMAIN": "beeline.au.auth0.com"
 	};
