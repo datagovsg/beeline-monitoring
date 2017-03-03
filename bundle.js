@@ -8236,7 +8236,7 @@
 
 	window.addEventListener('DOMContentLoaded', function () {
 	    (0, _vueGoogleMaps.load)({
-	        key: 'AIzaSyDC38zMc2TIj1-fvtLUdzNsgOQmTBb3N5M'
+	        client: 'gme-infocommunications'
 	    });
 
 	    var router = new _vueRouter2.default({
