@@ -265,7 +265,7 @@ module.exports = {
         }));
     },
 
-    'trip.transportCompanyId' (companyId) {
+    'trip.route.transportCompanyId' (companyId) {
       authAjax(`/companies/${companyId}/drivers`)
         .then((result) => {
           this.driversById = _.keyBy(result.json(), 'id')
