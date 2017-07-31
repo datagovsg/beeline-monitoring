@@ -1,11 +1,11 @@
 var overlays = [];
-var counter = {
+export const counter = {
   count: 0
 }
 import assert from 'assert';
 
 export function registerOverlay(overlay) {
-  overlay.$emit('useCounter', counter);
+  overlay.useCounter(counter);
   overlays.push(overlay);
 }
 

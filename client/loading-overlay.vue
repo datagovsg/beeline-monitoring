@@ -5,8 +5,7 @@
 </template>
 
 <script>
-const Vue = require('vue');
-const LoadingOverlay = require('./loading-overlay.js')
+import * as LoadingOverlay from './loading-overlay.js'
 
 export default {
   data() {
@@ -25,12 +24,11 @@ export default {
       return !this.counter || this.counter.count == 0;
     }
   },
-  events: {
+  methods: {
     useCounter(counter) {
       this.counter = counter;
     }
   }
-
 }
 
 </script>
