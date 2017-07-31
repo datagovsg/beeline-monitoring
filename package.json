@@ -5,7 +5,7 @@
     "webpack": "webpack",
     "webpack-watch": "webpack --watch -d",
     "start": "http-server -c-1 -p 5000 static/",
-    "watch": "node ./generate-env.js && npm run start & cross-env NODE_ENV=production npm run webpack-watch",
+    "watch": "node ./generate-env.js && npm run start & npm run webpack-watch",
     "deploy": "node ./build-wrs.js && gh-pages -d static "
   },
   "dependencies": {

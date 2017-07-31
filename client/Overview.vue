@@ -7,19 +7,14 @@
         <tr>
             <th data-column="label"  @click="sortBy ='label'"
               style="width: calc(50% - 5em)">
-              Label
-            </th>
-            <th data-column="label"  @click="sortBy ='time'"
-              style="width: calc(50% - 5em)">
-              Time
+              Route
             </th>
             <th data-column="led">App is on</th>
             <th data-column="led">ETA (1<sup>st</sup> stop)</th>
-            <th data-column="next"></th>
         </tr>
         </thead>
           <tr v-if="servicesByStartTime.length == 0">
-            <td colspan="5">
+            <td colspan="3">
                 You have no bus services today.
                 You might not be authorized to view the bus service status.
                 Please contact the Beeline team if this is incorrect.
@@ -27,7 +22,7 @@
           </tr>
           <template v-if="favourited.length">
             <tr>
-              <th colspan="5">
+              <th colspan="3">
                 Favourite Routes
               </th>
             </tr>
@@ -38,7 +33,7 @@
           </template>
           <template v-if="notFavourited.length">
             <tr>
-              <th colspan="5">
+              <th colspan="3">
                 Remaining Routes
               </th>
             </tr>

@@ -1,22 +1,35 @@
 <template>
-  <tbody>
     <tr :class="{
             emergency: service.trip.status === 'cancelled',
             nobody: service.nobody && (service.trip.route.tags.indexOf('notify-when-empty') === -1),
         }"
         >
-      <td style="border-bottom: transparent" colspan="2">
-        <div class="service_name">
+      <td>
+        <div class="service-description">
           <FavouriteButton
             @click="setFavourite($event, service.trip.routeId)"
             :isFavourite="isFavourite"
+            class="favourite-button"
           />
-          <big>{{service.trip.route.label}}</big> ({{service.trip.route.id}})
-          {{takeTime(service.trip.tripStops[0].time)}}
+
+          <div class="label-and-description">
+            <div class="service-name">
+              <big>{{service.trip.route.label}}</big>
+              ({{service.trip.routeId}})
+              {{takeTime(service.trip.tripStops[0].time)}}
+            </div>
+
+            <div class="from-and-to">
+              {{service.trip.route.from}}<br/>
+              {{service.trip.route.to}}
+            </div>
+          </div>
         </div>
       </td>
-      <td data-column="led" rowspan="2">
-          <div :class="{
+      <td data-column="led">
+          <router-link
+            :to="{name: 'map-view', params: {svc: service.trip.id}}"
+            :class="{
               led: true,
               s0 : service.status.ping == 0,
               s1 : service.status.ping == 1,
@@ -35,10 +48,12 @@
                       L<sup>ast</sup>: {{minutesSince(service.lastPing)}} <br/> mins ago
                   </template>
               </template>
-          </div>
+          </router-link>
       </td>
-      <td data-column="led" rowspan="2">
-          <div :class="{
+      <td data-column="led">
+          <router-link
+            :to="{name: 'map-view', params: {svc: service.trip.id}}"
+            :class="{
               led: true,
               s0 : service.status.distance == 0,
               s1 : service.status.distance == 1,
@@ -46,27 +61,13 @@
               s3 : service.status.distance >= 3,
               sU : service.status.distance == -1,
           }">
-              <template v-if="service.status.arrivalTime">
-                  {{takeTime(service.status.arrivalTime)}} (arrived)
-              </template>
-              <template v-else>
-                  {{takeTime(service.status.eta)}} (est)
-              </template>
-          </div>
-      </td>
-      <td data-column="next" rowspan="2">
-        <router-link :to="{path: '/map/' + service.trip.id}" class="details_button">
-          &gt;&gt;
-        </router-link>
-      </td>
-    </tr>
-    <tr :class="{
-            emergency: service.trip.status === 'cancelled',
-            nobody: service.nobody && (service.trip.route.tags.indexOf('notify-when-empty') === -1),
-        }">
-      <td data-column="route" colspan="2">
-        {{service.trip.route.from}}<br/>
-        {{service.trip.route.to}}
+            <template v-if="service.status.arrivalTime">
+                {{takeTime(service.status.arrivalTime)}} (arrived)
+            </template>
+            <template v-else>
+                {{takeTime(service.status.eta)}} (est)
+            </template>
+          </router-link>
       </td>
     </tr>
 </tbody>
@@ -104,21 +105,46 @@
       background-color: #dddddd;
   }
 
-  .service_name {
-      color: #666;
-      font-size: 80%;
+  .service-description {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    .favourite-button {
+      flex: 0 0 auto;
+      display: block;
+      margin: 0.1em;
+      font-size: 150%;
+    }
+
+    .label-and-description {
+      flex: 1 1 auto;
+      flex-direction: column;
+
+      .service-name {
+        color: #666;
+        font-size: 80%;
+      }
+      .from-and-to {
+
+      }
+    }
+
   }
+
   .led {
-      min-width: 50px;
-      min-height: 50px;
-      border-radius: 25px;
-      box-sizing: border-box;
-      margin: 10px;
-      text-align: center;
-      overflow: visible;
-      font-size: 80%;
-      line-height: 1.3;
-      padding-top: 0.4em;
+    color: #000;
+    display: block;
+    min-width: 50px;
+    min-height: 50px;
+    border-radius: 25px;
+    box-sizing: border-box;
+    margin: 10px;
+    text-align: center;
+    overflow: visible;
+    font-size: 80%;
+    line-height: 1.3;
+    padding-top: 0.4em;
   }
 
   .led.sU {

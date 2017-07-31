@@ -38,6 +38,7 @@ window.addEventListener('DOMContentLoaded', function () {
         },
         {
           path: '/map/:svc',
+          name: 'map-view',
           component: MapView,
         },
         {
