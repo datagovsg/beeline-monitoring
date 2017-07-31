@@ -1,7 +1,7 @@
 <template>
     <ul>
-        <li><a v-link="{ path: '/map/' + service}">Map</a></li>
-        <li><a v-link="{ path: '/passengers/' + service}">Passenger List</a></li>
+        <li><router-link :to="{ path: '/map/' + service}">Map</router-link></li>
+        <li><router-link :to="{ path: '/passengers/' + service}">Passenger List</router-link></li>
     </ul>
 </template>
 

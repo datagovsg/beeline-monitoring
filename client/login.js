@@ -1,6 +1,7 @@
-var Vue = require('vue');
-var env = require('./env.json')
-var jwt_decode = require('jwt-decode');
+const axios = require('axios')
+const env = require('./env.json')
+const jwt_decode = require('jwt-decode');
+const _ = require('lodash')
 
 /////////// Functions
 
@@ -12,7 +13,7 @@ export function authAjax(path, opts) {
       opts.headers.Authorization = 'Bearer ' + localStorage.session_token;
     }
     opts.url = env.BACKEND_URL + path;
-    return Vue.http(opts);
+    return axios(opts);
 };
 
 export function refreshTokenIfNecessary() {
@@ -45,14 +46,13 @@ export function refreshTokenIfNecessary() {
 
 export async function checkLoggedIn() {
   refreshTokenIfNecessary();
-
   try {
     await authAjax(`/monitoring`)
     return;
   } catch (err) {
     console.log(err);
-    if (err.status !== 403) {
-      return;
+    if (_.get(err, 'response.status') !== 403) {
+      throw err;
     }
     login();
   }

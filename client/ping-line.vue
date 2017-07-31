@@ -1,41 +1,29 @@
 <template>
 <!-- Pings -->
+<div>
   <template v-if="pings">
     <gmap-marker
-                  v-for="ping in pings | everyN"
-                  track-by="$index"
-                  :position="{
-                      lat: ping.coordinates.coordinates[1],
-                      lng: ping.coordinates.coordinates[0],
-                  }"
-                  :icon="pingPoint"
-                  @g-mouseover="selectPing(ping)"
-                  >
-    </gmap-marker>
+      v-for="ping in everyN(pings) "
+      :key="ping.id"
+      :position="{
+          lat: ping.coordinates.coordinates[1],
+          lng: ping.coordinates.coordinates[0],
+      }"
+      :icon="pingPoint"
+      @mouseover="selectPing(ping)" />
   </template>
 
   <gmap-polyline v-if="pings" :options="polylineOptions" :path="pingPath">
   </gmap-polyline>
+</div>
 </template>
 
 <script>
-import {
-  Map,
-  load,
-  InfoWindow,
-  Polyline,
-  Marker
-} from 'vue-google-maps'
 import leftPad from 'left-pad'
 import Vue from 'vue'
 import _ from 'lodash'
 
 export default {
-  components: {
-    'gmap-marker': Marker,
-    'gmap-polyline': Polyline,
-    'gmap-infowindow': InfoWindow,
-  },
   props: ['pings', 'options', 'sampleRate'],
   data() {
     return {
@@ -70,13 +58,11 @@ export default {
   },
   methods: {
     selectPing(ping) {
-      this.$dispatch('selectPing', ping);
+      this.$emit('selectPing', ping);
+    },
+    everyN(s) {
+      return _.filter(s, (value, key) => key % this.sampleRate === 0) || []
     },
   },
-  filters: {
-    everyN(s) {
-      return _.filter(s, (value, key) => key % this.sampleRate === 0)
-    },
-  }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <div v-bind:class="{hide: hide}">
+    <div :class="{hide: hide}">
       <img src="img/spinner.svg">
     </div>
 </template>

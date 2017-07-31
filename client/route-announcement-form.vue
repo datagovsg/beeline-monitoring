@@ -18,21 +18,21 @@
       <button class="message-button" type="button"
         @click="clearMessage">Clear message</button>
     </span>
+    <form @submit="updateRouteAnnouncements">
+      <div>
+        <label>
+          New message<br/>
+          <textarea v-model="message"
+              style="display: block; width: 100%; height: 100px"
+              name="message"></textarea>
+        </label>
+      </div>
+      <div>
+        <button class="message-button" type="submit"
+          :disabled="!message">Submit</button>
+      </div>
+    </form>
   </div>
-  <form @submit="updateRouteAnnouncements">
-    <div>
-      <label>
-        New message (leave blank to clear the message)<br/>
-        <textarea v-model="message"
-            style="display: block; width: 100%; height: 100px"
-            name="message"></textarea>
-      </label>
-    </div>
-    <div>
-      <button class="message-button" type="submit"
-        :disabled="!message">Submit</button>
-    </div>
-  </form>
 </template>
 
 <style scoped>
@@ -64,8 +64,11 @@ export default {
   },
 
   watch: {
-    tripId() {
-      this.requery();
+    tripId: {
+      immediate: true,
+      handler() {
+        this.requery();
+      }
     }
   },
 
@@ -81,7 +84,7 @@ export default {
         authAjax(`/trips/${this.tripId}/statuses`, {
           method: 'GET',
         })
-        .then(r => r.json())
+        .then(r => r.data)
         .then((result) => {
           // Get and show the one with the latest time
           if (result.length === 0)
@@ -101,12 +104,12 @@ export default {
 
       authAjax(`/trips/${this.tripId}/statuses`, {
           method: 'POST',
-          body: {
+          data: {
             status: 'normal',
             message: this.message,
           }
       })
-      .then(r => r.json())
+      .then(r => r.data)
       .then((result) => {
           this.requery();
       })
@@ -120,12 +123,12 @@ export default {
 
       authAjax(`/trips/${this.tripId}/statuses`, {
           method: 'POST',
-          body: {
+          data: {
             status: 'normal',
             message: '',
           }
       })
-      .then(r => r.json())
+      .then(r => r.data)
       .then((result) => {
           this.requery();
       })

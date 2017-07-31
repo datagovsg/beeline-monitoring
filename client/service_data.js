@@ -1,6 +1,7 @@
-var Vue = require('vue');
+import Vue from 'vue';
 
-module.exports = {
-            services: {},
+module.exports = new Vue({
+  data: {
+    services: {},
+  }
 });
-
