@@ -25,14 +25,18 @@ export default {
       }
     }
   },
+  created () {
+    // Cannot declare under methods because
+    // we need a unique debouncer for every instance
+    this.emit = _.debounce(function () {
+      this.$emit('click', this.wantFavourite)
+    }, 2000, {leading: false, trailing: true})
+  },
   methods: {
     delayedFavourite($event) {
       this.wantFavourite = !this.wantFavourite
       this.emit()
     },
-    emit: _.debounce(function () {
-      this.$emit('click', this.wantFavourite)
-    }, 2000, {leading: false, trailing: true})
   }
 }
 </script>
