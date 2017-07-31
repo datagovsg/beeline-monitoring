@@ -269,7 +269,6 @@ module.exports = {
 
         arrivalInfo() {
           var stops = _.sortBy(this.trip.tripStops, s => s.time);
-          var index = 0;
 
           const withNamesTransformed = this.passengers.map(p => {
             if (p.name) {
@@ -289,11 +288,12 @@ module.exports = {
           })
           const passengersByStops = _.groupBy(this.passengers, p => p.boardStopId)
 
+          let index = 0
           return stops.map(s => ({
             ...s,
-            passengers: (passengersByStops[stop.id] || []).map((ps, index) => ({
+            passengers: (passengersByStops[s.id] || []).map((ps) => ({
               ...ps,
-              index: index
+              index: index++
             }))
           }));
         },
