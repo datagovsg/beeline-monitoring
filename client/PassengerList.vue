@@ -253,7 +253,7 @@ module.exports = {
     },
 
     components: {
-      'RouteAnnouncementForm': require('./route-announcement-form.vue').default
+      'RouteAnnouncementForm': require('./RouteAnnouncementForm.vue').default
     },
 
     computed: {

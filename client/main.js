@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import Overview from './overview.vue';
-import Map from './route-map.vue';
+import MapView from './MapView.vue';
 import App from './App.vue';
 import Navi from './nav.vue';
-import PassengerList from './route-passengers.vue';
+import PassengerList from './PassengerList.vue';
 import VueRouter from 'vue-router';
 import VueResource from 'vue-resource';
 import * as VueGoogleMaps from 'vue2-google-maps'
@@ -38,7 +38,7 @@ window.addEventListener('DOMContentLoaded', function () {
         },
         {
           path: '/map/:svc',
-          component: Map,
+          component: MapView,
         },
         {
           path: '/passengers/:svc',
