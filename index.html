@@ -11,48 +11,6 @@
   <script src="bundle.js"></script>
 </head>
 <body>
-  <header>
-    <div style="position: absolute; top: 0px; left: 0px;
-        width: 40px; height: 40px"
-      v-show="$route.path != '/'"
-      class="backButton"
-    >
-      <a v-link="{ path: '/' }">&#x25c0;</a>
-    </div>
-
-    <div style="position: absolute; left:40px; top:0px;
-        height: 40px; right: 40px; text-overflow: ellipsis;
-        overflow: hidden;
-         font-size: 80%;line-height: 1.0 "
-       v-if="$route.params.svc && ServiceData.services[$route.params.svc]"
-    style=""
-    >
-      {{ServiceData.services[$route.params.svc].stops[0].route_service_id}}:
-      {{ServiceData.services[$route.params.svc].stops[0].from_name
-          }}
-          &mdash;
-      {{ServiceData.services[$route.params.svc].stops[0].to_name
-          }}
-    </div>
-    <div v-else
-     style="position: absolute; left:40px; top:0px;
-        height: 40px; right: 40px; text-overflow: ellipsis;"
-    >
-    Service Overview
-    </div>
-    <div style="position: absolute; top: 0px; right: 0px; font-size: 50%; margin: 3px; width: 45px;">
-      <button onclick="Login.logOut()"
-        style="color: black"
-        class="btn btn-xs"
-      >Log<br/>out</button>
-    </div>
-  </header>
-
-  <main v-cloak>
-    <router-view keep-alive></router-view>
-  </main>
-
-  <loading-overlay id="loading-overlay">
-  </loading-overlay>
+  <div id="app"></div>
 </body>
 </html>
