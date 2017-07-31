@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Overview from './overview.vue';
+import Overview from './Overview.vue';
 import MapView from './MapView.vue';
 import App from './App.vue';
 import Navi from './nav.vue';
