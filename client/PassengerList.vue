@@ -60,14 +60,14 @@
       <h1>Passenger List</h1>
       <div v-for="(stop, index) in arrivalInfo"
           v-show="stop.canBoard"
-          track-by="id">
+          :key="stop.id">
           <h3 :class="{'show-passengers': stop.showPassengers}"
               @click="togglePassengers(stop)">
               ({{formatTime(stop.time)}}) {{index + 1}}.   {{stop.stop.description}} - {{stop.stop.road}}
           </h3>
           <div v-for="passenger in stop.passengers"
               :class="{passenger: true, 'animate-hide': !stop.showPassengers}"
-              track-by="id"
+              :key="passenger.id"
               >
               {{passenger.index + 1}}.
               {{passenger.name}}

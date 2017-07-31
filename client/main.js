@@ -56,6 +56,7 @@ window.addEventListener('DOMContentLoaded', function () {
     })
 
     new Vue({
+      data() { return {} },
       render(h) { return h(App) },
       router
     }).$mount('#app');
