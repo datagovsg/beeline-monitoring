@@ -45,6 +45,15 @@ window.addEventListener('DOMContentLoaded', function () {
           path: '/passengers/:svc',
           component: PassengerList,
         },
+        { // If users saved the old bookmark, it would take them to #!/
+          // which needs to be redirected to #/
+          path: '/:anything*',
+          redirect: (to) => {
+            if (to.fullPath.indexOf('access_token') === -1) {
+              return '/'
+            }
+          },
+        }
       ]
     });
 
