@@ -1,7 +1,7 @@
 <template>
-<div>
+<div class="contents-with-nav">
     <navi :service="tripId"></navi>
-    <div class="contents-with-nav">
+    <div>
     <h2>Boarding stops</h2>
     <table class="arrivalInfo">
         <tr>

@@ -1,9 +1,22 @@
 <template>
-    <div :class="{hide: hide}">
+    <div v-show="!hide" class="loading-overlay">
       <img src="img/spinner.svg">
     </div>
 </template>
-
+<style>
+.loading-overlay {
+  text-align: center;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
 <script>
 import * as LoadingOverlay from './loading-overlay.js'
 

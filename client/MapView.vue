@@ -1,7 +1,7 @@
 <template>
-<div>
+<div class="contents-with-nav">
   <navi :service="service"></navi>
-  <div class="contents-with-nav">
+  <div class="map-view">
     <div v-if="$route.query.time" class="filter-message">
       Showing known positions between
       {{formatTime(startTime)}} and
@@ -11,7 +11,7 @@
         Clear Filter
       </router-link>
     </div>
-    <gmap-map ref="gmap" class="sec-map" :center="{lng: 103.8, lat: 1.38}" :zoom="12">
+    <gmap-map ref="gmap" :center="{lng: 103.8, lat: 1.38}" :zoom="12">
 
       <gmap-marker v-for="(stop, index) in uniqueStops"
         :key="stop.id"
@@ -55,7 +55,7 @@
 </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .contents-with-nav {
   display: flex;
   flex-direction: column;
@@ -64,13 +64,16 @@
   padding: 0.5em;
   border: solid 1px #888;
 }
-.sec-map {
-  flex: 1 1 auto;
-  left: 0px;
-  width: 100%;
-  bottom: 0px;
-  top: 0px;
-  position: relative;
+.map-view {
+  position: fixed;
+  top: 90px;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+
+  .vue-map-container {
+    flex: 1 1 auto;
+  }
 }
 </style>
 
@@ -180,13 +183,13 @@ module.exports = {
     },
 
     startTime() {
-      if (!this.query.time) return null;
-      let time = new Date(this.query.time);
+      if (!this.$route.query.time) return null;
+      let time = new Date(this.$route.query.time);
       return time.getTime() - 15 * 60000
     },
     endTime() {
-      if (!this.query.time) return null;
-      let time = new Date(this.query.time);
+      if (!this.$route.query.time) return null;
+      let time = new Date(this.$route.query.time);
       return time.getTime() + 15 * 60000
     },
 
@@ -236,8 +239,6 @@ module.exports = {
       // claimed this trip id
       var pingsPromise;
       if (this.$route.query && this.$route.query.time) {
-        let time = new Date(this.$route.query.time);
-
         pingsPromise = authAjax(`/trips/${this.service}/pingsByTripId?` +
           querystring.stringify({
             startTime: this.startTime,
