@@ -12,7 +12,7 @@
               Route
             </th>
             <th data-column="led">App is on</th>
-            <th data-column="led">ETA (1<sup>st</sup> stop)</th>
+            <th data-column="led">ETA</th>
         </tr>
         </thead>
           <tr v-if="servicesByStartTime.length == 0">
