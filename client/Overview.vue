@@ -1,7 +1,9 @@
 <template>
   <div class="overview">
-    {{date}}
-    <input type="text" v-model="filter" placeholder="Search for Route">
+    <div class="date-and-search">
+      <div>{{date}}</div>
+      <input type="text" v-model="filter" placeholder="Search for Route">
+    </div>
     <table>
         <thead>
         <tr>
@@ -45,6 +47,22 @@
     </table>
   </div>
 </template>
+
+<style lang="scss">
+.date-and-search {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.2em;
+  & > * {
+    margin: 0.2em;
+  }
+  input {
+    flex: 1 1 auto;
+    padding: 0.2em;
+  }
+}
+</style>
 
 <script>
 var Vue = require('vue');
