@@ -30,9 +30,9 @@
       </div>
       <div style="position: absolute; top: 0px; right: 0px; font-size: 50%; margin: 3px; width: 45px;">
         <button onclick="Login.logOut()"
-          style="color: black"
-          class="btn btn-xs"
-        >Log<br/>out</button>
+          class="btn btn-sm btn-default logout-button">
+          <i class="mdi mdi-logout" />
+        </button>
       </div>
     </header>
 
