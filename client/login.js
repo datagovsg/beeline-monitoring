@@ -3,6 +3,8 @@ const env = require('./env.json')
 const jwt_decode = require('jwt-decode');
 const _ = require('lodash')
 
+import Vue from 'vue'
+
 /////////// Functions
 
 export function authAjax(path, opts) {
@@ -58,8 +60,31 @@ export async function checkLoggedIn() {
   }
 }
 
-export var lock;
-export var auth0;
+export let lock;
+export let auth0;
+
+/* Use the reactivity features of Vue to detect when we need to reload data,
+e.g. vehicles */
+export let sharedData = new Vue({
+  data: {
+    vehicles: null,
+    authData: {
+      idToken: localStorage.id_token,
+      refreshToken: localStorage.refresh_token,
+    },
+  },
+  watch: {
+    authData: {
+      immediate: true,
+      handler () {
+        authAjax(`/vehicles`)
+          .then((result) => {
+            this.vehiclesById = _.keyBy(result.data, 'id')
+          })
+      }
+    }
+  }
+})
 
 export function initAuth0() {
   auth0 = new Auth0({
@@ -84,6 +109,8 @@ export function initAuth0() {
         localStorage.setItem('profile', JSON.stringify(profile))
       }
     });
+
+    sharedData.authData = what
   }
 
   lock.on('authenticated', authenticated);
