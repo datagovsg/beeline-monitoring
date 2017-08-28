@@ -27,11 +27,15 @@
       </gmap-info-window>
 
       <gmap-info-window v-if="selectedPing != null" :opened="selectedPing != null" :position="coordinatesToLatLng(selectedPing.coordinates)">
-        {{formatTime(selectedPing.time)}}
-        <br/>
-        <span v-if="driversById && driversById[selectedPing.driverId]">
+        <div>
+          {{formatTime(selectedPing.time)}}
+        </div>
+        <div v-if="driversById && driversById[selectedPing.driverId]">
           By: <b>{{driversById[selectedPing.driverId].transportCompanies[0].driverCompany.name}}</b>
-        </span>
+        </div>
+        <div v-if="vehiclesById && vehiclesById[selectedPing.vehicleId]">
+          By: <b style="text-transform: uppercase">{{vehiclesById[selectedPing.vehicleId].vehicleNumber}}</b>
+        </div>
       </gmap-info-window>
 
       <!-- <ping-line :pings="pings" :options="pingOptions" :sample-rate="5"></ping-line> -->
@@ -85,7 +89,7 @@ import _ from 'lodash'
 import assert from 'assert';
 import querystring from 'querystring';
 
-var authAjax = require('./login').authAjax;
+import {authAjax, sharedData} from './login';
 import {
   watch
 } from './loading-overlay';
@@ -136,6 +140,7 @@ module.exports = {
           }
         })
     };
+
     queryAgain();
   },
 
@@ -147,6 +152,9 @@ module.exports = {
   },
 
   computed: {
+    vehiclesById () {
+      return sharedData.vehiclesById
+    },
     service () {
       return this.$route.params.svc;
     },
