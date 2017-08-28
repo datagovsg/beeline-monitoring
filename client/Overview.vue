@@ -70,7 +70,7 @@ var _ = require('lodash')
 
 var months = 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec'.split(',');
 var tzo = (new Date()).getTimezoneOffset() * 60000;
-var authAjax = require('./login').authAjax;
+import {authAjax, sharedData} from './login';
 import {watch} from './loading-overlay';
 const ServiceData = require('./service_data')
 const Favourites = require('./favourites')
@@ -96,6 +96,8 @@ module.exports = {
       RouteRow
     },
     computed: {
+        authData: () => sharedData.authData,
+
         date: function () {
             // FIXME use server date?
             var d = new Date();
@@ -141,6 +143,11 @@ module.exports = {
         notFavourited () {
           return this.favouritesAndNotFavourites[1]
         }
+    },
+    watch: {
+      authData() {
+        this.requery()
+      }
     },
     created: function() {
         var queryAgain = () => {
