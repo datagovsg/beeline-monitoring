@@ -7,4 +7,4 @@ export const isServiceGood = s => isPingGood(s) && isDistanceGood(s)
 export const hasNoPassengers = s => s.nobody &&
   (s.trip.route.tags.indexOf('notify-when-empty') === -1)
 export const notYetTime = s => s.status.ping === -1 && s.status.distance === -1
-export const isIgnorable = s => hasNoPassengers(s) && notYetTime(s)
+export const isIgnorable = s => hasNoPassengers(s) || notYetTime(s)

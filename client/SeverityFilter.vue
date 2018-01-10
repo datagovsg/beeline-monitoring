@@ -1,13 +1,14 @@
 <template>
   <div class="severity-filter">
-    <label>
-      <input type="checkbox" :checked="showOnlyFavourites"
-        @change="change('showOnlyFavourites', $event)">
-      <i class="mdi mdi-star favourite-button" />
-    </label>
-    <label>
-      <input type="checkbox" :checked="showOK"
-        @change="change('showOK', $event)">
+    <button :class="{selected: showOnlyFavourites}"
+        @click="toggleFavourites(!showOnlyFavourites)"
+        class="toggle-button">
+      <div class="mdi mdi-star favourite-button" />
+    </button>
+    <button :class="{selected: showOK}"
+        @click="change('showOK', !showOK)"
+        :disabled="showOnlyFavourites"
+        class="toggle-button">
       <RouteIndicator
         :upperIndicator="false"
         :lowerIndicator="false"
@@ -15,27 +16,40 @@
         :ignoreUpper="false"
         :noPassengers="false"
         />
-    </label>
-    <label>
-      <input type="checkbox" :checked="showBad"
-        @change="change('showBad', $event)">
+    </button>
+    <button :class="{selected: showBad}"
+        @click="change('showBad', !showBad)"
+        :disabled="showOnlyFavourites"
+        class="toggle-button">
       <RouteIndicator
         :upperIndicator="true"
         :lowerIndicator="true"
         :ignoreLower="false"
         :ignoreUpper="false"
         :noPassengers="false" />
-    </label>
-    <label>
-      <input type="checkbox" :checked="showIgnorable"
-        @change="change('showIgnorable', $event)">
+    </button>
+    <button :class="{selected: showNotYet}"
+        @click="change('showNotYet', !showNotYet)"
+        :disabled="showOnlyFavourites"
+        class="toggle-button">
+      <RouteIndicator
+        :upperIndicator="false"
+        :lowerIndicator="false"
+        :ignoreLower="true"
+        :ignoreUpper="true"
+        :noPassengers="false" />
+    </button>
+    <button :class="{selected: showNoPassengers}"
+        @click="change('showNoPassengers', !showNoPassengers)"
+        :disabled="showOnlyFavourites"
+        class="toggle-button">
       <RouteIndicator
         :upperIndicator="false"
         :lowerIndicator="false"
         :ignoreLower="true"
         :ignoreUpper="true"
         :noPassengers="true" />
-    </label>
+    </button>
   </div>
 </template>
 
@@ -43,10 +57,8 @@
 .route-indicator {
   display: inline-flex;
   flex-direction: column;
-  width: 1.5em;
-  height: 1.5em;
-  margin: 0.05em;
-  border: solid 1px #000;
+  width: 1.2em;
+  height: 1.2em;
 
   .indicator-half {
     flex: 1 1 auto;
@@ -65,6 +77,37 @@
     opacity: 0.3;
   }
 }
+
+.toggle-button {
+  // box-shadow: inset 0.2em 0.2em 0.2em #888;
+  border-radius: 0.2em;
+  border: solid 0.75px #666;
+  min-height: 2.5em;
+
+  &.selected {
+    background-color: #F90;
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+  }
+}
+
+.favourite-button {
+  font-size: 12px;
+  color: #FF0;
+  text-shadow: 0px 0px 3px #000;
+}
+
+.severity-filter {
+  display: inline-flex;
+  flex-direction: row;
+  width: 13.5em;
+
+  & > button {
+    flex: 1 1 0px;
+  }
+}
 </style>
 
 <script>
@@ -80,12 +123,23 @@ export default {
     showBad() { return this.settings.showBad },
     showIgnorable() { return this.settings.showIgnorable },
     showOnlyFavourites() { return this.settings.showOnlyFavourites },
+    showNotYet() { return this.settings.showNotYet },
+    showNoPassengers() { return this.settings.showNoPassengers },
   },
   methods: {
-    change (which, event) {
+    change (which, value) {
       this.$emit('settingsChanged', {
         ...this.settings,
-        [which]: event.target.checked,
+        [which]: value,
+      })
+    },
+    toggleFavourites (value) {
+      this.$emit('settingsChanged', {
+        showOnlyFavourites: value,
+        showBad: false,
+        showOK: false,
+        showNotYet: false,
+        showNoPassengers: false,
       })
     }
   }

@@ -39,7 +39,9 @@
     </header>
 
     <main v-cloak>
-      <router-view keep-alive></router-view>
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </main>
 
     <loading-overlay id="loading-overlay">

@@ -27,16 +27,20 @@
         :key="routesInHour.id"
         :routes="routesInHour"
         :header="hour + ':00 hrs'"
-        @visibilitySettingsChanged="visibilitySettings=$event"
+        @visibilitySettingsChanged="visibilitySettings = ($event)"
         :visibilitySettings="visibilitySettings"
         :data-hour="hour"
         ref="dashboards"
         />
 
       <tfoot>
-        <tr><th>
-          <SeverityFilter :settings="visibilitySettings" @settingsChanged="visibilitySettings = $event" />
-        </th></tr>
+        <tr>
+          <th>
+            Filters:
+            <SeverityFilter :settings="visibilitySettings"
+              @settingsChanged="visibilitySettings = ($event)" />
+          </th>
+        </tr>
       </tfoot>
     </table>
 
@@ -73,7 +77,7 @@ import RouteRow from './RouteRow.vue'
 import RoutesDashboard from './RoutesDashboard.vue'
 import SeverityFilter from './SeverityFilter.vue'
 import {isServiceGood, isPingGood, isDistanceGood,
-        isIgnorable} from './serviceInterpretation'
+        isIgnorable, notYetTime, hasNoPassengers} from './serviceInterpretation'
 
 Date.prototype.localISO = function () {
     return (new Date(this.getTime() - tzo)).toISOString();
@@ -89,12 +93,13 @@ module.exports = {
           label: ['trip.route.label', 'trip.tripStops[0].time'],
         },
         filter: '',
-        visibilitySettings: {
-          showOK: true,
-          showBad: true,
-          showIgnorable: true,
+        visibilitySettings:  {
+          showOK: false,
+          showBad: false,
+          showNotYet: false,
+          showNoPassengers: false,
           showOnlyFavourites: false,
-        }
+        },
       };
     },
     components: {
@@ -148,17 +153,26 @@ module.exports = {
           )])
           : result
 
-        const visibilityFilterResult = textFilteredResult.map(([hour, routes]) => [
-          hour,
-          routes.filter(s => {
-            return this.visibilitySettings.showOnlyFavourites
-              ? s.isFavourite
-              : (
-                isIgnorable(s) ? this.visibilitySettings.showIgnorable :
-                isServiceGood(s) ? this.visibilitySettings.showOK : this.visibilitySettings.showBad
-              )
-          })
-        ])
+        const visibilityFilterResult =
+          // everything false ==> no filter
+          (!this.visibilitySettings.showBad && !this.visibilitySettings.showOK &&
+            !this.visibilitySettings.showNotYet && !this.visibilitySettings.showNoPassengers &&
+            !this.visibilitySettings.showOnlyFavourites)
+            ? textFilteredResult
+            // showOnlyFavourites ==> apply just this filter
+            : textFilteredResult.map(([hour, routes]) => [
+              hour,
+              routes.filter(r => {
+                return this.visibilitySettings.showOnlyFavourites
+                  ? r.isFavourite
+                  : (
+                    (this.visibilitySettings.showNotYet && notYetTime(r) && !hasNoPassengers(r)) ||
+                    (this.visibilitySettings.showNoPassengers && hasNoPassengers(r)) ||
+                    (this.visibilitySettings.showOK && isServiceGood(r) && !hasNoPassengers(r) && !notYetTime(r)) ||
+                    (this.visibilitySettings.showBad && !isServiceGood(r))
+                  )
+              })
+            ])
 
         return visibilityFilterResult
       },

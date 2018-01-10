@@ -228,7 +228,7 @@ module.exports = {
       // Trigger map change
       Vue.nextTick(() => {
         if (this.$refs.gmap.$mapObject) {
-          this.$refs.gmap.$mapObject.resizePreserveCenter()
+          this.$refs.gmap.resizePreserveCenter()
           return;
         }
       });
@@ -243,6 +243,8 @@ module.exports = {
       // This optionally tries to re-fetch the vehicles,
       // only if it had not been successfully fetched
       sharedData.fetchVehicles()
+
+      if (!this.service) return Promise.resolve(null)
 
       var startTime = new Date();
       startTime.setHours(0, 0, 0, 0);

@@ -10,8 +10,10 @@
           />
       </th>
     </tr>
-    <tr>
+    <tr class="indicator-row">
       <td @click="routeDetailsShown = !routeDetailsShown">
+        <i class="mdi mdi-menu-right" v-if="!routeDetailsShown" />
+        <i class="mdi mdi-menu-down" v-else />
         <transition-group name="expand"
           >
           <RouteIndicator
@@ -59,9 +61,12 @@
   transition: all 0.2s;
 }
 
-
 .header-cell .severity-filter {
   float: right;
+}
+
+.indicator-row .route-indicator {
+  vertical-align: middle;
 }
 </style>
 
