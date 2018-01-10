@@ -30,7 +30,7 @@ export default {
     // we need a unique debouncer for every instance
     this.emit = _.debounce(function () {
       this.$emit('click', this.wantFavourite)
-    }, 2000, {leading: false, trailing: true})
+    }, 200, {leading: false, trailing: true})
   },
   methods: {
     delayedFavourite($event) {
