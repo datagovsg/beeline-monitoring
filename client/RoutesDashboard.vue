@@ -1,11 +1,12 @@
 <template>
   <tbody>
     <tr>
-      <th class="header-cell">
+      <th class="header-cell" @click="routeDetailsShown = !routeDetailsShown">
         {{ header }}
 
         <SeverityFilter
-          @settingsChanged="$emit('visibilitySettingsChanged', $event)"
+          @click.native.stop
+          @settingsChanged="$emit('visibilitySettingsChanged', $event); scrollToMe()"
           :settings="visibilitySettings"
           />
       </th>
@@ -30,9 +31,9 @@
       </td>
     </tr>
     <transition name="expand">
-      <tr v-if="routeDetailsShown">
+      <tr v-if="routeDetailsShown || expanded">
         <td>
-            <table v-if="routeDetailsShown">
+            <table v-if="routeDetailsShown || expanded">
               <!-- TODO: sort by priority -->
               <RouteRow v-for="route in routes"
                 :key='route.id'
@@ -86,6 +87,12 @@ export default {
     }
   },
 
-  props: ['routes', 'header', 'visibilitySettings'],
+  props: ['routes', 'header', 'visibilitySettings', 'expanded'],
+
+  methods: {
+    scrollToMe () {
+      this.$nextTick(() => window.scrollTo(0, this.$el.offsetTop))
+    }
+  }
 }
 </script>

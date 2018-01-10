@@ -30,10 +30,11 @@
         @visibilitySettingsChanged="visibilitySettings = ($event)"
         :visibilitySettings="visibilitySettings"
         :data-hour="hour"
+        :expanded="numResults < 10"
         ref="dashboards"
         />
 
-      <tfoot>
+      <tfoot v-if="routesByHour.length === 0">
         <tr>
           <th>
             Filters:
@@ -93,6 +94,7 @@ module.exports = {
           label: ['trip.route.label', 'trip.tripStops[0].time'],
         },
         filter: '',
+        actualFilter: '',
         visibilitySettings:  {
           showOK: false,
           showBad: false,
@@ -114,6 +116,10 @@ module.exports = {
         return d.getDate() + ' ' +
             months[d.getMonth()] + ' ' +
             d.getFullYear();
+      },
+
+      numResults () {
+        return _.sum(this.routesByHour.map(([h, r]) => r.length))
       },
 
       routesByHour () {
@@ -142,14 +148,14 @@ module.exports = {
           .sortBy(x => parseInt(x[0]))
           .value()
 
-
-        const textFilteredResult = this.filter
+        const filter = this.actualFilter
+        const textFilteredResult = filter
           ? result.map(([hour, routes]) => [hour, routes.filter(s =>
-            s.trip.route.from.toUpperCase().indexOf(this.filter.toUpperCase()) != -1
+            s.trip.route.from.toUpperCase().indexOf(filter.toUpperCase()) != -1
             ||
-            s.trip.route.to.toUpperCase().indexOf(this.filter.toUpperCase()) != -1
+            s.trip.route.to.toUpperCase().indexOf(filter.toUpperCase()) != -1
             ||
-            s.trip.route.label.toUpperCase().indexOf(this.filter.toUpperCase()) != -1
+            s.trip.route.label.toUpperCase().indexOf(filter.toUpperCase()) != -1
           )])
           : result
 
@@ -197,6 +203,10 @@ module.exports = {
       authData() {
         this.requery()
       },
+
+      filter: _.debounce(function () {
+        this.actualFilter = this.filter
+      }, 200),
 
       servicesByRouteId (s, prev) {
         if (s && !prev) {
