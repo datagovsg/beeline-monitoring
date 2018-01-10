@@ -17,6 +17,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "babel-preset-stage-3": "^6.5.0",
     "css-loader": "^0.26.0",
+    "dateformat": "^3.0.2",
     "file-loader": "^0.11.2",
     "gh-pages": "^0.12.0",
     "http-server": "^0.9.0",
