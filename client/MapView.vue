@@ -240,6 +240,10 @@ module.exports = {
 
   methods: {
     requery: function() {
+      // This optionally tries to re-fetch the vehicles,
+      // only if it had not been successfully fetched
+      sharedData.fetchVehicles()
+
       var startTime = new Date();
       startTime.setHours(0, 0, 0, 0);
 

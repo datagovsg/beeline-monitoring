@@ -1,4 +1,5 @@
 <template>
+  <tbody>
     <tr :class="{
             emergency: service.trip.status === 'cancelled',
             nobody: service.nobody && (service.trip.route.tags.indexOf('notify-when-empty') === -1),

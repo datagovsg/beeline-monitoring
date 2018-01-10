@@ -5,46 +5,41 @@
       <input type="text" v-model="filter" placeholder="Search for Route">
     </div>
     <table>
-        <thead>
+      <!-- <thead>
         <tr>
-            <th data-column="label"  @click="sortBy ='label'"
-              style="width: calc(50% - 5em)">
-              Route
-            </th>
-            <th data-column="led">App is on</th>
-            <th data-column="led">ETA</th>
+          <th data-column="label"  @click="sortBy ='label'"
+            style="width: calc(50% - 5em)">
+            Route
+          </th>
         </tr>
-        </thead>
-          <tr v-if="servicesByStartTime.length == 0">
-            <td colspan="3">
-                You have no bus services today.
-                You might not be authorized to view the bus service status.
-                Please contact the Beeline team if this is incorrect.
-            </td>
-          </tr>
-          <template v-if="favourited.length">
-            <tr>
-              <th colspan="3">
-                Favourite Routes
-              </th>
-            </tr>
-            <RouteRow v-for="service in favourited"
-              :key='service.trip.route.id'
-              :isFavourite="true"
-              :service="service" />
-          </template>
-          <template v-if="notFavourited.length">
-            <tr>
-              <th colspan="3">
-                Remaining Routes
-              </th>
-            </tr>
-            <RouteRow v-for="service in notFavourited"
-              :key='service.trip.route.id'
-              :isFavourite="false"
-              :service="service" />
-          </template>
+      </thead> -->
+      <tr v-if="routesByHour.length == 0">
+        <td colspan="3">
+            You have no bus services today.
+            You might not be authorized to view the bus service status.
+            Please contact the Beeline team if this is incorrect.
+        </td>
+      </tr>
+
+      <RoutesDashboard
+        v-for="[hour, routesInHour] of routesByHour"
+        v-if="routesInHour.length"
+        :key="routesInHour.id"
+        :routes="routesInHour"
+        :header="hour + ':00 hrs'"
+        @visibilitySettingsChanged="visibilitySettings=$event"
+        :visibilitySettings="visibilitySettings"
+        :data-hour="hour"
+        ref="dashboards"
+        />
+
+      <tfoot>
+        <tr><th>
+          <SeverityFilter :settings="visibilitySettings" @settingsChanged="visibilitySettings = $event" />
+        </th></tr>
+      </tfoot>
     </table>
+
   </div>
 </template>
 
@@ -75,6 +70,10 @@ import {watch} from './loading-overlay';
 const ServiceData = require('./service_data')
 const Favourites = require('./favourites')
 import RouteRow from './RouteRow.vue'
+import RoutesDashboard from './RoutesDashboard.vue'
+import SeverityFilter from './SeverityFilter.vue'
+import {isServiceGood, isPingGood, isDistanceGood,
+        isIgnorable} from './serviceInterpretation'
 
 Date.prototype.localISO = function () {
     return (new Date(this.getTime() - tzo)).toISOString();
@@ -82,85 +81,127 @@ Date.prototype.localISO = function () {
 
 module.exports = {
     data() {
-        return {
-            services: {},
-            sortBy: 'time',
-            sortByTemplates: {
-              time: ['trip.tripStops[0].time', 'trip.route.label'],
-              label: ['trip.route.label', 'trip.tripStops[0].time'],
-            },
-            filter: '',
-        };
+      return {
+        servicesByRouteId: null,
+        sortBy: 'time',
+        sortByTemplates: {
+          time: ['trip.tripStops[0].time', 'trip.route.label'],
+          label: ['trip.route.label', 'trip.tripStops[0].time'],
+        },
+        filter: '',
+        visibilitySettings: {
+          showOK: true,
+          showBad: true,
+          showIgnorable: true,
+          showOnlyFavourites: false,
+        }
+      };
     },
     components: {
-      RouteRow
+      RouteRow, RoutesDashboard, SeverityFilter
     },
     computed: {
-        authData: () => sharedData.authData,
+      authData: () => sharedData.authData,
 
-        date: function () {
-            // FIXME use server date?
-            var d = new Date();
-            return d.getDate() + ' ' +
-                months[d.getMonth()] + ' ' +
-                d.getFullYear();
-        },
+      date: function () {
+        // FIXME use server date?
+        var d = new Date();
+        return d.getDate() + ' ' +
+            months[d.getMonth()] + ' ' +
+            d.getFullYear();
+      },
 
-        servicesByStartTime: function () {
-            var rv = [];
-            var self = this;
-            var ss = self.services;
+      routesByHour () {
+        const ss = this.servicesByRouteId;
 
-            ss = _.values(ss)
-            ss = _.orderBy(ss, this.sortByTemplates[this.sortBy]
-              .map(t => s => _.get(s, t))
-            )
-            if (this.filter) {
-              ss = ss.filter(s =>
-                s.trip.route.from.toUpperCase().indexOf(this.filter.toUpperCase()) != -1
-                ||
-                s.trip.route.to.toUpperCase().indexOf(this.filter.toUpperCase()) != -1
-                ||
-                s.trip.route.label.toUpperCase().indexOf(this.filter.toUpperCase()) != -1
-              )
-            }
+        if (!ss) return []
 
-            return ss;
-        },
+        const favouritesByRouteId = _.keyBy(Favourites.favourites)
 
-        favouritesAndNotFavourites () {
-          const favouritesByRouteId = _.keyBy(Favourites.favourites)
-          return _.partition(
-            this.servicesByStartTime,
-            t => t.trip.routeId in favouritesByRouteId
+        const result = _(ss)
+          .values()
+          .groupBy(
+            s => (s.trip.tripStops[0].time.getUTCHours() + 8) % 24
           )
-        },
+          .toPairs()
+          .map(([hour, routes]) => {
+            return [
+              hour,
+              _.sortBy(routes, s => [s.trip.tripStops[0].time, s.id])
+                .map(r => ({
+                  ...r,
+                  isFavourite: r.trip.routeId in favouritesByRouteId,
+                }))
+            ]
+          })
+          .sortBy(x => parseInt(x[0]))
+          .value()
 
-        favourited () {
-          return this.favouritesAndNotFavourites[0]
-        },
 
-        notFavourited () {
-          return this.favouritesAndNotFavourites[1]
-        }
+        const textFilteredResult = this.filter
+          ? result.map(([hour, routes]) => [hour, routes.filter(s =>
+            s.trip.route.from.toUpperCase().indexOf(this.filter.toUpperCase()) != -1
+            ||
+            s.trip.route.to.toUpperCase().indexOf(this.filter.toUpperCase()) != -1
+            ||
+            s.trip.route.label.toUpperCase().indexOf(this.filter.toUpperCase()) != -1
+          )])
+          : result
+
+        const visibilityFilterResult = textFilteredResult.map(([hour, routes]) => [
+          hour,
+          routes.filter(s => {
+            return this.visibilitySettings.showOnlyFavourites
+              ? s.isFavourite
+              : (
+                isIgnorable(s) ? this.visibilitySettings.showIgnorable :
+                isServiceGood(s) ? this.visibilitySettings.showOK : this.visibilitySettings.showBad
+              )
+          })
+        ])
+
+        return visibilityFilterResult
+      },
+
+      favouritesAndNotFavourites () {
+        const favouritesByRouteId = _.keyBy(Favourites.favourites)
+        return _.partition(
+          this.servicesByStartTime,
+          t => t.trip.routeId in favouritesByRouteId
+        )
+      },
+
+      favourited () {
+        return this.favouritesAndNotFavourites[0]
+      },
+
+      notFavourited () {
+        return this.favouritesAndNotFavourites[1]
+      }
     },
     watch: {
       authData() {
         this.requery()
+      },
+
+      servicesByRouteId (s, prev) {
+        if (s && !prev) {
+          this.firstScroll()
+        }
       }
     },
-    created: function() {
-        var queryAgain = () => {
-          this.$queryTimeout = null;
-          return this.requery()
+    created () {
+      var queryAgain = () => {
+        this.$queryTimeout = null;
+        return this.requery()
           .catch((err) => console.error(err))
           .then(() => {
             if (this.$queryTimeout === null) {
               this.$queryTimeout = setTimeout(queryAgain, 20000);
             }
           })
-        };
-        watch(queryAgain());
+      };
+      watch(queryAgain());
     },
     destroyed() {
       if (this.$queryTimeout) {
@@ -169,22 +210,42 @@ module.exports = {
       this.$queryTimeout = false;
     },
     methods: {
-        showService: function (svc) {
-            if (mapVue)
-                mapVue.service = svc;
-        },
-        requery: function(timeout) {
-            var self = this;
-            return authAjax('/monitoring', {
-                method: 'GET',
+      firstScroll () {
+        this.$nextTick(() => {
+          const firstAfterNow = this.$refs.dashboards.find(
+            d => parseInt(d.$el.dataset.hour) >=
+              18
+          )
+
+          if (firstAfterNow) {
+            window.scrollTo(0, firstAfterNow.$el.offsetTop)
+          }
+        })
+      },
+
+      showService: function (svc) {
+        if (mapVue)
+          mapVue.service = svc;
+      },
+
+      requery (timeout) {
+        return authAjax('/monitoring', {
+          method: 'GET',
+        })
+        .then((result) => {
+          // Convert the time fields
+          Object.keys(result.data).forEach(routeId => {
+            const service = result.data[routeId]
+            service.trip.tripStops.forEach(ts => {
+              ts.time = new Date(ts.time)
             })
-            .then(function (result) {
-                ServiceData.services = self.services = result.data;
-            })
-            .then(null, function (err) {
-                console.log(err);
-            })
-        },
+          })
+          ServiceData.servicesByRouteId = this.servicesByRouteId = result.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+      },
     },
 }
 </script>
