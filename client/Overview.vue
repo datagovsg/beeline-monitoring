@@ -34,7 +34,7 @@
         ref="dashboards"
         />
 
-      <tfoot v-if="routesByHour.length === 0">
+      <tfoot v-if="numResults === 0">
         <tr>
           <th>
             Filters:
