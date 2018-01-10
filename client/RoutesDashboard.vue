@@ -1,7 +1,7 @@
 <template>
   <tbody>
     <tr>
-      <th class="header-cell" @click="routeDetailsShown = !routeDetailsShown">
+      <th class="header-cell" @click="routeDetailsShown = !routeDetailsShown; scrollToMe()">
         {{ header }}
 
         <SeverityFilter
@@ -12,7 +12,7 @@
       </th>
     </tr>
     <tr class="indicator-row">
-      <td @click="routeDetailsShown = !routeDetailsShown">
+      <td @click="routeDetailsShown = !routeDetailsShown; scrollToMe()">
         <i class="mdi mdi-menu-right" v-if="!routeDetailsShown" />
         <i class="mdi mdi-menu-down" v-else />
         <transition-group name="expand"
@@ -91,7 +91,9 @@ export default {
 
   methods: {
     scrollToMe () {
-      this.$nextTick(() => window.scrollTo(0, this.$el.offsetTop))
+      this.$nextTick(() => {
+        window.scrollTo(0, this.$el.offsetTop)
+      })
     }
   }
 }

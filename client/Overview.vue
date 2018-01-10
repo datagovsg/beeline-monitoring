@@ -282,10 +282,10 @@ module.exports = {
     border-spacing: 0;
   }
   th {
-      background-color: #EBEFF2;
-      color: #493761;
-      font-size: 80%;
-      height: 30px;
+    background-color: #EBEFF2;
+    color: #493761;
+    font-size: 100%;
+    height: 30px;
   }
 }
 
