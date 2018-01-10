@@ -105,7 +105,7 @@
   width: 13.5em;
 
   & > button {
-    flex: 1 1 0px;
+    flex: 0 0 2.7em;
   }
 }
 </style>
