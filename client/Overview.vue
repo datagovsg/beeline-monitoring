@@ -26,7 +26,7 @@
         v-if="routesInHour.length"
         :key="routesInHour.id"
         :routes="routesInHour"
-        :header="hour + ':00 hrs'"
+        :header="dateformat(hour * 3600e3, 'h:MM TT', true)"
         @visibilitySettingsChanged="visibilitySettings = ($event)"
         :visibilitySettings="visibilitySettings"
         :data-hour="hour"
@@ -79,6 +79,7 @@ import RoutesDashboard from './RoutesDashboard.vue'
 import SeverityFilter from './SeverityFilter.vue'
 import {isServiceGood, isPingGood, isDistanceGood,
         isIgnorable, notYetTime, hasNoPassengers} from './serviceInterpretation'
+import dateformat from 'dateformat'
 
 Date.prototype.localISO = function () {
     return (new Date(this.getTime() - tzo)).toISOString();
@@ -234,6 +235,8 @@ module.exports = {
       this.$queryTimeout = false;
     },
     methods: {
+      dateformat,
+
       firstScroll () {
         this.$nextTick(() => {
           const firstAfterNow = this.$refs.dashboards.find(
