@@ -15,13 +15,13 @@
           height: 40px; right: 40px; text-overflow: ellipsis;
           overflow: hidden;
            font-size: 80%;line-height: 1.0 "
-         v-if="$route.params.svc && ServiceData.services[$route.params.svc]"
+         v-if="$route.params.svc && ServiceData.servicesByRouteId[$route.params.svc]"
       >
-        {{ServiceData.services[$route.params.svc].stops[0].route_service_id}}:
-        {{ServiceData.services[$route.params.svc].stops[0].from_name
+        {{ServiceData.servicesByRouteId[$route.params.svc].stops[0].route_service_id}}:
+        {{ServiceData.servicesByRouteId[$route.params.svc].stops[0].from_name
             }}
             &mdash;
-        {{ServiceData.services[$route.params.svc].stops[0].to_name
+        {{ServiceData.servicesByRouteId[$route.params.svc].stops[0].to_name
             }}
       </div>
       <div v-else
@@ -39,7 +39,9 @@
     </header>
 
     <main v-cloak>
-      <router-view keep-alive></router-view>
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </main>
 
     <loading-overlay id="loading-overlay">

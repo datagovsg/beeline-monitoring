@@ -73,18 +73,26 @@ export let sharedData = new Vue({
       refreshToken: localStorage.refresh_token,
     },
   },
-  watch: {
-    authData: {
-      immediate: true,
-      handler () {
-        authAjax(`/vehicles`)
+  methods: {
+    fetchVehicles () {
+      if (!this.vehiclesById && !this.$vehiclesPromise) {
+        this.$vehiclesPromise = authAjax(`/vehicles`)
           .then((result) => {
             this.vehiclesById = _.keyBy(result.data, 'id')
+          })
+          .catch(() => {
+          })
+          .then((result) => {
+            this.$vehiclesPromise = null
           })
       }
     }
   }
 })
+
+// Use the following promise to signal that user just logged in
+let postLoginPromiseResolver
+export const postLoginPromise = new Promise((resolve) => postLoginPromiseResolver = resolve)
 
 export function initAuth0() {
   auth0 = new Auth0({
@@ -117,6 +125,7 @@ export function initAuth0() {
 
   lock.on('hash_parsed', (result) => {
     console.log(result, 'hash_parsed');
+    postLoginPromiseResolver()
     if (result === null) {
       checkLoggedIn();
     }

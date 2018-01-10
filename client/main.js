@@ -57,17 +57,11 @@ window.addEventListener('DOMContentLoaded', function () {
       ]
     });
 
-    /* Load once... */
-    Login.authAjax('/monitoring', {
-        method: 'GET',
+    Login.postLoginPromise.then(() => {
+      new Vue({
+        data() { return {} },
+        render(h) { return h(App) },
+        router
+      }).$mount('#app');
     })
-    .then(function (result) {
-        ServiceData.services = self.services = result.data
-    })
-
-    new Vue({
-      data() { return {} },
-      render(h) { return h(App) },
-      router
-    }).$mount('#app');
 });

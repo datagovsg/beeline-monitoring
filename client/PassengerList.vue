@@ -258,7 +258,7 @@ module.exports = {
 
     computed: {
         services() {
-            return this.ServiceData.services;
+            return this.ServiceData.servicesByRouteId;
         },
         sessionToken() {
             return window.localStorage.session_token;
