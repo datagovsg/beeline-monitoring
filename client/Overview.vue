@@ -1,6 +1,6 @@
 <template>
   <div class="overview">
-    <ExpandingBox class="date-and-search" auxWidth="13.5em">
+    <ExpandingBox class="date-and-search" auxWidth="10.8em">
       <input type="text" v-model="filter" placeholder="Search for Route" style="width: 100%"
         class="form-control">
       <div slot="auxiliary">
