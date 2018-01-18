@@ -28,17 +28,6 @@
         :ignoreUpper="false"
         :noPassengers="false" />
     </button>
-    <button :class="{selected: showNotYet}"
-        @click="change('showNotYet', !showNotYet)"
-        :disabled="showOnlyFavourites"
-        class="toggle-button">
-      <RouteIndicator
-        :upperIndicator="false"
-        :lowerIndicator="false"
-        :ignoreLower="true"
-        :ignoreUpper="true"
-        :noPassengers="false" />
-    </button>
     <button :class="{selected: showNoPassengers}"
         @click="change('showNoPassengers', !showNoPassengers)"
         :disabled="showOnlyFavourites"

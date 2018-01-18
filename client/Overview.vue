@@ -161,10 +161,9 @@ module.exports = {
                 return this.visibilitySettings.showOnlyFavourites
                   ? r.isFavourite
                   : (
-                    (this.visibilitySettings.showNotYet && notYetTime(r) && !hasNoPassengers(r)) ||
                     (this.visibilitySettings.showNoPassengers && hasNoPassengers(r)) ||
-                    (this.visibilitySettings.showOK && isServiceGood(r) && !hasNoPassengers(r) && !notYetTime(r)) ||
-                    (this.visibilitySettings.showBad && !isServiceGood(r))
+                    (this.visibilitySettings.showOK && (isServiceGood(r) || notYetTime(r)) && !hasNoPassengers(r)) ||
+                    (this.visibilitySettings.showBad && (!isServiceGood(r) || notYetTime(r)) && !hasNoPassengers(r))
                   )
               })
             ])
