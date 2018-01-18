@@ -1,7 +1,9 @@
 <template>
-    <i class="mdi mdi-star favourite-button"
+    <i class="glyphicon favourite-button"
       :class="{
-        isFavourite: wantFavourite
+        isFavourite: wantFavourite,
+        'glyphicon-star-empty': !wantFavourite,
+        'glyphicon-star': wantFavourite,
         }"
       @click="delayedFavourite"
     />

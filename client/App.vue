@@ -5,9 +5,9 @@
           width: 40px; height: 40px"
         v-show="$route.path != '/'"
       >
-        <router-link :to="{ path: '/' }"
-          class="btn btn-sm btn-default">
-          <i class="mdi mdi-arrow-left" />
+        <router-link :to="{ path: '/' }" tag="button" style="color: #FFF"
+          class="btn btn-primary btn-link">
+          <i class="glyphicon glyphicon-chevron-left" />
         </router-link>
       </div>
 
