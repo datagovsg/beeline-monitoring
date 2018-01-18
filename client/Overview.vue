@@ -240,12 +240,11 @@ module.exports = {
       firstScroll () {
         this.$nextTick(() => {
           const firstAfterNow = this.$refs.dashboards.find(
-            d => parseInt(d.$el.dataset.hour) >=
-              18
+            d => parseInt(d.$el.dataset.hour) >= ((new Date().getUTCHours() + 8) % 24)
           )
 
           if (firstAfterNow) {
-            window.scrollTo(0, firstAfterNow.$el.offsetTop)
+            window.scrollTo(0, firstAfterNow.$el.offsetTop + 40)
           }
         })
       },
