@@ -67,7 +67,9 @@
   }
 }
 
+
 .toggle-button {
+
 
   &:first-of-type {
     border-top-left-radius: 0.2em;
@@ -79,10 +81,11 @@
   }
 
   // box-shadow: inset 0.2em 0.2em 0.2em #888;
+  background: #fff;
   padding: 0.2em;
   margin: 0;
-  border: solid 0.75px #666;
-  min-height: 2.5em;
+  border: solid 0.5px #ccc;
+  min-height: 2.4em;
 
   &.selected {
     background-color: #F90;
@@ -94,7 +97,7 @@
 }
 
 .favourite-button {
-  font-size: 22px;
+  font-size: 20px;
   color: #FF0;
   text-shadow: 0px 0px 3px #000;
 }
