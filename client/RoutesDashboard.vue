@@ -7,26 +7,27 @@
     </tr>
     <tr class="indicator-row">
       <td @click="routeDetailsShown = !routeDetailsShown; scrollToMe()">
-        <i class="mdi mdi-menu-right" v-if="!routeDetailsShown" />
-        <i class="mdi mdi-menu-down" v-else />
-        <transition-group name="expand"
-          >
-          <RouteIndicator
-            v-for="route in routes"
-            :key="route.trip.route.id"
-            :upperIndicator="route.status.ping >= 2"
-            :lowerIndicator="route.status.distance >= 2"
-            :ignoreUpper="route.status.ping === -1"
-            :ignoreLower="route.status.distance === -1"
-            :title="route.trip.route.label + ' - ' + route.trip.route.name"
-            :noPassengers="route.nobody && (route.trip.route.tags.indexOf('notify-when-empty') === -1)"
-            />
-        </transition-group>
+        <div class="flex-row">
+          <transition-group name="expand" class="route-indicators" tag="div">
+            <RouteIndicator
+              v-for="route in routes"
+              :key="route.trip.route.id"
+              :upperIndicator="route.status.ping >= 2"
+              :lowerIndicator="route.status.distance >= 2"
+              :ignoreUpper="route.status.ping === -1"
+              :ignoreLower="route.status.distance === -1"
+              :title="route.trip.route.label + ' - ' + route.trip.route.name"
+              :noPassengers="route.nobody && (route.trip.route.tags.indexOf('notify-when-empty') === -1)"
+              />
+          </transition-group>
+          <i class="expanded-indicator glyphicon glyphicon-chevron-right" v-if="!routeDetailsShown" />
+          <i class="expanded-indicator glyphicon glyphicon-chevron-down" v-else />
+        </div>
       </td>
     </tr>
     <transition name="expand">
       <tr v-if="routeDetailsShown || expanded">
-        <td>
+        <td class="route-list-in-routes">
             <table v-if="routeDetailsShown || expanded">
               <thead>
                 <tr>
@@ -69,6 +70,24 @@
 
 .indicator-row .route-indicator {
   vertical-align: middle;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+
+  .route-indicators {
+    flex: 1 1 0;
+  }
+  .expanded-indicator {
+    padding: 0.2em;
+    flex: 0 0 auto;
+  }
+}
+
+.route-list-in-routes table {
+  margin: 0.5em;
 }
 </style>
 
