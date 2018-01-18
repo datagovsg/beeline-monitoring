@@ -32,8 +32,8 @@
               <thead>
                 <tr>
                   <th>Route</th>
-                  <th style="text-align: center">Switched on</th>
-                  <th style="text-align: center">ETA</th>
+                  <th style="text-align: center">Tracking</th>
+                  <th style="text-align: center">On Time</th>
                 </tr>
               </thead>
               <!-- TODO: sort by priority -->
