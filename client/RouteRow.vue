@@ -46,7 +46,7 @@
               </template>
               <template v-else>
                   <template v-if="service.lastPing">
-                    {{minutesSince(service.lastPing)}} <br/> mins ago
+                    {{humanizeRelative(service.lastPing)}}
                   </template>
               </template>
           </router-link>
@@ -188,11 +188,19 @@ export default {
 
 
     /*************** Filters ***************/
-    minutesSince (dt) {
-        if (dt) {
-            return Math.round(((new Date()).getTime() - (new Date(dt.createdAt)).getTime()) / 60000).toFixed(0);
-        }
-        return '';
+    humanizeRelative (dt) {
+      if (!dt) {
+        return ''
+      } else {
+        const difference = Date.now() - (new Date(dt.createdAt)).getTime()
+        const magnitude = Math.abs(difference)
+
+        const interval = (magnitude < 60000) ? `${Math.round(magnitude / 1000)}s`
+          : (magnitude < 3600e3) ? `${Math.round(magnitude / 60e3)} mins`
+          : `${Math.round(magnitude / 3600e3)} hrs`
+
+        return interval + ' ' + (difference > 0 ? 'ago' : 'in the future')
+      }
     },
     takeTime (dt) {
         if (dt) {
