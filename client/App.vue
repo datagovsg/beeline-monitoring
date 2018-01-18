@@ -18,17 +18,15 @@
          v-if="$route.params.svc && ServiceData.servicesByRouteId[$route.params.svc]"
       >
         {{ServiceData.servicesByRouteId[$route.params.svc].stops[0].route_service_id}}:
-        {{ServiceData.servicesByRouteId[$route.params.svc].stops[0].from_name
-            }}
+        {{ServiceData.servicesByRouteId[$route.params.svc].stops[0].from_name}}
             &mdash;
-        {{ServiceData.servicesByRouteId[$route.params.svc].stops[0].to_name
-            }}
+        {{ServiceData.servicesByRouteId[$route.params.svc].stops[0].to_name}}
       </div>
       <div v-else
        style="position: absolute; left:40px; top:0px;
           height: 40px; right: 40px; text-overflow: ellipsis;"
       >
-      Service Overview
+        {{ date }}
       </div>
       <div style="position: absolute; top: 0px; right: 0px; font-size: 50%; margin: 3px; width: 45px;">
         <button onclick="Login.logOut()"
@@ -38,7 +36,7 @@
       </div>
     </header>
 
-    <main v-cloak>
+    <main>
       <keep-alive>
         <router-view></router-view>
       </keep-alive>
@@ -94,6 +92,8 @@ h4 {
 }
 </style>
 <script>
+import dateformat from 'dateformat'
+
 export default {
   data () {
     return {
@@ -101,5 +101,10 @@ export default {
       ServiceData: require('./service_data')
     }
   },
+  computed: {
+    date () {
+      return dateformat(new Date(), 'dddd, dd mmm yyyy')
+    }
+  }
 }
 </script>
