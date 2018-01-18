@@ -102,10 +102,11 @@
 .severity-filter {
   display: inline-flex;
   flex-direction: row;
-  width: 13.5em;
+  width: 10.8em;
 
   & > button {
     flex: 0 0 2.7em;
+    width: 2.7em;
   }
 }
 </style>
