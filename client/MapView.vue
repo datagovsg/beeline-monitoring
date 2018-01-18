@@ -43,15 +43,15 @@
       <!-- Start and end markers -->
       <template v-for="(driverPings, driverId) in otherPings">
         <gmap-marker :position="firstPing(driverPings)"
-          :icon="MapIcons.startPoint" title="Start">
+          :icon="MapIcons.startPoint" title="Start" :key="`start-${driverId}`">
         </gmap-marker>
 
         <gmap-marker :position="lastPing(driverPings)"
-          :icon="MapIcons.endPoint" title="End">
+          :icon="MapIcons.endPoint" title="End" :key="`end-${driverId}`">
         </gmap-marker>
 
         <ping-line :pings="driverPings" :options="otherPingOptions" :sample-rate="5"
-          @selectPing="selectPing">
+          @selectPing="selectPing"  :key="`ping-line-${driverId}`">
         </ping-line>
       </template>
     </gmap-map>
