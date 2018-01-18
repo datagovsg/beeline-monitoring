@@ -6,7 +6,7 @@
         v-show="$route.path != '/'"
       >
         <router-link :to="{ path: '/' }" tag="button" style="color: #FFF"
-          class="btn btn-primary btn-link">
+          class="btn btn-link">
           <i class="glyphicon glyphicon-chevron-left" />
         </router-link>
       </div>
@@ -29,8 +29,8 @@
         {{ date }}
       </div>
       <div style="position: absolute; top: 0px; right: 0px; font-size: 50%; margin: 3px; width: 45px;">
-        <button onclick="Login.logOut()"
-          class="btn btn-sm btn-default logout-button">
+        <button onclick="Login.logOut()" class="btn btn-link logout-button"
+            style="color: #FFF">
           <i class="mdi mdi-logout" />
         </button>
       </div>
