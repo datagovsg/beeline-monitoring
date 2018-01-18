@@ -1,9 +1,13 @@
 <template>
   <div class="overview">
-    <div class="date-and-search">
-      <div>{{date}}</div>
-      <input type="text" v-model="filter" placeholder="Search for Route">
-    </div>
+    <ExpandingBox class="date-and-search" auxWidth="13.5em">
+      <input type="text" v-model="filter" placeholder="Search for Route" style="width: 100%"
+        class="form-control">
+      <div slot="auxiliary">
+        <SeverityFilter :settings="visibilitySettings" @settingsChanged="visibilitySettings = $event" />
+      </div>
+    </ExpandingBox>
+
     <table>
       <!-- <thead>
         <tr>
@@ -33,34 +37,25 @@
         :expanded="numResults < 10"
         ref="dashboards"
         />
-
-      <tfoot v-if="numResults === 0">
-        <tr>
-          <th>
-            Filters:
-            <SeverityFilter :settings="visibilitySettings"
-              @settingsChanged="visibilitySettings = ($event)" />
-          </th>
-        </tr>
-      </tfoot>
     </table>
 
   </div>
 </template>
 
 <style lang="scss">
-.date-and-search {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0.2em;
-  & > * {
-    margin: 0.2em;
-  }
-  input {
-    flex: 1 1 auto;
-    padding: 0.2em;
-  }
+
+.overview {
+  padding-top: 40px;
+}
+
+.expanding-box {
+  background-color: white;
+  height: 40px;
+  top: 40px;
+  left: 0;
+  width: 100%;
+  position: fixed;
+  z-index: 2;
 }
 </style>
 
@@ -77,6 +72,7 @@ const Favourites = require('./favourites')
 import RouteRow from './RouteRow.vue'
 import RoutesDashboard from './RoutesDashboard.vue'
 import SeverityFilter from './SeverityFilter.vue'
+import ExpandingBox from './ExpandingBox.vue'
 import {isServiceGood, isPingGood, isDistanceGood,
         isIgnorable, notYetTime, hasNoPassengers} from './serviceInterpretation'
 import dateformat from 'dateformat'
@@ -106,18 +102,10 @@ module.exports = {
       };
     },
     components: {
-      RouteRow, RoutesDashboard, SeverityFilter
+      RouteRow, RoutesDashboard, SeverityFilter, ExpandingBox
     },
     computed: {
       authData: () => sharedData.authData,
-
-      date: function () {
-        // FIXME use server date?
-        var d = new Date();
-        return d.getDate() + ' ' +
-            months[d.getMonth()] + ' ' +
-            d.getFullYear();
-      },
 
       numResults () {
         return _.sum(this.routesByHour.map(([h, r]) => r.length))

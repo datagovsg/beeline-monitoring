@@ -62,6 +62,8 @@ header {
   height: $height;
   top: 0px;
   left: 0px;
+
+  z-index: 2,
 }
 
 main {
