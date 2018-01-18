@@ -3,12 +3,6 @@
     <tr>
       <th class="header-cell" @click="routeDetailsShown = !routeDetailsShown; scrollToMe()">
         {{ header }}
-
-        <SeverityFilter
-          @click.native.stop
-          @settingsChanged="$emit('visibilitySettingsChanged', $event); scrollToMe()"
-          :settings="visibilitySettings"
-          />
       </th>
     </tr>
     <tr class="indicator-row">
