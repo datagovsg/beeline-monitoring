@@ -3,7 +3,7 @@
     <button :class="{selected: showOnlyFavourites}"
         @click="toggleFavourites(!showOnlyFavourites)"
         class="toggle-button">
-      <div class="mdi mdi-star favourite-button" />
+      <div class="glyphicon glyphicon-star favourite-button" />
     </button>
     <button :class="{selected: showOK}"
         @click="change('showOK', !showOK)"
