@@ -270,12 +270,16 @@ module.exports = {
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
+
+  }
+  td,th{
+    padding: 0.5em;
   }
   th {
     border-top: solid 1px #ddd;
   }
   tr{
-
+    margin: 0.5em;
   }
 }
 
