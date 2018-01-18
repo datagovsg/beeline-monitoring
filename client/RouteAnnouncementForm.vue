@@ -22,10 +22,10 @@
       <div>
         <label>
           New message<br/>
-          <textarea v-model="message"
-              style="display: block; width: 100%; height: 100px"
-              name="message"></textarea>
         </label>
+        <textarea v-model="message"
+            style="display: block; width: 100%; height: 100px"
+            name="message"></textarea>
       </div>
       <div>
         <button class="message-button" type="submit"

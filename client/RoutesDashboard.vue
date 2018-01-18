@@ -28,6 +28,13 @@
       <tr v-if="routeDetailsShown || expanded">
         <td>
             <table v-if="routeDetailsShown || expanded">
+              <thead>
+                <tr>
+                  <th>Route</th>
+                  <th style="text-align: center">Switched on</th>
+                  <th style="text-align: center">ETA</th>
+                </tr>
+              </thead>
               <!-- TODO: sort by priority -->
               <RouteRow v-for="route in routes"
                 :key='route.id'
