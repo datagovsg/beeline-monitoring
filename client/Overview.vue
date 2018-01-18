@@ -264,6 +264,7 @@ module.exports = {
 </script>
 
 <style lang="scss">
+
 .overview {
   table {
     width: 100%;
@@ -271,7 +272,10 @@ module.exports = {
     border-spacing: 0;
   }
   th {
-    border-top: solid 2px #CCC;
+    border-top: solid 1px #ddd;
+  }
+  tr{
+
   }
 }
 

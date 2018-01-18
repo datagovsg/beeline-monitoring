@@ -28,7 +28,7 @@
     <transition name="expand">
       <tr v-if="routeDetailsShown || expanded">
         <td class="route-list-in-routes">
-            <table v-if="routeDetailsShown || expanded">
+            <table v-if="routeDetailsShown || expanded" class="route-listing">
               <thead>
                 <tr>
                   <th>Route</th>
@@ -88,6 +88,9 @@
 
 .route-list-in-routes table {
   margin: 0.5em;
+  tr{
+    border-top: solid 1px #ddd;
+  }
 }
 </style>
 
