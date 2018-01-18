@@ -46,7 +46,7 @@
               </template>
               <template v-else>
                   <template v-if="service.lastPing">
-                      L<sup>ast</sup>: {{minutesSince(service.lastPing)}} <br/> mins ago
+                    {{minutesSince(service.lastPing)}} <br/> mins ago
                   </template>
               </template>
           </router-link>

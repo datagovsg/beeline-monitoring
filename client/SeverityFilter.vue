@@ -68,8 +68,19 @@
 }
 
 .toggle-button {
+
+  &:first-of-type {
+    border-top-left-radius: 0.2em;
+    border-bottom-left-radius: 0.2em;
+  }
+  &:last-of-type {
+    border-top-right-radius: 0.2em;
+    border-bottom-right-radius: 0.2em;
+  }
+
   // box-shadow: inset 0.2em 0.2em 0.2em #888;
-  border-radius: 0.2em;
+  padding: 0.2em;
+  margin: 0;
   border: solid 0.75px #666;
   min-height: 2.5em;
 
