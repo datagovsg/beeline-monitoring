@@ -43,15 +43,15 @@
       <!-- Start and end markers -->
       <template v-for="(driverPings, driverId) in otherPings">
         <gmap-marker :position="firstPing(driverPings)"
-          :icon="startPoint" title="Start">
+          :icon="startPoint" title="Start" :key="`start-${driverId}`">
         </gmap-marker>
 
         <gmap-marker :position="lastPing(driverPings)"
-          :icon="endPoint" title="End">
+          :icon="endPoint" title="End" :key="`end-${driverId}`">
         </gmap-marker>
 
         <ping-line :pings="driverPings" :options="otherPingOptions" :sample-rate="5"
-          @selectPing="selectPing">
+          @selectPing="selectPing"  :key="`ping-line-${driverId}`">
         </ping-line>
       </template>
     </gmap-map>
@@ -225,16 +225,21 @@ module.exports = {
     },
 
     $route () {
-      // Trigger map change
-      Vue.nextTick(() => {
-        if (this.$refs.gmap.$mapObject) {
-          this.$refs.gmap.resizePreserveCenter()
-          return;
-        }
-      });
+      if (this.$route.params.svc && this.$el && this.$el.offsetWidth !== 0) {
+        // Trigger map change
+        Vue.nextTick(() => {
+          if (this.$refs.gmap.$mapObject) {
+            this.$refs.gmap.resizePreserveCenter()
+            return;
+          }
+        });
 
-      this.query.time = this.$route.query.time;
-      this.requery();
+        this.query.time = this.$route.query.time;
+        this.requery()
+          .then(() => {
+            this.setBounds()
+          })
+      }
     }
   },
 
