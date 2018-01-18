@@ -1,12 +1,12 @@
 <template>
   <tbody>
     <tr>
-      <th class="header-cell" @click="routeDetailsShown = !routeDetailsShown; scrollToMe()">
+      <th class="header-cell" @click="toggleRouteDetailsShown">
         {{ header }}
       </th>
     </tr>
     <tr class="indicator-row">
-      <td @click="routeDetailsShown = !routeDetailsShown; scrollToMe()">
+      <td @click="toggleRouteDetailsShown">
         <div class="flex-row">
           <transition-group name="expand" class="route-indicators" tag="div">
             <RouteIndicator
@@ -125,6 +125,13 @@ export default {
       this.$nextTick(() => {
         window.scrollTo(0, this.$el.offsetTop)
       })
+    },
+
+    toggleRouteDetailsShown () {
+      this.routeDetailsShown = !this.routeDetailsShown
+      if (this.routeDetailsShown) {
+        this.scrollToMe()
+      }
     }
   }
 }
