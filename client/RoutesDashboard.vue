@@ -92,6 +92,14 @@
     border-top: solid 1px #ddd;
   }
 }
+
+.route-listing{
+  thead{
+    color: #999;
+    text-transform: uppercase;
+    font-size: 0.8em;
+  }
+}
 </style>
 
 <script>
