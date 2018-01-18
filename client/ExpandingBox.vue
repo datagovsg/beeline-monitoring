@@ -41,7 +41,6 @@ export default {
 
   computed: {
     expectedWidthStyle () {
-      console.log(this.isFocused, this.auxWidth)
       if (this.isFocused) {
         return {
           width: '100%'
@@ -54,7 +53,6 @@ export default {
     },
 
     expectedWidthStyleAux () {
-      console.log(this.isFocused, this.auxWidth)
       if (this.isFocused) {
         return {
           width: '0',
