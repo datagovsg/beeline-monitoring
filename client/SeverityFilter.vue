@@ -94,7 +94,7 @@
 }
 
 .favourite-button {
-  font-size: 12px;
+  font-size: 22px;
   color: #FF0;
   text-shadow: 0px 0px 3px #000;
 }

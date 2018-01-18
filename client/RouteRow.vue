@@ -85,8 +85,7 @@
   }
 
   th, td {
-      border-bottom: solid 1px #CCC;
-      padding: 0.2em;
+      padding: 0.5em;
   }
 
   th[data-column="route"],
