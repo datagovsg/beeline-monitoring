@@ -1,7 +1,9 @@
 <template>
-    <i class="mdi mdi-star favourite-button"
+    <i class="glyphicon favourite-button"
       :class="{
-        isFavourite: wantFavourite
+        isFavourite: wantFavourite,
+        'glyphicon-star-empty': !wantFavourite,
+        'glyphicon-star': wantFavourite,
         }"
       @click="delayedFavourite"
     />
@@ -30,7 +32,7 @@ export default {
     // we need a unique debouncer for every instance
     this.emit = _.debounce(function () {
       this.$emit('click', this.wantFavourite)
-    }, 2000, {leading: false, trailing: true})
+    }, 200, {leading: false, trailing: true})
   },
   methods: {
     delayedFavourite($event) {

@@ -1,9 +1,13 @@
 <template>
   <div class="overview">
-    <div class="date-and-search">
-      <div>{{date}}</div>
-      <input type="text" v-model="filter" placeholder="Search for Route">
-    </div>
+    <ExpandingBox class="date-and-search" auxWidth="10.8em">
+      <input type="text" v-model="filter" placeholder="Search for Route" style="width: 100%"
+        class="form-control">
+      <div slot="auxiliary">
+        <SeverityFilter :settings="visibilitySettings" @settingsChanged="visibilitySettings = $event" />
+      </div>
+    </ExpandingBox>
+
     <table>
       <!-- <thead>
         <tr>
@@ -26,41 +30,32 @@
         v-if="routesInHour.length"
         :key="routesInHour.id"
         :routes="routesInHour"
-        :header="hour + ':00 hrs'"
+        :header="dateformat(hour * 3600e3, 'h:MM TT', true)"
         @visibilitySettingsChanged="visibilitySettings = ($event)"
         :visibilitySettings="visibilitySettings"
         :data-hour="hour"
         :expanded="numResults < 10"
         ref="dashboards"
         />
-
-      <tfoot v-if="routesByHour.length === 0">
-        <tr>
-          <th>
-            Filters:
-            <SeverityFilter :settings="visibilitySettings"
-              @settingsChanged="visibilitySettings = ($event)" />
-          </th>
-        </tr>
-      </tfoot>
     </table>
 
   </div>
 </template>
 
 <style lang="scss">
-.date-and-search {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0.2em;
-  & > * {
-    margin: 0.2em;
-  }
-  input {
-    flex: 1 1 auto;
-    padding: 0.2em;
-  }
+
+.overview {
+  padding-top: 40px;
+}
+
+.expanding-box {
+  background-color: white;
+  height: 40px;
+  top: 40px;
+  left: 0;
+  width: 100%;
+  position: fixed;
+  z-index: 2;
 }
 </style>
 
@@ -77,8 +72,10 @@ const Favourites = require('./favourites')
 import RouteRow from './RouteRow.vue'
 import RoutesDashboard from './RoutesDashboard.vue'
 import SeverityFilter from './SeverityFilter.vue'
+import ExpandingBox from './ExpandingBox.vue'
 import {isServiceGood, isPingGood, isDistanceGood,
         isIgnorable, notYetTime, hasNoPassengers} from './serviceInterpretation'
+import dateformat from 'dateformat'
 
 Date.prototype.localISO = function () {
     return (new Date(this.getTime() - tzo)).toISOString();
@@ -105,18 +102,10 @@ module.exports = {
       };
     },
     components: {
-      RouteRow, RoutesDashboard, SeverityFilter
+      RouteRow, RoutesDashboard, SeverityFilter, ExpandingBox
     },
     computed: {
       authData: () => sharedData.authData,
-
-      date: function () {
-        // FIXME use server date?
-        var d = new Date();
-        return d.getDate() + ' ' +
-            months[d.getMonth()] + ' ' +
-            d.getFullYear();
-      },
 
       numResults () {
         return _.sum(this.routesByHour.map(([h, r]) => r.length))
@@ -172,10 +161,9 @@ module.exports = {
                 return this.visibilitySettings.showOnlyFavourites
                   ? r.isFavourite
                   : (
-                    (this.visibilitySettings.showNotYet && notYetTime(r) && !hasNoPassengers(r)) ||
                     (this.visibilitySettings.showNoPassengers && hasNoPassengers(r)) ||
-                    (this.visibilitySettings.showOK && isServiceGood(r) && !hasNoPassengers(r) && !notYetTime(r)) ||
-                    (this.visibilitySettings.showBad && !isServiceGood(r))
+                    (this.visibilitySettings.showOK && (isServiceGood(r) || notYetTime(r)) && !hasNoPassengers(r)) ||
+                    (this.visibilitySettings.showBad && (!isServiceGood(r) || notYetTime(r)) && !hasNoPassengers(r))
                   )
               })
             ])
@@ -234,15 +222,16 @@ module.exports = {
       this.$queryTimeout = false;
     },
     methods: {
+      dateformat,
+
       firstScroll () {
         this.$nextTick(() => {
           const firstAfterNow = this.$refs.dashboards.find(
-            d => parseInt(d.$el.dataset.hour) >=
-              18
+            d => parseInt(d.$el.dataset.hour) >= ((new Date().getUTCHours() + 8) % 24)
           )
 
           if (firstAfterNow) {
-            window.scrollTo(0, firstAfterNow.$el.offsetTop)
+            window.scrollTo(0, firstAfterNow.$el.offsetTop + 40)
           }
         })
       },
@@ -275,17 +264,22 @@ module.exports = {
 </script>
 
 <style lang="scss">
+
 .overview {
   table {
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
+
+  }
+  td,th{
+    padding: 0.5em;
   }
   th {
-      background-color: #EBEFF2;
-      color: #493761;
-      font-size: 80%;
-      height: 30px;
+    border-top: solid 1px #ddd;
+  }
+  tr{
+    margin: 0.5em;
   }
 }
 
