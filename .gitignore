@@ -2,3 +2,4 @@ node_modules/
 *.map
 npm-debug.log
 static/fonts
+client/env.json
