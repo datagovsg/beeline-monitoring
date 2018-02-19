@@ -39,7 +39,7 @@
               sU : service.status.ping == -1,
           }">
               <span v-if="service.firstPing">
-                  1<sup>st</sup>: {{takeTime(service.firstPing.createdAt)}}
+                  1<sup>st</sup>: {{takeTime(service.firstPing.time)}}
               </span>
               <template v-if="service.status.arrivalTime">
                   (arrived)
@@ -191,7 +191,7 @@ export default {
     /*************** Filters ***************/
     minutesSince (dt) {
         if (dt) {
-            return Math.round(((new Date()).getTime() - (new Date(dt.createdAt)).getTime()) / 60000).toFixed(0);
+            return Math.round(((new Date()).getTime() - (new Date(dt.time)).getTime()) / 60000).toFixed(0);
         }
         return '';
     },
@@ -208,7 +208,7 @@ export default {
 
         var hasArrived = false;
         if (firstStop.lastPing) {
-            var time_part = new Date(firstStop.lastPing.createdAt);
+            var time_part = new Date(firstStop.lastPing.time);
             var scheduledTime = new Date(time_part.getTime());
             scheduledTime.setUTCHours(parseInt(firstStop.time.substr(0,2)));
             scheduledTime.setUTCMinutes(parseInt(firstStop.time.substr(2,4)));
@@ -220,14 +220,14 @@ export default {
             }
         }
         else if (svc.lastPing) {
-            var time_part = new Date(svc.lastPing.createdAt);
+            var time_part = new Date(svc.lastPing.time);
             var distance = svc.lastPing.distance;
 
             var hours = (distance / 1000 / 60);
             var estimatedArrivalTime = new Date(time_part.getTime() + hours*60*60*1000);
 
             return estimatedArrivalTime.localISO().substr(11,5);
-            //var arrival_time = new Date(firstStop.createdAt);
+            //var arrival_time = new Date(firstStop.time);
             //arrival_time.setHours(parseInt(firstStop.time.substr(0,2)));
             //arrival_time.setMinutes(parseInt(firstStop.time.substr(2,4)));
             //arrival_time.setSeconds(0);

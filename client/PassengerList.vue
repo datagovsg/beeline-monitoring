@@ -41,7 +41,7 @@
             <td v-for="tripStop in arrivalInfo"
                 v-show="tripStop.canBoard">
                 <span v-if="tripStop.canBoard">
-                  {{ takeLocalTime(tripStop.bestPing ? tripStop.bestPing.createdAt : '') }}
+                  {{ takeLocalTime(tripStop.bestPing ? tripStop.bestPing.time : '') }}
                 </span>
             </td>
         </tr>
@@ -50,7 +50,7 @@
             <td v-for="tripStop in arrivalInfo"
                 v-show="tripStop.canBoard">
                 <span v-if="tripStop.canBoard">
-                  {{ minsDiff(tripStop.bestPing ? tripStop.bestPing.createdAt : '', tripStop.time) }}
+                  {{ minsDiff(tripStop.bestPing ? tripStop.bestPing.time : '', tripStop.time) }}
                 </span>
             </td>
         </tr>
