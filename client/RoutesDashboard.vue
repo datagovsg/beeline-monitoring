@@ -1,39 +1,41 @@
 <template>
   <tbody>
     <tr>
-      <th class="header-cell" @click="routeDetailsShown = !routeDetailsShown">
+      <th class="header-cell" @click="toggleRouteDetailsShown">
         {{ header }}
-
-        <SeverityFilter
-          @click.native.stop
-          @settingsChanged="$emit('visibilitySettingsChanged', $event); scrollToMe()"
-          :settings="visibilitySettings"
-          />
       </th>
     </tr>
     <tr class="indicator-row">
-      <td @click="routeDetailsShown = !routeDetailsShown">
-        <i class="mdi mdi-menu-right" v-if="!routeDetailsShown" />
-        <i class="mdi mdi-menu-down" v-else />
-        <transition-group name="expand"
-          >
-          <RouteIndicator
-            v-for="route in routes"
-            :key="route.trip.route.id"
-            :upperIndicator="route.status.ping >= 2"
-            :lowerIndicator="route.status.distance >= 2"
-            :ignoreUpper="route.status.ping === -1"
-            :ignoreLower="route.status.distance === -1"
-            :title="route.trip.route.label + ' - ' + route.trip.route.name"
-            :noPassengers="route.nobody && (route.trip.route.tags.indexOf('notify-when-empty') === -1)"
-            />
-        </transition-group>
+      <td @click="toggleRouteDetailsShown">
+        <div class="flex-row">
+          <transition-group name="expand" class="route-indicators" tag="div">
+            <RouteIndicator
+              v-for="route in routes"
+              :key="route.trip.route.id"
+              :upperIndicator="route.status.ping >= 2"
+              :lowerIndicator="route.status.distance >= 2"
+              :ignoreUpper="route.status.ping === -1"
+              :ignoreLower="route.status.distance === -1"
+              :title="route.trip.route.label + ' - ' + route.trip.route.name"
+              :noPassengers="route.nobody && (route.trip.route.tags.indexOf('notify-when-empty') === -1)"
+              />
+          </transition-group>
+          <i class="expanded-indicator glyphicon glyphicon-chevron-right" v-if="!routeDetailsShown" />
+          <i class="expanded-indicator glyphicon glyphicon-chevron-down" v-else />
+        </div>
       </td>
     </tr>
     <transition name="expand">
       <tr v-if="routeDetailsShown || expanded">
-        <td>
-            <table v-if="routeDetailsShown || expanded">
+        <td class="route-list-in-routes">
+            <table v-if="routeDetailsShown || expanded" class="route-listing">
+              <thead>
+                <tr>
+                  <th>Route</th>
+                  <th style="text-align: center">Tracking</th>
+                  <th style="text-align: center">On Time</th>
+                </tr>
+              </thead>
               <!-- TODO: sort by priority -->
               <RouteRow v-for="route in routes"
                 :key='route.id'
@@ -69,6 +71,35 @@
 .indicator-row .route-indicator {
   vertical-align: middle;
 }
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+
+  .route-indicators {
+    flex: 1 1 0;
+  }
+  .expanded-indicator {
+    padding: 0.2em;
+    flex: 0 0 auto;
+  }
+}
+
+.route-list-in-routes table {
+  margin: 0.5em;
+  tr{
+    border-top: solid 1px #ddd;
+  }
+}
+
+.route-listing{
+  thead{
+    color: #999;
+    text-transform: uppercase;
+    font-size: 0.8em;
+  }
+}
 </style>
 
 <script>
@@ -91,7 +122,16 @@ export default {
 
   methods: {
     scrollToMe () {
-      this.$nextTick(() => window.scrollTo(0, this.$el.offsetTop))
+      this.$nextTick(() => {
+        window.scrollTo(0, this.$el.offsetTop)
+      })
+    },
+
+    toggleRouteDetailsShown () {
+      this.routeDetailsShown = !this.routeDetailsShown
+      if (this.routeDetailsShown) {
+        this.scrollToMe()
+      }
     }
   }
 }

@@ -3,7 +3,7 @@
     <button :class="{selected: showOnlyFavourites}"
         @click="toggleFavourites(!showOnlyFavourites)"
         class="toggle-button">
-      <div class="mdi mdi-star favourite-button" />
+      <div class="glyphicon glyphicon-star favourite-button" />
     </button>
     <button :class="{selected: showOK}"
         @click="change('showOK', !showOK)"
@@ -26,17 +26,6 @@
         :lowerIndicator="true"
         :ignoreLower="false"
         :ignoreUpper="false"
-        :noPassengers="false" />
-    </button>
-    <button :class="{selected: showNotYet}"
-        @click="change('showNotYet', !showNotYet)"
-        :disabled="showOnlyFavourites"
-        class="toggle-button">
-      <RouteIndicator
-        :upperIndicator="false"
-        :lowerIndicator="false"
-        :ignoreLower="true"
-        :ignoreUpper="true"
         :noPassengers="false" />
     </button>
     <button :class="{selected: showNoPassengers}"
@@ -78,11 +67,25 @@
   }
 }
 
+
 .toggle-button {
+
+
+  &:first-of-type {
+    border-top-left-radius: 0.2em;
+    border-bottom-left-radius: 0.2em;
+  }
+  &:last-of-type {
+    border-top-right-radius: 0.2em;
+    border-bottom-right-radius: 0.2em;
+  }
+
   // box-shadow: inset 0.2em 0.2em 0.2em #888;
-  border-radius: 0.2em;
-  border: solid 0.75px #666;
-  min-height: 2.5em;
+  background: #fff;
+  padding: 0.2em;
+  margin: 0;
+  border: solid 0.5px #ccc;
+  min-height: 2.4em;
 
   &.selected {
     background-color: #F90;
@@ -94,7 +97,7 @@
 }
 
 .favourite-button {
-  font-size: 12px;
+  font-size: 20px;
   color: #FF0;
   text-shadow: 0px 0px 3px #000;
 }
@@ -102,10 +105,11 @@
 .severity-filter {
   display: inline-flex;
   flex-direction: row;
-  width: 13.5em;
+  width: 10.8em;
 
   & > button {
-    flex: 1 1 0px;
+    flex: 0 0 2.7em;
+    width: 2.7em;
   }
 }
 </style>
