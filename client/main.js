@@ -43,6 +43,7 @@ window.addEventListener('DOMContentLoaded', function () {
         },
         {
           path: '/passengers/:svc',
+          name: 'passenger-list',
           component: PassengerList,
         },
         { // If users saved the old bookmark, it would take them to #!/
