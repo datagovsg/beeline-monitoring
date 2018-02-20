@@ -16,7 +16,7 @@
       <gmap-marker v-for="(stop, index) in uniqueStops"
         :key="stop.id"
         :position="stopPosition(stop) "
-        :icon="stopIcon(stop, index)" @mouseover='selectStop(stop)' @mouseout='closeWindow'>
+        :icon="MapIcons.stopIcon(stop, index)" @mouseover='selectStop(stop)' @mouseout='closeWindow'>
       </gmap-marker>
 
       <gmap-info-window v-if="selectedStop != null" :opened='selectedStop != null' :position="stopPosition(selectedStop) ">
@@ -43,11 +43,11 @@
       <!-- Start and end markers -->
       <template v-for="(driverPings, driverId) in otherPings">
         <gmap-marker :position="firstPing(driverPings)"
-          :icon="startPoint" title="Start">
+          :icon="MapIcons.startPoint" title="Start">
         </gmap-marker>
 
         <gmap-marker :position="lastPing(driverPings)"
-          :icon="endPoint" title="End">
+          :icon="MapIcons.endPoint" title="End">
         </gmap-marker>
 
         <ping-line :pings="driverPings" :options="otherPingOptions" :sample-rate="5"
@@ -86,6 +86,7 @@ import PingLine from './ping-line.vue'
 import axios from 'axios'
 import leftPad from 'left-pad'
 import Vue from 'vue'
+import MapIcons from './utils/MapIcons'
 import _ from 'lodash'
 import assert from 'assert';
 import querystring from 'querystring';
@@ -125,6 +126,8 @@ module.exports = {
 
       selectedStop: null,
       selectedPing: null,
+
+      MapIcons,
     };
   },
 
@@ -159,22 +162,6 @@ module.exports = {
     },
     service () {
       return this.$route.params.svc;
-    },
-    startPoint() {
-      return {
-        url: 'img/routeStartMarker.png',
-        size: new google.maps.Size(50, 40),
-        origin: new google.maps.Point(0, 0),
-        anchor: new google.maps.Point(25, 40)
-      };
-    },
-    endPoint() {
-      return {
-        url: 'img/routeEndMarker.png',
-        size: new google.maps.Size(50, 40),
-        origin: new google.maps.Point(0, 0),
-        anchor: new google.maps.Point(25, 40)
-      };
     },
     otherPingOptions() {
       return {
@@ -333,47 +320,34 @@ module.exports = {
       }
     },
 
-
-      formatTime(sdt) {
-        if (!(sdt instanceof Date)) {
-          sdt = new Date(sdt);
-        }
-        return leftPad(sdt.getHours(), 1, '0')
-          + ':' + leftPad(sdt.getMinutes(), 2, '0')
-          + ':' + leftPad(sdt.getSeconds(), 2, '0');
-      },
-
-      stopIcon(stop, index) {
-        return {
-          url: 'img/stop' +
-            (stop.canBoard ? 'Board' : 'Alight') +
-            leftPad(index + 1, 3, '0') + '.png',
-          size: new google.maps.Size(100, 100),
-          origin: new google.maps.Point(0, 0),
-          anchor: new google.maps.Point(20, 20),
-          scaledSize: new google.maps.Size(40, 40),
-        }
-      },
-
-      stopPosition(ts) {
-        return {
-          lat: ts.stop.coordinates.coordinates[1],
-          lng: ts.stop.coordinates.coordinates[0],
-        }
-      },
-      coordinatesToLatLng(cc) {
-        assert(typeof cc.coordinates[1] === 'number');
-        return {
-          lat: cc.coordinates[1],
-          lng: cc.coordinates[0],
-        }
-      },
-
-      /************** events ***************/
-      selectPing(ping) {
-        this.selectedPing = ping;
-        this.selectedStop = null
+    formatTime(sdt) {
+      if (!(sdt instanceof Date)) {
+        sdt = new Date(sdt);
       }
+      return leftPad(sdt.getHours(), 1, '0')
+        + ':' + leftPad(sdt.getMinutes(), 2, '0')
+        + ':' + leftPad(sdt.getSeconds(), 2, '0');
+    },
+
+    stopPosition(ts) {
+      return {
+        lat: ts.stop.coordinates.coordinates[1],
+        lng: ts.stop.coordinates.coordinates[0],
+      }
+    },
+    coordinatesToLatLng(cc) {
+      assert(typeof cc.coordinates[1] === 'number');
+      return {
+        lat: cc.coordinates[1],
+        lng: cc.coordinates[0],
+      }
+    },
+
+    /************** events ***************/
+    selectPing(ping) {
+      this.selectedPing = ping;
+      this.selectedStop = null
+    }
   },
 }
 </script>
