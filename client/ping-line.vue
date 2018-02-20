@@ -10,7 +10,8 @@
           lng: ping.coordinates.coordinates[0],
       }"
       :icon="pingPoint"
-      @mouseover="selectPing(ping)" />
+      @mouseover="selectPing(ping)"
+      @click="selectPing(ping)" />
   </template>
 
   <gmap-polyline v-if="pings" :options="polylineOptions" :path="pingPath">
