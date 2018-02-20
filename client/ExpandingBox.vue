@@ -1,3 +1,13 @@
+<!--
+
+If you put an <input> in the ExpandingBox, normally it will share the width with
+the controls in <slot=expanding-box-aux>.
+
+However, when you focus on the <input> its width will become 100%
+
+-->
+
+
 <template>
   <div class="expanding-box">
 
