@@ -230,6 +230,8 @@ var Vue=require('vue');
 const _ = require('lodash')
 import MessageTemplates from './message-templates'
 import {watch} from './loading-overlay';
+import PollingQuery from './utils/PollingQuery'
+import RouteAnnouncementForm from './RouteAnnouncementForm.vue'
 
 module.exports = {
     data () {
@@ -253,7 +255,7 @@ module.exports = {
     },
 
     components: {
-      'RouteAnnouncementForm': require('./RouteAnnouncementForm.vue').default
+      RouteAnnouncementForm
     },
 
     computed: {
@@ -308,42 +310,33 @@ module.exports = {
         },
 
         tripId () {
-          return this.$route.params.svc;
+          return this.$route.name === 'passenger-list' &&
+            this.$route.params.svc
         },
     },
 
     watch: {
       tripId: {
         immediate: true,
-        handler() {
+        handler (tripId) {
+          if (!tripId) return
+
           watch(Promise.all([
-            this.requery(),
+            this.$poller && this.$poller.executeNow(),
             this.requeryTrips()
           ]))
         },
       }
     },
 
-    created() {
-      var queryAgain = () => {
-        this.$queryTimeout = null;
-        this.requery()
-        .then(null, (err) => {console.log(err)})
-        .then(() => {
-          if (this.$queryTimeout === null) {
-            this.$queryTimeout = setTimeout(queryAgain, 30000);
-          }
-        })
-      };
-
-      queryAgain();
+    created () {
+      this.$poller = new PollingQuery(30000, () => {
+        return this.requery()
+      })
     },
 
     destroyed() {
-      if (this.$queryTimeout) {
-        clearTimeout(this.$queryTimeout);
-      }
-      this.$queryTimeout = false;
+      this.$poller.stop()
     },
 
     methods: {
@@ -364,7 +357,10 @@ module.exports = {
               }
             })
         },
-        requery: function () {
+
+        requery () {
+            if (!this.tripId) return Promise.resolve([])
+
             return authAjax(`/trips/${this.tripId}/passengers`)
             .then(result => result.data)
             .then((passengers) => {

@@ -86,6 +86,7 @@ import PingLine from './ping-line.vue'
 import axios from 'axios'
 import leftPad from 'left-pad'
 import Vue from 'vue'
+import PollingQuery from './utils/PollingQuery'
 import MapIcons from './utils/MapIcons'
 import _ from 'lodash'
 import assert from 'assert';
@@ -134,26 +135,13 @@ module.exports = {
   created: function() {
     this.$map = null;
 
-    var queryAgain = () => {
-      this.$queryTimeout = null;
-
-      this.requery()
-        .catch((err) => console.error(err))
-        .then(() => {
-          if (this.$queryTimeout === null) {
-            this.$queryTimeout = setTimeout(queryAgain, 30000);
-          }
-        })
-    };
-
-    queryAgain();
+    this.$poller = new PollingQuery(30000, () => {
+      return this.requery()
+    })
   },
 
   destroyed() {
-    if (this.$queryTimeout) {
-      clearTimeout(this.$queryTimeout);
-    }
-    this.$queryTimeout = false;
+    this.$poller.stop()
   },
 
   computed: {
@@ -192,20 +180,16 @@ module.exports = {
 
     uniqueStops() {
       return _.uniqBy(this.stops, 'stopId');
+    },
+
+    requeryDependencies () {
+      return this.$route.name === 'map-view' && {
+        service: this.service,
+      }
     }
   },
 
   watch: {
-    service: {
-      immediate: true,
-      handler() {
-        watch(this.requery()
-          .then(() => {
-            this.setBounds()
-          }));
-      }
-    },
-
     'trip.route.transportCompanyId' (companyId) {
       authAjax(`/companies/${companyId}/drivers`)
         .then((result) => {
@@ -213,22 +197,22 @@ module.exports = {
         })
     },
 
-    $route () {
-      // Trigger map change
-      Vue.nextTick(() => {
-        if (this.$refs.gmap.$mapObject) {
-          this.$refs.gmap.resizePreserveCenter()
-          return;
-        }
-      });
+    requeryDependencies (n) {
+      if (n) {
+        this.$poller.executeNow()
+          .then(() => {
+            this.setBounds()
+          })
 
-      this.query.time = this.$route.query.time;
-      this.requery();
-    }
+        this.$nextTick(() => {
+          this.$gmapDefaultResizeBus.$emit('resize')
+        })
+      }
+    },
   },
 
   methods: {
-    requery: function() {
+    requery () {
       // This optionally tries to re-fetch the vehicles,
       // only if it had not been successfully fetched
       sharedData.fetchVehicles()
@@ -278,10 +262,10 @@ module.exports = {
           this.stops = stops;
         });
 
-      return Promise.all([tripPromise, passengersPromise, pingsPromise]);
+      return Promise.all([tripPromise, passengersPromise, pingsPromise])
     },
 
-    selectStop(stop) {
+    selectStop (stop) {
       this.selectedPing = null;
       this.selectedStop = stop;
     },
