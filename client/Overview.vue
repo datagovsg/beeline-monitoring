@@ -231,7 +231,7 @@ module.exports = {
           )
 
           if (firstAfterNow) {
-            window.scrollTo(0, firstAfterNow.$el.offsetTop + 40)
+            window.scrollTo(0, firstAfterNow.$el.offsetTop)
           }
         })
       },
