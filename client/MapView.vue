@@ -83,12 +83,14 @@
 
 <script>
 import PingLine from './ping-line.vue'
+import axios from 'axios'
 import leftPad from 'left-pad'
 import Vue from 'vue'
 import _ from 'lodash'
 import assert from 'assert';
 import querystring from 'querystring';
 
+import {TRACKING_URL} from './env.json'
 import {authAjax, sharedData} from './login';
 import {
   watch
@@ -253,15 +255,15 @@ module.exports = {
       // claimed this trip id
       var pingsPromise;
       if (this.$route.query && this.$route.query.time) {
-        pingsPromise = authAjax(`/trips/${this.service}/pingsByTripId?` +
+        pingsPromise = axios.get(`${TRACKING_URL}/trips/${this.service}/pings?` +
           querystring.stringify({
-            startTime: this.startTime,
-            endTime: this.endTime,
+            from: this.startTime,
+            to: this.endTime,
           }))
       } else {
-        pingsPromise = authAjax(`/trips/${this.service}/pingsByTripId?` +
+        pingsPromise = axios.get(`${TRACKING_URL}/trips/${this.service}/pings?` +
           querystring.stringify({
-            startTime: startTime.getTime(),
+            from: startTime.getTime(),
             limit: 800,
           }))
       }

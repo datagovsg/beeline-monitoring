@@ -4,6 +4,10 @@ if (!process.env.BACKEND_URL) {
   process.env.BACKEND_URL='https://monitoring-api.beeline.sg'
 }
 
+if (!process.env.TRACKING_URL) {
+  process.env.TRACKING_URL='https://tracking.beeline.sg'
+}
+
 console.log(process.env.BACKEND_URL)
 
 var fs = require('fs')
@@ -19,6 +23,7 @@ module.exports = new Promise((resolve, reject) => {
       console.log(json);
 
       fs.writeFileSync('./client/env.json', JSON.stringify({
+        TRACKING_URL: process.env.TRACKING_URL,
         BACKEND_URL: process.env.BACKEND_URL,
         AUTH0_CID: json.cid,
         AUTH0_DOMAIN: json.domain,
