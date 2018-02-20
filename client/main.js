@@ -26,7 +26,7 @@ window.addEventListener('DOMContentLoaded', function () {
     Vue.use(VueRouter)
     Vue.use(VueGoogleMaps, {
       load: {
-        key: 'AIzaSyDC38zMc2TIj1-fvtLUdzNsgOQmTBb3N5M'
+        client: 'gme-infocommunications'
       }
     });
 
