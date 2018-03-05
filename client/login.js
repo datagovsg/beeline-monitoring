@@ -50,7 +50,7 @@ export function refreshTokenIfNecessary() {
 export async function checkLoggedIn() {
   refreshTokenIfNecessary();
   try {
-    await authAjax(`/admins/whatami`)
+    await authAjax(`/admins/whoami`)
     return;
   } catch (err) {
     console.log(err);
