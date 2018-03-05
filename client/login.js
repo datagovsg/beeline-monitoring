@@ -10,11 +10,12 @@ import Vue from 'vue'
 export function authAjax(path, opts) {
     opts = opts || {}
     opts.headers = opts.headers || {};
+    opts.baseURL = opts.baseURL || env.BACKEND_URL;
 
     if (localStorage.session_token) {
       opts.headers.Authorization = 'Bearer ' + localStorage.session_token;
     }
-    opts.url = env.BACKEND_URL + path;
+    opts.url = path;
     return axios(opts);
 };
 
@@ -49,7 +50,7 @@ export function refreshTokenIfNecessary() {
 export async function checkLoggedIn() {
   refreshTokenIfNecessary();
   try {
-    await authAjax(`/monitoring`)
+    await authAjax(`/admins/whatami`)
     return;
   } catch (err) {
     console.log(err);

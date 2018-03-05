@@ -83,7 +83,6 @@
 
 <script>
 import PingLine from './ping-line.vue'
-import axios from 'axios'
 import leftPad from 'left-pad'
 import Vue from 'vue'
 import PollingQuery from './utils/PollingQuery'
@@ -222,23 +221,15 @@ module.exports = {
       var startTime = new Date();
       startTime.setHours(0, 0, 0, 0);
 
-      // Pings of other drivers who also
-      // claimed this trip id
-      var pingsPromise;
-      if (this.$route.query && this.$route.query.time) {
-        pingsPromise = axios.get(`${TRACKING_URL}/trips/${this.service}/pings?` +
-          querystring.stringify({
-            from: this.startTime,
-            to: this.endTime,
-          }))
-      } else {
-        pingsPromise = axios.get(`${TRACKING_URL}/trips/${this.service}/pings?` +
-          querystring.stringify({
-            from: startTime.getTime(),
-            limit: 800,
-          }))
-      }
-      pingsPromise = pingsPromise.then((response) => {
+      // Pings of other drivers who also claimed this trip id
+      const queryParams = this.$route.query && this.$route.query.time
+        ? { from: this.startTime, to: this.endTime }
+        : { from: startTime.getTime(), limit: 800 }
+
+      const pingsPromise = authAjax(
+        `/trips/${this.service}/pings?${querystring.stringify(queryParams)}`,
+        { baseURL: TRACKING_URL }
+      ).then((response) => {
         this.otherPings = _.groupBy(response.data, 'driverId');
       })
 
