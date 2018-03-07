@@ -9,14 +9,6 @@
     </ExpandingBox>
 
     <table>
-      <!-- <thead>
-        <tr>
-          <th data-column="label"  @click="sortBy ='label'"
-            style="width: calc(50% - 5em)">
-            Route
-          </th>
-        </tr>
-      </thead> -->
       <tr v-if="routesByHour.length == 0">
         <td colspan="3">
             You have no bus services today.
@@ -76,6 +68,7 @@ import ExpandingBox from './ExpandingBox.vue'
 import {isServiceGood, isPingGood, isDistanceGood,
         isIgnorable, notYetTime, hasNoPassengers} from './serviceInterpretation'
 import dateformat from 'dateformat'
+import {TRACKING_URL} from './env.json'
 
 Date.prototype.localISO = function () {
     return (new Date(this.getTime() - tzo)).toISOString();
@@ -85,11 +78,6 @@ module.exports = {
     data() {
       return {
         servicesByRouteId: null,
-        sortBy: 'time',
-        sortByTemplates: {
-          time: ['trip.tripStops[0].time', 'trip.route.label'],
-          label: ['trip.route.label', 'trip.tripStops[0].time'],
-        },
         filter: '',
         actualFilter: '',
         visibilitySettings:  {
@@ -121,13 +109,13 @@ module.exports = {
         const result = _(ss)
           .values()
           .groupBy(
-            s => (s.trip.tripStops[0].time.getUTCHours() + 8) % 24
+            s => (s.trip.startTime.getUTCHours() + 8) % 24
           )
           .toPairs()
           .map(([hour, routes]) => {
             return [
               hour,
-              _.sortBy(routes, s => [s.trip.tripStops[0].time, s.id])
+              _.sortBy(routes, s => [s.trip.startTime, s.id])
                 .map(r => ({
                   ...r,
                   isFavourite: r.trip.routeId in favouritesByRouteId,
@@ -242,16 +230,14 @@ module.exports = {
       },
 
       requery (timeout) {
-        return authAjax('/monitoring', {
-          method: 'GET',
-        })
+        return authAjax('/monitoring', { baseURL: TRACKING_URL })
         .then((result) => {
           // Convert the time fields
           Object.keys(result.data).forEach(routeId => {
             const service = result.data[routeId]
-            service.trip.tripStops.forEach(ts => {
-              ts.time = new Date(ts.time)
-            })
+            if (service.trip && service.trip.startTime) {
+              service.trip.startTime = new Date(service.trip.startTime)
+            }
           })
           ServiceData.servicesByRouteId = this.servicesByRouteId = result.data;
         })

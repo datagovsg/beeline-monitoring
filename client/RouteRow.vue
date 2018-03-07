@@ -2,7 +2,7 @@
   <tbody>
     <tr :class="{
             emergency: service.trip.status === 'cancelled',
-            nobody: service.nobody && (service.trip.route.tags.indexOf('notify-when-empty') === -1),
+            nobody: service.nobody && !service.notifyWhenEmpty,
         }"
         >
       <td>
@@ -17,7 +17,7 @@
             <div class="service-name">
               <big>{{service.trip.route.label}}</big>
               ({{service.trip.routeId}})
-              {{takeTime(service.trip.tripStops[0].time)}}
+              {{takeTime(service.trip.startTime)}}
             </div>
 
             <div class="from-and-to">
@@ -29,7 +29,7 @@
       </td>
       <td data-column="led">
           <router-link
-            :to="{name: 'map-view', params: {svc: service.trip.id}}"
+            :to="{name: 'map-view', params: {svc: service.trip.tripId}}"
             :class="{
               led: true,
               s0 : service.status.ping == 0,
@@ -38,8 +38,6 @@
               s3 : service.status.ping >= 3,
               sU : service.status.ping == -1,
           }">
-              <span v-if="service.firstPing">
-                  1<sup>st</sup>: {{takeTime(service.firstPing.time)}}
               </span>
               <template v-if="service.status.arrivalTime">
                   (arrived)
@@ -53,7 +51,7 @@
       </td>
       <td data-column="led">
           <router-link
-            :to="{name: 'map-view', params: {svc: service.trip.id}}"
+            :to="{name: 'map-view', params: {svc: service.trip.tripId}}"
             :class="{
               led: true,
               s0 : service.status.distance == 0,
@@ -202,31 +200,14 @@ export default {
         return interval + ' ' + (difference > 0 ? 'ago' : 'in the future')
       }
     },
-    takeTime (dt) {
+    takeTime (dt, t) {
         if (dt) {
             return (new Date(dt)).localISO().substr(11,5);
         }
         return '';
     },
     firstStopETA (svc) {
-        // Has it arrived at all?
-        // check first stop...
-        var firstStop = svc.trip.tripStops[0];
-
-        var hasArrived = false;
-        if (firstStop.lastPing) {
-            var time_part = new Date(firstStop.lastPing.time);
-            var scheduledTime = new Date(time_part.getTime());
-            scheduledTime.setUTCHours(parseInt(firstStop.time.substr(0,2)));
-            scheduledTime.setUTCMinutes(parseInt(firstStop.time.substr(2,4)));
-            scheduledTime.setUTCSeconds(0);
-
-            if (time_part.getTime() - scheduledTime.getTime() >= -5 * 60 * 1000) {
-                return time_part.localISO().substr(11,5)
-                            + ' (Arrived)';
-            }
-        }
-        else if (svc.lastPing) {
+        if (svc.lastPing) {
             var time_part = new Date(svc.lastPing.time);
             var distance = svc.lastPing.distance;
 

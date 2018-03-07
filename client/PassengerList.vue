@@ -9,7 +9,7 @@
             <td v-for="(tripStop, index) in arrivalInfo"
                 :class="{ boarding: tripStop.canBoard,
                           alighting: tripStop.canAlight }"
-                :title="tripStop.stop.description"
+                :title="tripStop.description"
                 v-show="tripStop.canBoard">
                 {{ index + 1 }}
                 {{ tripStop.canBoard ? '↗' : '↙' }}
@@ -20,7 +20,7 @@
             <td v-for="tripStop in arrivalInfo"
                 v-show="tripStop.canBoard">
                 <span v-if="tripStop.canBoard">
-                  {{ tripStop.passengers.length  }}
+                  {{ tripStop.pax  }}
                 </span>
             </td>
         </tr>
@@ -30,9 +30,9 @@
                 v-show="tripStop.canBoard">
                 <router-link :to="{
                     path: '/map/' + tripId,
-                    query: {time: tripStop.time}
+                    query: {time: tripStop.expectedTime}
                   }" v-if="tripStop.canBoard">
-                  {{ takeLocalTime(tripStop.time)  }}
+                  {{ takeLocalTime(tripStop.expectedTime)  }}
                 </router-link>
             </td>
         </tr>
@@ -41,7 +41,7 @@
             <td v-for="tripStop in arrivalInfo"
                 v-show="tripStop.canBoard">
                 <span v-if="tripStop.canBoard">
-                  {{ takeLocalTime(tripStop.bestPing ? tripStop.bestPing.time : '') }}
+                  {{ takeLocalTime(tripStop.actualTime || '') }}
                 </span>
             </td>
         </tr>
@@ -50,7 +50,7 @@
             <td v-for="tripStop in arrivalInfo"
                 v-show="tripStop.canBoard">
                 <span v-if="tripStop.canBoard">
-                  {{ minsDiff(tripStop.bestPing ? tripStop.bestPing.time : '', tripStop.time) }}
+                  {{ minsDiff(tripStop.actualTime || '', tripStop.expectedTime) }}
                 </span>
             </td>
         </tr>
@@ -60,16 +60,16 @@
       <h1>Passenger List</h1>
       <div v-for="(stop, index) in arrivalInfo"
           v-show="stop.canBoard"
-          :key="stop.id">
+          :key="stop.expectedTime">
           <h3 :class="{'show-passengers': stop.showPassengers}"
               @click="togglePassengers(stop)">
-              ({{formatTime(stop.time)}}) {{index + 1}}.   {{stop.stop.description}} - {{stop.stop.road}}
+              ({{formatTime(stop.expectedTime)}}) {{index + 1}}.   {{stop.description}} - {{stop.road}}
           </h3>
           <div v-for="passenger in stop.passengers"
               :class="{passenger: true, 'animate-hide': !stop.showPassengers}"
-              :key="passenger.id"
+              :key="passenger.telephone"
               >
-              {{passenger.index + 1}}.
+              {{passenger.index}}.
               {{passenger.name}}
               &mdash;
               {{passenger.telephone}}
@@ -232,6 +232,8 @@ import MessageTemplates from './message-templates'
 import {watch} from './loading-overlay';
 import PollingQuery from './utils/PollingQuery'
 import RouteAnnouncementForm from './RouteAnnouncementForm.vue'
+import ServiceData from './service_data'
+import {TRACKING_URL} from './env.json'
 
 module.exports = {
     data () {
@@ -240,8 +242,8 @@ module.exports = {
             subtitle: '',
 
             stops: [],
-
-            ServiceData: window.ServiceData,
+            routeTags: [],
+            ServiceData,
 
             trip: {
               tripStops: [],
@@ -270,48 +272,37 @@ module.exports = {
         },
 
         arrivalInfo() {
-          var stops = _.sortBy(this.trip.tripStops, s => s.time);
+          var stops = _.sortBy(this.trip.stops, s => s.time);
 
-          const withNamesTransformed = this.passengers.map(p => {
-            if (p.name) {
-              try {
-                var jsonData = JSON.parse(p.name)
-                return {
-                  ...p,
-                  name: `${jsonData.name} (#${jsonData.index + 1})`,
-                  telephone: jsonData.telephone,
-                  email: jsonData.email,
-                }
-              }
-              catch (err) {
-                return p
-              }
-            }
-          })
-          const passengersByStops = _.groupBy(this.passengers, p => p.boardStopId)
+          const passengersByStops = _.groupBy(this.passengers, p => p.bsStopId)
 
-          let index = 0
+          let passengerIndex = 0
           return stops.map(s => ({
             ...s,
-            passengers: (passengersByStops[s.id] || []).map((ps) => ({
+            passengers: (passengersByStops[s.stopId] || []).map(ps => ({
               ...ps,
-              index: index++
+              index: ++passengerIndex
             }))
           }));
         },
         isPublicRoute() {
-          let routeTags = _.get(this.trip, 'route.tags', [])
-          return routeTags.indexOf('public') != -1 ||
-            routeTags.indexOf('mandai') != -1
+          return this.routeTags.indexOf('public') != -1 ||
+            this.routeTags.indexOf('mandai') != -1
         },
         isTrackingRoute() {
-          let routeTags = _.get(this.trip, 'route.tags', [])
-          return routeTags.indexOf('lite') != -1
+          return this.routeTags.indexOf('lite') != -1
         },
 
         tripId () {
           return this.$route.name === 'passenger-list' &&
-            this.$route.params.svc
+            Number(this.$route.params.svc)
+        },
+
+        routeId() {
+          const [routeId] = Object
+            .entries(this.services)
+            .find(([k, v]) => v.trip.tripId === this.tripId) || []
+          return routeId
         },
     },
 
@@ -326,6 +317,13 @@ module.exports = {
             this.requeryTrips()
           ]))
         },
+      },
+      routeId: {
+        immediate: true,
+        handler (routeId) {
+          if (!routeId) return
+          watch(this.getTags())
+        }
       }
     },
 
@@ -340,22 +338,28 @@ module.exports = {
     },
 
     methods: {
-        requeryTrips() {
-            return authAjax(`/monitoring`)
-            .then(result => result.data)
-            .then((status) => {
-              const trip = _.values(status)
-                  .find(t => t.trip.id == this.tripId)
-                  .trip
+        getTags() {
+          if (this.routeId) {
+            return authAjax(`/routes/${this.routeId}`)
+              .then(({data}) => {
+                this.routeTags = data.tags
+              })
+          } else {
+            return Promise.resolve()
+          }
+        },
 
-              this.trip = {
-                ...trip,
-                tripStops: trip.tripStops.map(ts => ({
-                  ...ts,
-                  showPassengers: true,
-                }))
-              }
-            })
+        requeryTrips () {
+          if (this.routeId) {
+            return authAjax(`/routes/${this.routeId}/performance`, { baseURL: TRACKING_URL })
+              .then(result => result.data)
+              .then(([trip]) => {
+                trip.stops.forEach(ts => (ts.showPassengers = true))
+                this.trip = trip
+              })
+          } else {
+            return Promise.resolve()
+          }
         },
 
         requery () {
@@ -437,7 +441,6 @@ module.exports = {
             var d = new Date(s);
 
             d = new Date(d.getTime() - 60000 * now.getTimezoneOffset());
-
             return d.toISOString().substr(11,5);
         },
         minsDiff (s, sched) {

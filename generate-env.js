@@ -1,7 +1,7 @@
 const process = require('process');
 
 if (!process.env.BACKEND_URL) {
-  process.env.BACKEND_URL='https://monitoring-api.beeline.sg'
+  process.env.BACKEND_URL='https://api-admin.beeline.sg'
 }
 
 if (!process.env.TRACKING_URL) {

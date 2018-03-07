@@ -11,13 +11,13 @@
           <transition-group name="expand" class="route-indicators" tag="div">
             <RouteIndicator
               v-for="route in routes"
-              :key="route.trip.route.id"
+              :key="route.trip.routeId"
               :upperIndicator="route.status.ping >= 2"
               :lowerIndicator="route.status.distance >= 2"
               :ignoreUpper="route.status.ping === -1"
               :ignoreLower="route.status.distance === -1"
               :title="route.trip.route.label + ' - ' + route.trip.route.name"
-              :noPassengers="route.nobody && (route.trip.route.tags.indexOf('notify-when-empty') === -1)"
+              :noPassengers="route.nobody && !route.notifyWhenEmpty"
               />
           </transition-group>
           <i class="expanded-indicator glyphicon glyphicon-chevron-right" v-if="!routeDetailsShown" />
@@ -36,9 +36,9 @@
                   <th style="text-align: center">On Time</th>
                 </tr>
               </thead>
-              <!-- TODO: sort by priority -->
+
               <RouteRow v-for="route in routes"
-                :key='route.id'
+                :key='route.trip.routeId'
                 :isFavourite="route.isFavourite"
                 :service="route" />
             </table>
