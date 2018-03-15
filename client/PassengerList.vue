@@ -403,9 +403,9 @@ module.exports = {
             event.preventDefault()
 
             var confirmResponse = prompt(
-              `To confirm please enter the route ID (${this.trip.route.id}):`
+              `To confirm please enter the route ID (${this.routeId}):`
             )
-            if (confirmResponse.trim() !== this.trip.route.id.toString()) {
+            if (confirmResponse.trim() !== this.routeId.toString()) {
               alert("The trip was not cancelled");
               return;
             }
