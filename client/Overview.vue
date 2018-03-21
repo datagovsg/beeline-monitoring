@@ -1,19 +1,27 @@
 <template>
   <div class="overview">
-    <ExpandingBox class="date-and-search" auxWidth="10.8em">
-      <input type="text" v-model="filter" placeholder="Search for Route" style="width: 100%"
+    <ExpandingBox 
+      class="date-and-search" 
+      auxWidth="10.8em">
+      <input 
+        type="text" 
+        v-model="filter" 
+        placeholder="Search for Route" 
+        style="width: 100%"
         class="form-control">
       <div slot="auxiliary">
-        <SeverityFilter :settings="visibilitySettings" @settingsChanged="visibilitySettings = $event" />
+        <SeverityFilter 
+          :settings="visibilitySettings" 
+          @settingsChanged="visibilitySettings = $event" />
       </div>
     </ExpandingBox>
 
     <table>
       <tr v-if="routesByHour.length == 0">
         <td colspan="3">
-            You have no bus services today.
-            You might not be authorized to view the bus service status.
-            Please contact the Beeline team if this is incorrect.
+          You have no bus services today.
+          You might not be authorized to view the bus service status.
+          Please contact the Beeline team if this is incorrect.
         </td>
       </tr>
 
@@ -30,7 +38,7 @@
         :selectedTripId="lastSelectedTripId"
         ref="dashboards"
         @routeSelected="lastSelectedTripId = $event.trip.tripId"
-        />
+      />
     </table>
 
   </div>

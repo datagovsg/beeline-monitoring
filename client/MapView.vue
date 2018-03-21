@@ -1,62 +1,82 @@
 <template>
-<div class="contents-with-nav">
-  <navi :service="tripId"></navi>
-  <div class="map-view">
-    <div v-if="$route.query.time" class="filter-message">
-      Showing known positions between
-      {{formatTime(startTime)}} and
-      {{formatTime(endTime)}}.
+  <div class="contents-with-nav">
+    <navi :service="tripId"/>
+    <div class="map-view">
+      <div 
+        v-if="$route.query.time" 
+        class="filter-message">
+        Showing known positions between
+        {{ formatTime(startTime) }} and
+        {{ formatTime(endTime) }}.
 
-      <router-link :to="{path: '/map/' + tripId, query: {}}">
-        Clear Filter
-      </router-link>
+        <router-link :to="{path: '/map/' + tripId, query: {}}">
+          Clear Filter
+        </router-link>
+      </div>
+      <gmap-map 
+        ref="gmap" 
+        :center="{lng: 103.8, lat: 1.38}" 
+        :zoom="12">
+
+        <gmap-marker 
+          v-for="(stop, index) in uniqueStops"
+          :key="stop.id"
+          :position="stopPosition(stop) "
+          :icon="MapIcons.stopIcon(stop, index)" 
+          @mouseover="selectStop(stop)" 
+          @mouseout="closeWindow"/>
+
+        <gmap-info-window 
+          v-if="selectedStop != null" 
+          :opened="selectedStop != null" 
+          :position="stopPosition(selectedStop) ">
+          Scheduled: {{ formatTime(selectedStop.time) }}
+          <div v-if="selectedStop.canBoard">
+            No. of Passengers: {{ selectedStop.passengers.length }}
+          </div>
+        </gmap-info-window>
+
+        <gmap-info-window 
+          v-if="selectedPing != null" 
+          :opened="selectedPing != null" 
+          :position="coordinatesToLatLng(selectedPing.coordinates)">
+          <div>
+            {{ formatTime(selectedPing.time) }}
+          </div>
+          <div v-if="driversById && driversById[selectedPing.driverId]">
+            By: <b>{{ driversById[selectedPing.driverId].transportCompanies[0].driverCompany.name }}</b>
+          </div>
+          <div v-if="vehiclesById && vehiclesById[selectedPing.vehicleId]">
+            By: <b style="text-transform: uppercase">{{ vehiclesById[selectedPing.vehicleId].vehicleNumber }}</b>
+          </div>
+        </gmap-info-window>
+
+        <!-- <PingLine :pings="pings" :options="pingOptions" :sample-rate="5"></PingLine> -->
+
+        <!-- Start and end markers -->
+        <template v-for="(driverPings, driverId) in otherPings">
+          <gmap-marker 
+            :position="firstPing(driverPings)"
+            :icon="MapIcons.startPoint" 
+            title="Start" 
+            :key="`start-${driverId}`"/>
+
+          <gmap-marker 
+            :position="lastPing(driverPings)"
+            :icon="MapIcons.endPoint" 
+            title="End" 
+            :key="`end-${driverId}`"/>
+
+          <PingLine 
+            :pings="driverPings" 
+            :options="otherPingOptions" 
+            :sampleRate="5"
+            @selectPing="selectPing" 
+            :key="`ping-line-${driverId}`"/>
+        </template>
+      </gmap-map>
     </div>
-    <gmap-map ref="gmap" :center="{lng: 103.8, lat: 1.38}" :zoom="12">
-
-      <gmap-marker v-for="(stop, index) in uniqueStops"
-        :key="stop.id"
-        :position="stopPosition(stop) "
-        :icon="MapIcons.stopIcon(stop, index)" @mouseover='selectStop(stop)' @mouseout='closeWindow'>
-      </gmap-marker>
-
-      <gmap-info-window v-if="selectedStop != null" :opened='selectedStop != null' :position="stopPosition(selectedStop) ">
-        Scheduled: {{formatTime(selectedStop.time)}}
-        <div v-if="selectedStop.canBoard">
-          No. of Passengers: {{selectedStop.passengers.length}}
-        </div>
-      </gmap-info-window>
-
-      <gmap-info-window v-if="selectedPing != null" :opened="selectedPing != null" :position="coordinatesToLatLng(selectedPing.coordinates)">
-        <div>
-          {{formatTime(selectedPing.time)}}
-        </div>
-        <div v-if="driversById && driversById[selectedPing.driverId]">
-          By: <b>{{driversById[selectedPing.driverId].transportCompanies[0].driverCompany.name}}</b>
-        </div>
-        <div v-if="vehiclesById && vehiclesById[selectedPing.vehicleId]">
-          By: <b style="text-transform: uppercase">{{vehiclesById[selectedPing.vehicleId].vehicleNumber}}</b>
-        </div>
-      </gmap-info-window>
-
-      <!-- <PingLine :pings="pings" :options="pingOptions" :sample-rate="5"></PingLine> -->
-
-      <!-- Start and end markers -->
-      <template v-for="(driverPings, driverId) in otherPings">
-        <gmap-marker :position="firstPing(driverPings)"
-          :icon="MapIcons.startPoint" title="Start" :key="`start-${driverId}`">
-        </gmap-marker>
-
-        <gmap-marker :position="lastPing(driverPings)"
-          :icon="MapIcons.endPoint" title="End" :key="`end-${driverId}`">
-        </gmap-marker>
-
-        <PingLine :pings="driverPings" :options="otherPingOptions" :sample-rate="5"
-          @selectPing="selectPing"  :key="`ping-line-${driverId}`">
-        </PingLine>
-      </template>
-    </gmap-map>
   </div>
-</div>
 </template>
 
 <style lang="scss" scoped>

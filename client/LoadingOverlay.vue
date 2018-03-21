@@ -1,5 +1,7 @@
 <template>
-  <div v-show="!hide" class="loading-overlay">
+  <div 
+    v-show="!hide" 
+    class="loading-overlay">
     <img src="img/spinner.svg">
   </div>
 </template>
@@ -27,16 +29,16 @@ export default {
       counter: null,
     }
   },
+  computed: {
+    hide() {
+      return !this.counter || this.counter.count == 0;
+    }
+  },
   created() {
     LoadingOverlay.registerOverlay(this)
   },
   destroyed() {
     LoadingOverlay.deregisterOverlay(this);
-  },
-  computed: {
-    hide() {
-      return !this.counter || this.counter.count == 0;
-    }
   },
   methods: {
     useCounter(counter) {

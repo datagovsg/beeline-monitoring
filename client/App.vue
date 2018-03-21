@@ -1,36 +1,44 @@
 <template>
   <div>
     <header>
-      <div style="position: absolute; top: 0px; left: 0px;
+      <div 
+        style="position: absolute; top: 0px; left: 0px;
           width: 40px; height: 40px"
         v-show="$route.path != '/'"
       >
-        <router-link :to="{ path: '/' }" tag="button" style="color: #FFF"
+        <router-link 
+          :to="{ path: '/' }" 
+          tag="button" 
+          style="color: #FFF"
           class="btn btn-link">
           <i class="glyphicon glyphicon-chevron-left" />
         </router-link>
       </div>
 
-      <div style="position: absolute; left:40px; top:0px;
+      <div 
+        style="position: absolute; left:40px; top:0px;
           height: 40px; right: 40px; text-overflow: ellipsis;
           overflow: hidden;
            font-size: 80%;line-height: 1.0 "
-         v-if="currentService"
+        v-if="currentService"
       >
-        {{currentService.trip.route.label}}:
-        {{currentService.trip.route.from}}
-            &mdash;
-        {{currentService.trip.route.to}}
+        {{ currentService.trip.route.label }}:
+        {{ currentService.trip.route.from }}
+        &mdash;
+        {{ currentService.trip.route.to }}
       </div>
-      <div v-else
-       style="position: absolute; left:40px; top:0px;
+      <div 
+        v-else
+        style="position: absolute; left:40px; top:0px;
           height: 40px; right: 40px; text-overflow: ellipsis;"
       >
         {{ date }}
       </div>
       <div style="position: absolute; top: 0px; right: 0px; font-size: 50%; margin: 3px; width: 45px;">
-        <button onclick="Login.logOut()" class="btn btn-link logout-button"
-            style="color: #FFF">
+        <button 
+          onclick="Login.logOut()" 
+          class="btn btn-link logout-button"
+          style="color: #FFF">
           <i class="mdi mdi-logout" />
         </button>
       </div>
@@ -38,12 +46,11 @@
 
     <main>
       <keep-alive>
-        <router-view></router-view>
+        <router-view/>
       </keep-alive>
     </main>
 
-    <LoadingOverlay id="loading-overlay">
-    </LoadingOverlay>
+    <LoadingOverlay id="loading-overlay"/>
   </div>
 </template>
 <style lang="scss">
@@ -100,15 +107,15 @@ import ScrollBus from './utils/ScrollBus';
 const ServiceData = require('./ServiceDataStore')
 
 export default {
+  components: {
+    LoadingOverlay
+  },
   data () {
     return {
       Login: require('./login'),
       ServiceData,
       currentTripId: null,
     }
-  },
-  components: {
-    LoadingOverlay
   },
   computed: {
     date () {

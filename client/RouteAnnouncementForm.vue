@@ -6,29 +6,38 @@
     <label>
       Use template:
       <select v-model="message">
-        <option v-for="template in announcementTemplates" :value="template[1]">
+        <option 
+          v-for="template in announcementTemplates" 
+          :value="template[1]">
           {{ template[0] }}
         </option>
       </select>
     </label>
-    <span class="message-box" v-if="currentMessage">
-      {{currentMessage}}
+    <span 
+      class="message-box" 
+      v-if="currentMessage">
+      {{ currentMessage }}
 
 
-      <button class="message-button" type="button"
+      <button 
+        class="message-button" 
+        type="button"
         @click="clearMessage">Clear message</button>
     </span>
     <form @submit="updateRouteAnnouncements">
       <div>
         <label>
-          New message<br/>
+          New message<br>
         </label>
-        <textarea v-model="message"
-            style="display: block; width: 100%; height: 100px"
-            name="message"></textarea>
+        <textarea 
+          v-model="message"
+          style="display: block; width: 100%; height: 100px"
+          name="message"/>
       </div>
       <div>
-        <button class="message-button" type="submit"
+        <button 
+          class="message-button" 
+          type="submit"
           :disabled="!message">Submit</button>
       </div>
     </form>
@@ -62,8 +71,10 @@ export default {
     }
   },
 
-  created () {
-    this.requery();
+  computed: {
+    announcementTemplates(){
+      return AnnouncementTemplates
+    }
   },
 
   watch: {
@@ -75,10 +86,8 @@ export default {
     }
   },
 
-  computed: {
-    announcementTemplates(){
-      return AnnouncementTemplates
-    }
+  created () {
+    this.requery();
   },
 
   methods: {

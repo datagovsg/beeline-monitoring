@@ -1,12 +1,13 @@
 <template>
-    <i class="glyphicon favourite-button"
-      :class="{
-        isFavourite: wantFavourite,
-        'glyphicon-star-empty': !wantFavourite,
-        'glyphicon-star': wantFavourite,
-        }"
-      @click="delayedFavourite"
-    />
+  <i 
+    class="glyphicon favourite-button"
+    :class="{
+      isFavourite: wantFavourite,
+      'glyphicon-star-empty': !wantFavourite,
+      'glyphicon-star': wantFavourite,
+    }"
+    @click="delayedFavourite"
+  />
 </template>
 
 <script>

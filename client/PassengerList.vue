@@ -1,132 +1,157 @@
 <template>
-<div class="contents-with-nav">
-  <navi :service="tripId"></navi>
-  <div v-if="services && trip">
-    <h2>Boarding stops</h2>
-    <table class="arrivalInfo">
-      <tr>
-        <th>Stop number</th>
-        <td v-for="(tripStop, index) in arrivalInfo"
-          :class="{ boarding: tripStop.canBoard,
-                alighting: tripStop.canAlight }"
-          :title="tripStop.description"
-          v-show="tripStop.canBoard">
-          {{ index + 1 }}
-          {{ tripStop.canBoard ? '↗' : '↙' }}
-        </td>
-      </tr>
-      <tr>
-        <th>Pax boarding</th>
-        <td v-for="tripStop in arrivalInfo"
-          v-show="tripStop.canBoard">
-          <span v-if="tripStop.canBoard">
-            {{ tripStop.pax  }}
-          </span>
-        </td>
-      </tr>
-      <tr>
-        <th>Scheduled</th>
-        <td v-for="tripStop in arrivalInfo"
-          v-show="tripStop.canBoard">
-          <router-link :to="{
-            path: '/map/' + tripId,
-            query: {time: tripStop.expectedTime}
-            }" v-if="tripStop.canBoard">
-            {{ takeLocalTime(tripStop.expectedTime)  }}
-          </router-link>
-        </td>
-      </tr>
-      <tr>
-        <th>Actual</th>
-        <td v-for="tripStop in arrivalInfo" v-show="tripStop.canBoard">
-          <span v-if="tripStop.canBoard">
-            {{ takeLocalTime(tripStop.actualTime || '') }}
-          </span>
-        </td>
-      </tr>
-      <tr>
-        <th>Diff (mins)</th>
-        <td v-for="tripStop in arrivalInfo" v-show="tripStop.canBoard">
-          <span v-if="tripStop.canBoard">
-            {{ minsDiff(tripStop.actualTime || '', tripStop.expectedTime) }}
-          </span>
-        </td>
-      </tr>
-    </table>
+  <div class="contents-with-nav">
+    <navi :service="tripId"/>
+    <div v-if="services && trip">
+      <h2>Boarding stops</h2>
+      <table class="arrivalInfo">
+        <tr>
+          <th>Stop number</th>
+          <td 
+            v-for="(tripStop, index) in arrivalInfo"
+            :class="{ boarding: tripStop.canBoard,
+                      alighting: tripStop.canAlight }"
+            :title="tripStop.description"
+            v-show="tripStop.canBoard">
+            {{ index + 1 }}
+            {{ tripStop.canBoard ? '↗' : '↙' }}
+          </td>
+        </tr>
+        <tr>
+          <th>Pax boarding</th>
+          <td 
+            v-for="tripStop in arrivalInfo"
+            v-show="tripStop.canBoard">
+            <span v-if="tripStop.canBoard">
+              {{ tripStop.pax }}
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <th>Scheduled</th>
+          <td 
+            v-for="tripStop in arrivalInfo"
+            v-show="tripStop.canBoard">
+            <router-link 
+              :to="{
+                path: '/map/' + tripId,
+                query: {time: tripStop.expectedTime}
+              }" 
+              v-if="tripStop.canBoard">
+              {{ takeLocalTime(tripStop.expectedTime) }}
+            </router-link>
+          </td>
+        </tr>
+        <tr>
+          <th>Actual</th>
+          <td 
+            v-for="tripStop in arrivalInfo" 
+            v-show="tripStop.canBoard">
+            <span v-if="tripStop.canBoard">
+              {{ takeLocalTime(tripStop.actualTime || '') }}
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <th>Diff (mins)</th>
+          <td 
+            v-for="tripStop in arrivalInfo" 
+            v-show="tripStop.canBoard">
+            <span v-if="tripStop.canBoard">
+              {{ minsDiff(tripStop.actualTime || '', tripStop.expectedTime) }}
+            </span>
+          </td>
+        </tr>
+      </table>
 
-    <template v-if="isPublicRoute">
-      <h1>Passenger List</h1>
-      <div v-for="(stop, index) in arrivalInfo"
-        v-show="stop.canBoard"
-        :key="stop.expectedTime">
-        <h3>
-          ({{formatTime(stop.expectedTime)}}) {{index + 1}}.   {{stop.description}} - {{stop.road}}
-        </h3>
-        <div
-          v-for="passenger in stop.passengers"
-          :class="{passenger: true}"
-          :key="passenger.telephone">
-          {{passenger.index}}.
-          {{passenger.name}}
-          &mdash;
-          {{passenger.telephone}}
-          &mdash;
-          {{passenger.email}}
-        </div>
+      <template v-if="isPublicRoute">
+        <h1>Passenger List</h1>
+        <div 
+          v-for="(stop, index) in arrivalInfo"
+          v-show="stop.canBoard"
+          :key="stop.expectedTime">
+          <h3>
+            ({{ formatTime(stop.expectedTime) }}) {{ index + 1 }}.   {{ stop.description }} - {{ stop.road }}
+          </h3>
+          <div
+            v-for="passenger in stop.passengers"
+            :class="{passenger: true}"
+            :key="passenger.telephone">
+            {{ passenger.index }}.
+            {{ passenger.name }}
+            &mdash;
+            {{ passenger.telephone }}
+            &mdash;
+            {{ passenger.email }}
+          </div>
         </transition>
-      </div>
+        </div>
 
-      <h1>Cancel Trip</h1>
-      <form class="cancel-form"
-        method="POST"
-        @submit="confirmAndCancel"
+        <h1>Cancel Trip</h1>
+        <form 
+          class="cancel-form"
+          method="POST"
+          @submit="confirmAndCancel"
         >
-        <div v-if="trip.status !== 'cancelled'">
-        <b>Warning</b>: This will cancel the trip, and passengers will be notified
-        via SMS. This action is irreversible.
+          <div v-if="trip.status !== 'cancelled'">
+            <b>Warning</b>: This will cancel the trip, and passengers will be notified
+            via SMS. This action is irreversible.
 
-        <button class="danger-button" type="submit">Cancel Trip</button>
-        </div>
-        <div v-else>
-        This trip has been cancelled.
-        </div>
-      </form>
+            <button 
+              class="danger-button" 
+              type="submit">Cancel Trip</button>
+          </div>
+          <div v-else>
+            This trip has been cancelled.
+          </div>
+        </form>
 
-      <h1>Send message to passengers</h1>
-      <form method="POST" @submit="confirmAndSend">
-        <label>
-        Use template:
-        <select v-model="sms.message">
-          <option v-for="mt in messageTemplates"
-            :value="mt[1]"
-            >
-            {{mt[0]}}
-          </option>
-        </select>
-        </label>
-        <input type="hidden" name="session_token" :value="sessionToken" />
-        <input type="hidden" name="service" :value="tripId" />
-        <textarea v-model="sms.message"
-          style="display: block; width: 100%; height: 100px"
-          name="message"></textarea>
-        <button class="message-button" type="submit">Submit</button>
-      </form>
-    </template>
+        <h1>Send message to passengers</h1>
+        <form 
+          method="POST" 
+          @submit="confirmAndSend">
+          <label>
+            Use template:
+            <select v-model="sms.message">
+              <option 
+                v-for="mt in messageTemplates"
+                :value="mt[1]"
+              >
+                {{ mt[0] }}
+              </option>
+            </select>
+          </label>
+          <input 
+            type="hidden" 
+            name="session_token" 
+            :value="sessionToken" >
+          <input 
+            type="hidden" 
+            name="service" 
+            :value="tripId" >
+          <textarea 
+            v-model="sms.message"
+            style="display: block; width: 100%; height: 100px"
+            name="message"/>
+          <button 
+            class="message-button" 
+            type="submit">Submit</button>
+        </form>
+      </template>
 
-    <template v-if="isTrackingRoute">
-      <h1>Update Route Announcements</h1>
-      <RouteAnnouncementForm :tripId="tripId" />
-    </template>
+      <template v-if="isTrackingRoute">
+        <h1>Update Route Announcements</h1>
+        <RouteAnnouncementForm :tripId="tripId" />
+      </template>
 
-    <!-- space for the user to scroll down -->
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
+      <!-- space for the user to scroll down -->
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
 
+    </div>
   </div>
-</div>
 </template>
 
 <style scoped lang="scss">

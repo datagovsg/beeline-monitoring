@@ -1,11 +1,12 @@
 <template>
   <tbody>
-    <tr :class="{
-            emergency: service.trip.status === 'cancelled',
-            nobody: service.nobody && !service.notifyWhenEmpty,
-        }"
-        class="route-row"
-        >
+    <tr 
+      :class="{
+        emergency: service.trip.status === 'cancelled',
+        nobody: service.nobody && !service.notifyWhenEmpty,
+      }"
+      class="route-row"
+    >
       <td>
         <div class="service-description">
           <FavouriteButton
@@ -16,14 +17,14 @@
 
           <div class="label-and-description">
             <div class="service-name">
-              <big>{{service.trip.route.label}}</big>
-              ({{service.trip.routeId}})
-              {{takeTime(service.trip.startTime)}}
+              <big>{{ service.trip.route.label }}</big>
+              ({{ service.trip.routeId }})
+              {{ takeTime(service.trip.startTime) }}
             </div>
 
             <div class="from-and-to">
-              {{service.trip.route.from}}<br/>
-              {{service.trip.route.to}}
+              {{ service.trip.route.from }}<br>
+              {{ service.trip.route.to }}
             </div>
           </div>
         </div>
@@ -45,7 +46,7 @@
           </template>
           <template v-else>
             <template v-if="service.lastPing">
-              {{humanizeRelative(service.lastPing)}}
+              {{ humanizeRelative(service.lastPing) }}
             </template>
           </template>
         </router-link>
@@ -63,15 +64,15 @@
             sU : service.status.distance == -1,
         }">
           <template v-if="service.status.arrivalTime">
-            {{takeTime(service.status.arrivalTime)}} (arrived)
+            {{ takeTime(service.status.arrivalTime) }} (arrived)
           </template>
           <template v-else>
-            {{takeTime(service.status.eta)}} (est)
+            {{ takeTime(service.status.eta) }} (est)
           </template>
         </router-link>
       </td>
     </tr>
-</tbody>
+  </tbody>
 </template>
 
 <style lang="scss">
@@ -171,10 +172,10 @@ import ScrollBus from './utils/ScrollBus'
 const Favourites = require('./favourites')
 
 export default {
-  props: ['service', 'isFavourite'],
   components: {
     FavouriteButton,
   },
+  props: ['service', 'isFavourite'],
   mounted () {
     // Note: this is rather inefficient, because it's an O(n), where n == number of rows
     // But it shouldn't be a big problem

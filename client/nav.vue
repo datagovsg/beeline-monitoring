@@ -1,8 +1,8 @@
 <template>
-    <ul>
-        <li><router-link :to="{ path: '/map/' + service}">Map</router-link></li>
-        <li><router-link :to="{ path: '/passengers/' + service}">Passenger List</router-link></li>
-    </ul>
+  <ul>
+    <li><router-link :to="{ path: '/map/' + service}">Map</router-link></li>
+    <li><router-link :to="{ path: '/passengers/' + service}">Passenger List</router-link></li>
+  </ul>
 </template>
 
 <style scoped>

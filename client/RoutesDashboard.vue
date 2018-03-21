@@ -1,14 +1,19 @@
 <template>
   <tbody>
     <tr>
-      <th class="header-cell" @click="toggleRouteDetailsShown">
+      <th 
+        class="header-cell" 
+        @click="toggleRouteDetailsShown">
         {{ header }}
       </th>
     </tr>
     <tr class="indicator-row">
       <td @click="toggleRouteDetailsShown">
         <div class="flex-row">
-          <transition-group name="expand" class="route-indicators" tag="div">
+          <transition-group 
+            name="expand" 
+            class="route-indicators" 
+            tag="div">
             <RouteIndicator
               v-for="route in routes"
               :key="route.trip.routeId"
@@ -18,34 +23,39 @@
               :ignoreLower="route.status.distance === -1"
               :title="route.trip.route.label + ' - ' + route.trip.route.name"
               :noPassengers="route.nobody && !route.notifyWhenEmpty"
-              />
+            />
           </transition-group>
-          <i class="expanded-indicator glyphicon glyphicon-chevron-right" v-if="!routeDetailsShown" />
-          <i class="expanded-indicator glyphicon glyphicon-chevron-down" v-else />
+          <i 
+            class="expanded-indicator glyphicon glyphicon-chevron-right" 
+            v-if="!routeDetailsShown" />
+          <i 
+            class="expanded-indicator glyphicon glyphicon-chevron-down" 
+            v-else />
         </div>
       </td>
     </tr>
     <transition name="expand">
       <tr v-if="routeDetailsShown || expanded">
         <td class="route-list-in-routes">
-            <table class="route-listing">
-              <thead>
-                <tr>
-                  <th>Route</th>
-                  <th style="text-align: center">Tracking</th>
-                  <th style="text-align: center">On Time</th>
-                </tr>
-              </thead>
+          <table class="route-listing">
+            <thead>
+              <tr>
+                <th>Route</th>
+                <th style="text-align: center">Tracking</th>
+                <th style="text-align: center">On Time</th>
+              </tr>
+            </thead>
 
-              <RouteRow v-for="route in routes"
-                :key='route.trip.routeId'
-                :isFavourite="route.isFavourite"
-                :service="route"
-                @routeSelected="$emit('routeSelected', $event)"
-                :class="{ selected: selectedTripId === route.trip.tripId }"
-                ref="routeRows"
-                />
-            </table>
+            <RouteRow 
+              v-for="route in routes"
+              :key="route.trip.routeId"
+              :isFavourite="route.isFavourite"
+              :service="route"
+              @routeSelected="$emit('routeSelected', $event)"
+              :class="{ selected: selectedTripId === route.trip.tripId }"
+              ref="routeRows"
+            />
+          </table>
         </td>
       </tr>
     </transition>
@@ -121,13 +131,13 @@ export default {
     RouteIndicator, RouteRow, SeverityFilter,
   },
 
+  props: ['routes', 'header', 'visibilitySettings', 'expanded', 'selectedTripId'],
+
   data () {
     return {
       routeDetailsShown: false,
     }
   },
-
-  props: ['routes', 'header', 'visibilitySettings', 'expanded', 'selectedTripId'],
 
   mounted () {
     this.$unwatchScrollToTripId = ScrollBus.$watch('scrollToTripId', (tripId) => {

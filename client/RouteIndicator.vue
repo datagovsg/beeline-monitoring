@@ -1,20 +1,21 @@
 <template>
-  <div class="route-indicator"
+  <div 
+    class="route-indicator"
     :title="title"
     :class="{ 'status-nobody': noPassengers }">
-    <div class="indicator-half"
+    <div 
+      class="indicator-half"
       :class="{
         'status-bad': upperIndicator && !ignoreUpper,
         'status-ignore': ignoreUpper,
       }"
-      >
-    </div>
-    <div class="indicator-half"
+    />
+    <div 
+      class="indicator-half"
       :class="{
         'status-bad': lowerIndicator && !ignoreLower,
         'status-ignore': ignoreLower,
-      }">
-    </div>
+    }"/>
   </div>
 </template>
 

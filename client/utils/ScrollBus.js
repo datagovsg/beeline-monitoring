@@ -38,6 +38,12 @@ export default new Vue({
     }
   },
 
+  watch: {
+    scrollToTripId (tripId) {
+      console.log(`Scroll to ${tripId} requested`)
+    }
+  },
+
   methods: {
     scrollToEl (el) {
       let netTop = 0
@@ -50,10 +56,4 @@ export default new Vue({
       window.scrollTo(0, netTop - 90) // header height
     }
   },
-
-  watch: {
-    scrollToTripId (tripId) {
-      console.log(`Scroll to ${tripId} requested`)
-    }
-  }
 })
