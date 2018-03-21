@@ -28,7 +28,7 @@
     <transition name="expand">
       <tr v-if="routeDetailsShown || expanded">
         <td class="route-list-in-routes">
-            <table v-if="routeDetailsShown || expanded" class="route-listing">
+            <table class="route-listing">
               <thead>
                 <tr>
                   <th>Route</th>
@@ -40,7 +40,11 @@
               <RouteRow v-for="route in routes"
                 :key='route.trip.routeId'
                 :isFavourite="route.isFavourite"
-                :service="route" />
+                :service="route"
+                @routeSelected="$emit('routeSelected', $event)"
+                :class="{ selected: selectedTripId === route.trip.tripId }"
+                ref="routeRows"
+                />
             </table>
         </td>
       </tr>
@@ -88,7 +92,7 @@
 
 .route-list-in-routes table {
   margin: 0.5em;
-  tr{
+  tr {
     border-top: solid 1px #ddd;
   }
 }
@@ -100,12 +104,17 @@
     font-size: 0.8em;
   }
 }
+
+.selected .route-row {
+  background-color: #FFC;
+}
 </style>
 
 <script>
 import RouteIndicator from './RouteIndicator.vue'
 import RouteRow from './RouteRow.vue'
 import SeverityFilter from './SeverityFilter.vue'
+import ScrollBus from './utils/ScrollBus'
 
 export default {
   components: {
@@ -118,12 +127,31 @@ export default {
     }
   },
 
-  props: ['routes', 'header', 'visibilitySettings', 'expanded'],
+  props: ['routes', 'header', 'visibilitySettings', 'expanded', 'selectedTripId'],
+
+  mounted () {
+    this.$unwatchScrollToTripId = ScrollBus.$watch('scrollToTripId', (tripId) => {
+      if (tripId !== null &&
+          !this.routeDetailsShown &&
+          this.routes.find(r => r.trip.tripId === tripId)) {
+
+        this.routeDetailsShown = true
+        // Event will be consumed by RouteRow when it appears
+      }
+    })
+  },
+
+  destroyed () {
+    if (this.$unwatchScrollToTripId) {
+      this.$unwatchScrollToTripId()
+    }
+  },
 
   methods: {
+
     scrollToMe () {
       this.$nextTick(() => {
-        window.scrollTo(0, this.$el.offsetTop)
+        ScrollBus.scrollToEl(this.$el)
       })
     },
 

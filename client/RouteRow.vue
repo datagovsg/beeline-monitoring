@@ -4,6 +4,7 @@
             emergency: service.trip.status === 'cancelled',
             nobody: service.nobody && !service.notifyWhenEmpty,
         }"
+        class="route-row"
         >
       <td>
         <div class="service-description">
@@ -28,45 +29,46 @@
         </div>
       </td>
       <td data-column="led">
-          <router-link
-            :to="{name: 'map-view', params: {svc: service.trip.tripId}}"
-            :class="{
-              led: true,
-              s0 : service.status.ping == 0,
-              s1 : service.status.ping == 1,
-              s2 : service.status.ping == 2,
-              s3 : service.status.ping >= 3,
-              sU : service.status.ping == -1,
-          }">
-              </span>
-              <template v-if="service.status.arrivalTime">
-                  (arrived)
-              </template>
-              <template v-else>
-                  <template v-if="service.lastPing">
-                    {{humanizeRelative(service.lastPing)}}
-                  </template>
-              </template>
-          </router-link>
+        <router-link
+          :to="{name: 'map-view', params: {tripId: service.trip.tripId}}"
+          @click.native="$emit('routeSelected', service)"
+          :class="{
+            led: true,
+            s0 : service.status.ping == 0,
+            s1 : service.status.ping == 1,
+            s2 : service.status.ping == 2,
+            s3 : service.status.ping >= 3,
+            sU : service.status.ping == -1,
+        }">
+          <template v-if="service.status.arrivalTime">
+            (arrived)
+          </template>
+          <template v-else>
+            <template v-if="service.lastPing">
+              {{humanizeRelative(service.lastPing)}}
+            </template>
+          </template>
+        </router-link>
       </td>
       <td data-column="led">
-          <router-link
-            :to="{name: 'map-view', params: {svc: service.trip.tripId}}"
-            :class="{
-              led: true,
-              s0 : service.status.distance == 0,
-              s1 : service.status.distance == 1,
-              s2 : service.status.distance == 2,
-              s3 : service.status.distance >= 3,
-              sU : service.status.distance == -1,
-          }">
-            <template v-if="service.status.arrivalTime">
-                {{takeTime(service.status.arrivalTime)}} (arrived)
-            </template>
-            <template v-else>
-                {{takeTime(service.status.eta)}} (est)
-            </template>
-          </router-link>
+        <router-link
+          :to="{name: 'map-view', params: {tripId: service.trip.tripId}}"
+          @click.native="$emit('routeSelected', service)"
+          :class="{
+            led: true,
+            s0 : service.status.distance == 0,
+            s1 : service.status.distance == 1,
+            s2 : service.status.distance == 2,
+            s3 : service.status.distance >= 3,
+            sU : service.status.distance == -1,
+        }">
+          <template v-if="service.status.arrivalTime">
+            {{takeTime(service.status.arrivalTime)}} (arrived)
+          </template>
+          <template v-else>
+            {{takeTime(service.status.eta)}} (est)
+          </template>
+        </router-link>
       </td>
     </tr>
 </tbody>
@@ -165,6 +167,7 @@
 
 <script>
 import FavouriteButton from './FavouriteButton.vue'
+import ScrollBus from './utils/ScrollBus'
 const Favourites = require('./favourites')
 
 export default {
@@ -172,6 +175,28 @@ export default {
   components: {
     FavouriteButton,
   },
+  mounted () {
+    // Note: this is rather inefficient, because it's an O(n), where n == number of rows
+    // But it shouldn't be a big problem
+    this.$unwatchScrollToTripId = ScrollBus.$watch('scrollToTripId', (tripId) => {
+      if (tripId !== null &&
+          tripId === this.service.trip.tripId) {
+        ScrollBus.scrollToTripId = null
+        // Need to wait for $nextTick in order to guarantee in-document
+        // https://vuejs.org/v2/api/#mounted
+        this.$nextTick(() => {
+          ScrollBus.scrollToEl(this.$el)
+        })
+      }
+    }, {immediate: true})
+  },
+
+  destroyed () {
+    if (this.$unwatchScrollToTripId) {
+      this.$unwatchScrollToTripId()
+    }
+  },
+
   methods: {
     setFavourite(isFav, routeId) {
       if (isFav) {
@@ -220,7 +245,7 @@ export default {
 
 
         return '';
-    }
-  }
+    },
+  },
 }
 </script>

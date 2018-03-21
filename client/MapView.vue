@@ -1,13 +1,13 @@
 <template>
 <div class="contents-with-nav">
-  <navi :service="service"></navi>
+  <navi :service="tripId"></navi>
   <div class="map-view">
     <div v-if="$route.query.time" class="filter-message">
       Showing known positions between
       {{formatTime(startTime)}} and
       {{formatTime(endTime)}}.
 
-      <router-link :to="{path: '/map/' + service, query: {}}">
+      <router-link :to="{path: '/map/' + tripId, query: {}}">
         Clear Filter
       </router-link>
     </div>
@@ -51,7 +51,7 @@
         </gmap-marker>
 
         <PingLine :pings="driverPings" :options="otherPingOptions" :sample-rate="5"
-          @selectPing="selectPing"  :key="`PingLine-${driverId}`">
+          @selectPing="selectPing"  :key="`ping-line-${driverId}`">
         </PingLine>
       </template>
     </gmap-map>
@@ -96,8 +96,10 @@ import {authAjax, sharedData} from './login';
 import {spinnerOn} from './LoadingOverlay';
 
 module.exports = {
+  props: ['tripId'],
+
   components: {
-    'PingLine': PingLine,
+    PingLine,
   },
 
   data() {
@@ -145,9 +147,6 @@ module.exports = {
     vehiclesById () {
       return sharedData.vehiclesById
     },
-    service () {
-      return this.$route.params.svc;
-    },
     otherPingOptions() {
       return {
         polyline: {
@@ -178,12 +177,6 @@ module.exports = {
     uniqueStops() {
       return _.uniqBy(this.stops, 'stopId');
     },
-
-    requeryDependencies () {
-      return this.$route.name === 'map-view' && {
-        service: this.service,
-      }
-    }
   },
 
   watch: {
@@ -194,18 +187,18 @@ module.exports = {
         })
     },
 
-    requeryDependencies (n) {
-      if (n) {
-        this.$poller.executeNow()
-          .then(() => {
-            this.setBounds()
-          })
-
-        this.$nextTick(() => {
-          this.$gmapDefaultResizeBus.$emit('resize')
+    tripId () {
+      this.$poller.executeNow()
+        .then(() => {
+          this.setBounds()
         })
-      }
-    },
+    }
+  },
+
+  beforeRouteEnter (to, from, next) {
+    next(vm => vm.$nextTick(() => {
+      vm.$gmapDefaultResizeBus.$emit('resize')
+    }))
   },
 
   methods: {
@@ -214,7 +207,7 @@ module.exports = {
       // only if it had not been successfully fetched
       sharedData.fetchVehicles()
 
-      if (!this.service) return Promise.resolve(null)
+      if (!this.tripId) return Promise.resolve(null)
 
       var startTime = new Date();
       startTime.setHours(0, 0, 0, 0);
@@ -225,15 +218,15 @@ module.exports = {
         : { from: startTime.getTime(), limit: 800 }
 
       const pingsPromise = authAjax(
-        `/trips/${this.service}/pings?${querystring.stringify(queryParams)}`,
+        `/trips/${this.tripId}/pings?${querystring.stringify(queryParams)}`,
         { baseURL: TRACKING_URL }
       ).then((response) => {
         this.otherPings = _.groupBy(response.data, 'driverId');
       })
 
-      var tripPromise = authAjax(`/trips/${this.service}`)
+      var tripPromise = authAjax(`/trips/${this.tripId}`)
         .then(result => result.data);
-      var passengersPromise = authAjax(`/trips/${this.service}/passengers`)
+      var passengersPromise = authAjax(`/trips/${this.tripId}/passengers`)
         .then(result => result.data);
 
       Promise.all([tripPromise, passengersPromise])
