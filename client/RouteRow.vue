@@ -1,6 +1,6 @@
 <template>
   <tbody>
-    <tr 
+    <tr
       :class="{
         emergency: service.trip.status === 'cancelled',
         nobody: service.nobody && !service.notifyWhenEmpty,
@@ -10,9 +10,9 @@
       <td>
         <div class="service-description">
           <FavouriteButton
-            @click="setFavourite($event, service.trip.routeId)"
             :isFavourite="isFavourite"
             class="favourite-button"
+            @click="setFavourite($event, service.trip.routeId)"
           />
 
           <div class="label-and-description">
@@ -32,7 +32,6 @@
       <td data-column="led">
         <router-link
           :to="{name: 'map-view', params: {tripId: service.trip.tripId}}"
-          @click.native="$emit('routeSelected', service)"
           :class="{
             led: true,
             s0 : service.status.ping == 0,
@@ -40,7 +39,8 @@
             s2 : service.status.ping == 2,
             s3 : service.status.ping >= 3,
             sU : service.status.ping == -1,
-        }">
+          }"
+          @click.native="$emit('routeSelected', service)">
           <template v-if="service.status.arrivalTime">
             (arrived)
           </template>
@@ -54,7 +54,6 @@
       <td data-column="led">
         <router-link
           :to="{name: 'map-view', params: {tripId: service.trip.tripId}}"
-          @click.native="$emit('routeSelected', service)"
           :class="{
             led: true,
             s0 : service.status.distance == 0,
@@ -62,7 +61,9 @@
             s2 : service.status.distance == 2,
             s3 : service.status.distance >= 3,
             sU : service.status.distance == -1,
-        }">
+          }"
+          @click.native="$emit('routeSelected', service)"
+        >
           <template v-if="service.status.arrivalTime">
             {{ takeTime(service.status.arrivalTime) }} (arrived)
           </template>
@@ -175,7 +176,16 @@ export default {
   components: {
     FavouriteButton,
   },
-  props: ['service', 'isFavourite'],
+  props: {
+    service: {
+      type: Object,
+      required: true,
+    },
+    isFavourite: {
+      type: Boolean,
+      required: true,
+    }
+  },
   mounted () {
     // Note: this is rather inefficient, because it's an O(n), where n == number of rows
     // But it shouldn't be a big problem

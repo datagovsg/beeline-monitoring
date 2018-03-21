@@ -2,8 +2,8 @@
   <div class="contents-with-nav">
     <navi :service="tripId"/>
     <div class="map-view">
-      <div 
-        v-if="$route.query.time" 
+      <div
+        v-if="$route.query.time"
         class="filter-message">
         Showing known positions between
         {{ formatTime(startTime) }} and
@@ -13,22 +13,22 @@
           Clear Filter
         </router-link>
       </div>
-      <gmap-map 
-        ref="gmap" 
-        :center="{lng: 103.8, lat: 1.38}" 
+      <gmap-map
+        ref="gmap"
+        :center="{lng: 103.8, lat: 1.38}"
         :zoom="12">
 
-        <gmap-marker 
+        <gmap-marker
           v-for="(stop, index) in uniqueStops"
           :key="stop.id"
           :position="stopPosition(stop) "
-          :icon="MapIcons.stopIcon(stop, index)" 
-          @mouseover="selectStop(stop)" 
+          :icon="MapIcons.stopIcon(stop, index)"
+          @mouseover="selectStop(stop)"
           @mouseout="closeWindow"/>
 
-        <gmap-info-window 
-          v-if="selectedStop != null" 
-          :opened="selectedStop != null" 
+        <gmap-info-window
+          v-if="selectedStop != null"
+          :opened="selectedStop != null"
           :position="stopPosition(selectedStop) ">
           Scheduled: {{ formatTime(selectedStop.time) }}
           <div v-if="selectedStop.canBoard">
@@ -36,9 +36,9 @@
           </div>
         </gmap-info-window>
 
-        <gmap-info-window 
-          v-if="selectedPing != null" 
-          :opened="selectedPing != null" 
+        <gmap-info-window
+          v-if="selectedPing != null"
+          :opened="selectedPing != null"
           :position="coordinatesToLatLng(selectedPing.coordinates)">
           <div>
             {{ formatTime(selectedPing.time) }}
@@ -55,24 +55,27 @@
 
         <!-- Start and end markers -->
         <template v-for="(driverPings, driverId) in otherPings">
-          <gmap-marker 
+          <gmap-marker
+            :key="`start-${driverId}`"
             :position="firstPing(driverPings)"
-            :icon="MapIcons.startPoint" 
-            title="Start" 
-            :key="`start-${driverId}`"/>
+            :icon="MapIcons.startPoint"
+            title="Start"
+          />
 
-          <gmap-marker 
+          <gmap-marker
+            :key="`end-${driverId}`"
             :position="lastPing(driverPings)"
-            :icon="MapIcons.endPoint" 
-            title="End" 
-            :key="`end-${driverId}`"/>
+            :icon="MapIcons.endPoint"
+            title="End"
+          />
 
-          <PingLine 
-            :pings="driverPings" 
-            :options="otherPingOptions" 
+          <PingLine
+            :key="`ping-line-${driverId}`"
+            :pings="driverPings"
+            :options="otherPingOptions"
             :sampleRate="5"
-            @selectPing="selectPing" 
-            :key="`ping-line-${driverId}`"/>
+            @selectPing="selectPing"
+          />
         </template>
       </gmap-map>
     </div>

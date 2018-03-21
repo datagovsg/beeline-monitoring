@@ -6,7 +6,8 @@
     "webpack-watch": "webpack --watch -d",
     "start": "http-server -c-1 static/",
     "watch": "node ./generate-env.js && npm run start & npm run webpack-watch",
-    "deploy": "node ./build-wrs.js && gh-pages -d static "
+    "deploy": "node ./build-wrs.js && gh-pages -d static ",
+    "lint": "eslint --ext .js,.vue client"
   },
   "dependencies": {
     "axios": "^0.16.2",

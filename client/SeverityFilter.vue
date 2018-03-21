@@ -1,16 +1,16 @@
 <template>
   <div class="severity-filter">
-    <button 
+    <button
       :class="{selected: showOnlyFavourites}"
-      @click="toggleFavourites(!showOnlyFavourites)"
-      class="toggle-button">
+      class="toggle-button"
+      @click="toggleFavourites(!showOnlyFavourites)">
       <div class="glyphicon glyphicon-star favourite-button" />
     </button>
-    <button 
-      :class="{selected: showOK}"
-      @click="change('showOK', !showOK)"
+    <button
       :disabled="showOnlyFavourites"
-      class="toggle-button">
+      :class="{selected: showOK}"
+      class="toggle-button"
+      @click="change('showOK', !showOK)">
       <RouteIndicator
         :upperIndicator="false"
         :lowerIndicator="false"
@@ -19,11 +19,11 @@
         :noPassengers="false"
       />
     </button>
-    <button 
-      :class="{selected: showBad}"
-      @click="change('showBad', !showBad)"
+    <button
       :disabled="showOnlyFavourites"
-      class="toggle-button">
+      :class="{selected: showBad}"
+      class="toggle-button"
+      @click="change('showBad', !showBad)">
       <RouteIndicator
         :upperIndicator="true"
         :lowerIndicator="true"
@@ -31,11 +31,11 @@
         :ignoreUpper="false"
         :noPassengers="false" />
     </button>
-    <button 
-      :class="{selected: showNoPassengers}"
-      @click="change('showNoPassengers', !showNoPassengers)"
+    <button
       :disabled="showOnlyFavourites"
-      class="toggle-button">
+      :class="{selected: showNoPassengers}"
+      class="toggle-button"
+      @click="change('showNoPassengers', !showNoPassengers)">
       <RouteIndicator
         :upperIndicator="false"
         :lowerIndicator="false"
@@ -125,7 +125,9 @@ export default {
   components: {
     RouteIndicator,
   },
-  props: ['settings'],
+  props: {
+    settings: { type: Object, required: true },
+  },
   computed: {
     showOK () { return this.settings.showOK },
     showBad() { return this.settings.showBad },

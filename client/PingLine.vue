@@ -14,9 +14,9 @@
         @click="selectPing(ping)" />
     </template>
 
-    <gmap-polyline 
-      v-if="pings" 
-      :options="polylineOptions" 
+    <gmap-polyline
+      v-if="pings"
+      :options="polylineOptions"
       :path="pingPath"/>
   </div>
 </template>
@@ -27,7 +27,20 @@ import Vue from 'vue'
 import _ from 'lodash'
 
 export default {
-  props: ['pings', 'options', 'sampleRate'],
+  props: {
+    pings: {
+      type: Array,
+      required: true,
+    },
+    options: {
+      type: Object,
+      default: () => ({}),
+    },
+    sampleRate: {
+      type: Number,
+      default: 3,
+    }
+  },
   data() {
     return {
       selectedPing: null,

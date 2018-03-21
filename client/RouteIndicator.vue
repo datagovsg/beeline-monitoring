@@ -1,21 +1,22 @@
 <template>
-  <div 
-    class="route-indicator"
+  <div
     :title="title"
-    :class="{ 'status-nobody': noPassengers }">
-    <div 
-      class="indicator-half"
+    :class="{ 'status-nobody': noPassengers }"
+    class="route-indicator">
+    <div
       :class="{
         'status-bad': upperIndicator && !ignoreUpper,
         'status-ignore': ignoreUpper,
       }"
-    />
-    <div 
       class="indicator-half"
+    />
+    <div
       :class="{
         'status-bad': lowerIndicator && !ignoreLower,
         'status-ignore': ignoreLower,
-    }"/>
+      }"
+      class="indicator-half"
+    />
   </div>
 </template>
 
@@ -53,8 +54,31 @@
 import RouteIndicator from './RouteIndicator.vue'
 
 export default {
-  props: ['upperIndicator', 'lowerIndicator',
-    'ignoreLower', 'ignoreUpper', 'title',
-    'noPassengers'],
+  props: {
+    upperIndicator: {
+      type: Boolean,
+      required: true,
+    },
+    lowerIndicator: {
+      type: Boolean,
+      required: true,
+    },
+    ignoreLower: {
+      type: Boolean,
+      required: true,
+    },
+    ignoreUpper: {
+      type: Boolean,
+      required: true,
+    },
+    title: {
+      type: String,
+      default: '',
+    },
+    noPassengers: {
+      type: Boolean,
+      required: true,
+    }
+  }
 }
 </script>

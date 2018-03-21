@@ -6,21 +6,23 @@
       <table class="arrivalInfo">
         <tr>
           <th>Stop number</th>
-          <td 
+          <td
             v-for="(tripStop, index) in arrivalInfo"
+            v-show="tripStop.canBoard"
+            :key="tripStop.id"
             :class="{ boarding: tripStop.canBoard,
                       alighting: tripStop.canAlight }"
-            :title="tripStop.description"
-            v-show="tripStop.canBoard">
+            :title="tripStop.description">
             {{ index + 1 }}
             {{ tripStop.canBoard ? '↗' : '↙' }}
           </td>
         </tr>
         <tr>
           <th>Pax boarding</th>
-          <td 
+          <td
             v-for="tripStop in arrivalInfo"
-            v-show="tripStop.canBoard">
+            v-show="tripStop.canBoard"
+            :key="tripStop.id">
             <span v-if="tripStop.canBoard">
               {{ tripStop.pax }}
             </span>
@@ -28,24 +30,27 @@
         </tr>
         <tr>
           <th>Scheduled</th>
-          <td 
+          <td
             v-for="tripStop in arrivalInfo"
-            v-show="tripStop.canBoard">
-            <router-link 
+            v-show="tripStop.canBoard"
+            :key="tripStop.id">
+            <router-link
+              v-if="tripStop.canBoard"
               :to="{
                 path: '/map/' + tripId,
                 query: {time: tripStop.expectedTime}
-              }" 
-              v-if="tripStop.canBoard">
+              }"
+            >
               {{ takeLocalTime(tripStop.expectedTime) }}
             </router-link>
           </td>
         </tr>
         <tr>
           <th>Actual</th>
-          <td 
-            v-for="tripStop in arrivalInfo" 
-            v-show="tripStop.canBoard">
+          <td
+            v-for="tripStop in arrivalInfo"
+            v-show="tripStop.canBoard"
+            :key="tripStop.id">
             <span v-if="tripStop.canBoard">
               {{ takeLocalTime(tripStop.actualTime || '') }}
             </span>
@@ -53,9 +58,10 @@
         </tr>
         <tr>
           <th>Diff (mins)</th>
-          <td 
-            v-for="tripStop in arrivalInfo" 
-            v-show="tripStop.canBoard">
+          <td
+            v-for="tripStop in arrivalInfo"
+            v-show="tripStop.canBoard"
+            :key="tripStop.id">
             <span v-if="tripStop.canBoard">
               {{ minsDiff(tripStop.actualTime || '', tripStop.expectedTime) }}
             </span>
@@ -65,10 +71,10 @@
 
       <template v-if="isPublicRoute">
         <h1>Passenger List</h1>
-        <div 
+        <div
           v-for="(stop, index) in arrivalInfo"
           v-show="stop.canBoard"
-          :key="stop.expectedTime">
+          :key="stop.id">
           <h3>
             ({{ formatTime(stop.expectedTime) }}) {{ index + 1 }}.   {{ stop.description }} - {{ stop.road }}
           </h3>
@@ -83,11 +89,10 @@
             &mdash;
             {{ passenger.email }}
           </div>
-        </transition>
         </div>
 
         <h1>Cancel Trip</h1>
-        <form 
+        <form
           class="cancel-form"
           method="POST"
           @submit="confirmAndCancel"
@@ -96,8 +101,8 @@
             <b>Warning</b>: This will cancel the trip, and passengers will be notified
             via SMS. This action is irreversible.
 
-            <button 
-              class="danger-button" 
+            <button
+              class="danger-button"
               type="submit">Cancel Trip</button>
           </div>
           <div v-else>
@@ -106,34 +111,35 @@
         </form>
 
         <h1>Send message to passengers</h1>
-        <form 
-          method="POST" 
+        <form
+          method="POST"
           @submit="confirmAndSend">
           <label>
             Use template:
             <select v-model="sms.message">
-              <option 
-                v-for="mt in messageTemplates"
+              <option
+                v-for="(mt, index) in messageTemplates"
+                :key="index"
                 :value="mt[1]"
               >
                 {{ mt[0] }}
               </option>
             </select>
           </label>
-          <input 
-            type="hidden" 
-            name="session_token" 
-            :value="sessionToken" >
-          <input 
-            type="hidden" 
-            name="service" 
-            :value="tripId" >
-          <textarea 
+          <input
+            :value="sessionToken"
+            type="hidden"
+            name="session_token">
+          <input
+            :value="tripId"
+            type="hidden"
+            name="service">
+          <textarea
             v-model="sms.message"
             style="display: block; width: 100%; height: 100px"
             name="message"/>
-          <button 
-            class="message-button" 
+          <button
+            class="message-button"
             type="submit">Submit</button>
         </form>
       </template>

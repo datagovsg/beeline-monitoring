@@ -1,8 +1,8 @@
 <template>
   <tbody>
     <tr>
-      <th 
-        class="header-cell" 
+      <th
+        class="header-cell"
         @click="toggleRouteDetailsShown">
         {{ header }}
       </th>
@@ -10,9 +10,9 @@
     <tr class="indicator-row">
       <td @click="toggleRouteDetailsShown">
         <div class="flex-row">
-          <transition-group 
-            name="expand" 
-            class="route-indicators" 
+          <transition-group
+            name="expand"
+            class="route-indicators"
             tag="div">
             <RouteIndicator
               v-for="route in routes"
@@ -25,12 +25,12 @@
               :noPassengers="route.nobody && !route.notifyWhenEmpty"
             />
           </transition-group>
-          <i 
-            class="expanded-indicator glyphicon glyphicon-chevron-right" 
-            v-if="!routeDetailsShown" />
-          <i 
-            class="expanded-indicator glyphicon glyphicon-chevron-down" 
-            v-else />
+          <i
+            v-if="!routeDetailsShown"
+            class="expanded-indicator glyphicon glyphicon-chevron-right" />
+          <i
+            v-else
+            class="expanded-indicator glyphicon glyphicon-chevron-down"/>
         </div>
       </td>
     </tr>
@@ -46,14 +46,14 @@
               </tr>
             </thead>
 
-            <RouteRow 
+            <RouteRow
               v-for="route in routes"
+              ref="routeRows"
               :key="route.trip.routeId"
               :isFavourite="route.isFavourite"
               :service="route"
-              @routeSelected="$emit('routeSelected', $event)"
               :class="{ selected: selectedTripId === route.trip.tripId }"
-              ref="routeRows"
+              @routeSelected="$emit('routeSelected', $event)"
             />
           </table>
         </td>
@@ -131,7 +131,28 @@ export default {
     RouteIndicator, RouteRow, SeverityFilter,
   },
 
-  props: ['routes', 'header', 'visibilitySettings', 'expanded', 'selectedTripId'],
+  props: {
+    routes: {
+      type: Array,
+      required: true,
+    },
+    header: {
+      type: String,
+      required: true,
+    },
+    visibilitySettings: {
+      type: Object,
+      required: true,
+    },
+    expanded: {
+      type: Boolean,
+      default: false,
+    },
+    selectedTripId: {
+      type: Number,
+      default: null,
+    }
+  },
 
   data () {
     return {

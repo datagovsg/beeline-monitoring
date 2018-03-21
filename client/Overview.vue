@@ -1,17 +1,17 @@
 <template>
   <div class="overview">
-    <ExpandingBox 
-      class="date-and-search" 
+    <ExpandingBox
+      class="date-and-search"
       auxWidth="10.8em">
-      <input 
-        type="text" 
-        v-model="filter" 
-        placeholder="Search for Route" 
+      <input
+        v-model="filter"
+        type="text"
+        placeholder="Search for Route"
         style="width: 100%"
         class="form-control">
       <div slot="auxiliary">
-        <SeverityFilter 
-          :settings="visibilitySettings" 
+        <SeverityFilter
+          :settings="visibilitySettings"
           @settingsChanged="visibilitySettings = $event" />
       </div>
     </ExpandingBox>
@@ -28,15 +28,15 @@
       <RoutesDashboard
         v-for="[hour, routesInHour] of routesByHour"
         v-if="routesInHour.length"
+        ref="dashboards"
         :key="routesInHour.id"
         :routes="routesInHour"
         :header="dateformat(hour * 3600e3, 'h:MM TT', true)"
-        @visibilitySettingsChanged="visibilitySettings = ($event)"
         :visibilitySettings="visibilitySettings"
         :data-hour="hour"
         :expanded="numResults < 10"
         :selectedTripId="lastSelectedTripId"
-        ref="dashboards"
+        @visibilitySettingsChanged="visibilitySettings = ($event)"
         @routeSelected="lastSelectedTripId = $event.trip.tripId"
       />
     </table>

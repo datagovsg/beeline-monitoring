@@ -1,11 +1,11 @@
 <template>
-  <i 
-    class="glyphicon favourite-button"
+  <i
     :class="{
       isFavourite: wantFavourite,
       'glyphicon-star-empty': !wantFavourite,
       'glyphicon-star': wantFavourite,
     }"
+    class="glyphicon favourite-button"
     @click="delayedFavourite"
   />
 </template>
@@ -14,7 +14,12 @@
 import _ from 'lodash'
 
 export default {
-  props: ['isFavourite'],
+  props: {
+    isFavourite: {
+      type: Boolean,
+      required: true,
+    }
+  },
   data () {
     return {
       wantFavourite: null,
