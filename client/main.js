@@ -7,7 +7,6 @@ import PassengerList from './PassengerList.vue';
 import VueRouter from 'vue-router';
 import VueResource from 'vue-resource';
 import * as VueGoogleMaps from 'vue2-google-maps'
-import LoadingOverlay from './LoadingOverlay.vue';
 import * as Login from './login';
 import 'mdi/scss/materialdesignicons.scss';
 
@@ -18,7 +17,6 @@ Vue.use(VueResource);
 Login.initAuth0();
 
 Vue.component('navi', Navi);
-Vue.component('LoadingOverlay', LoadingOverlay);
 
 window.Login = Login;
 

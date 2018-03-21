@@ -229,7 +229,7 @@ var authAjax = require('./login').authAjax;
 var Vue=require('vue');
 const _ = require('lodash')
 import MessageTemplates from './message-templates'
-import {watch} from './LoadingOverlay';
+import {spinnerOn} from './LoadingOverlay';
 import PollingQuery from './utils/PollingQuery'
 import RouteAnnouncementForm from './RouteAnnouncementForm.vue'
 import ServiceData from './ServiceDataStore'
@@ -312,7 +312,7 @@ module.exports = {
         handler (tripId) {
           if (!tripId) return
 
-          watch(Promise.all([
+          spinnerOn(Promise.all([
             this.$poller && this.$poller.executeNow(),
             this.requeryTrips()
           ]))
@@ -322,7 +322,7 @@ module.exports = {
         immediate: true,
         handler (routeId) {
           if (!routeId) return
-          watch(this.getTags())
+          spinnerOn(this.getTags())
         }
       }
     },
@@ -410,7 +410,7 @@ module.exports = {
               return;
             }
 
-            watch(authAjax(`/trips/${this.tripId}/statuses?messagePassengers=true`, {
+            spinnerOn(authAjax(`/trips/${this.tripId}/statuses?messagePassengers=true`, {
                 method: 'POST',
                 data: {
                   status: 'cancelled'

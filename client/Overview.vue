@@ -58,7 +58,7 @@ var _ = require('lodash')
 var months = 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec'.split(',');
 var tzo = (new Date()).getTimezoneOffset() * 60000;
 import {authAjax, sharedData} from './login';
-import {watch} from './LoadingOverlay';
+import {spinnerOn} from './LoadingOverlay';
 const ServiceData = require('./ServiceDataStore')
 const Favourites = require('./favourites')
 import RouteRow from './RouteRow.vue'
@@ -201,7 +201,7 @@ module.exports = {
             }
           })
       };
-      watch(queryAgain());
+      spinnerOn(queryAgain());
     },
     destroyed() {
       if (this.$queryTimeout) {

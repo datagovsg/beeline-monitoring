@@ -93,9 +93,7 @@ import querystring from 'querystring';
 
 import {TRACKING_URL} from './env.json'
 import {authAjax, sharedData} from './login';
-import {
-  watch
-} from './LoadingOverlay';
+import {spinnerOn} from './LoadingOverlay';
 
 module.exports = {
   components: {

@@ -1,7 +1,7 @@
 <template>
-    <div v-show="!hide" class="loading-overlay">
-      <img src="img/spinner.svg">
-    </div>
+  <div v-show="!hide" class="loading-overlay">
+    <img src="img/spinner.svg">
+  </div>
 </template>
 <style>
 .loading-overlay {
