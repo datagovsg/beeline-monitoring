@@ -73,34 +73,34 @@
 </template>
 
 <style lang="scss">
-  tr.emergency td {
+  tr {
+    .emergency td {
       background-color: #FFECEC;
-  }
+    }
 
-  tr.nobody td{
+    .nobody td {
       opacity: 0.3;
       background-color: #ccc;
+    }
   }
 
   th, td {
-      padding: 0.5em;
-  }
+    padding: 0.5em;
 
-  th[data-column="route"],
-  td[data-column="route"] {
+    &[data-column="route"] {
       min-width: 60px;
-  }
-  th[data-column="led"],
-  td[data-column="led"] {
+    }
+    &[data-column="led"] {
       width: 60px;
-  }
-  th[data-column="next"],
-  td[data-column="next"] {
+    }
+    &[data-column="next"] {
       width: 20px;
       position: relative;
-  }
-  td[data-column="next"]:hover {
-      background-color: #dddddd;
+
+      &:hover {
+        background-color: #dddddd;
+      }
+    }
   }
 
   .service-description {
@@ -123,11 +123,7 @@
         color: #666;
         font-size: 80%;
       }
-      .from-and-to {
-
-      }
     }
-
   }
 
   .led {
@@ -145,15 +141,16 @@
     padding-top: 0.4em;
   }
 
-  .led.sU {
+  .led {
+    &.sU {
       background-color: #c9c9c9;
-  }
-
-  .led.s0, .led.s1 {
+    }
+    &.s0, &.s1 {
       background-color: #14c3a6;
-  }
-  .led.s2, .led.s3 {
+    }
+    &.s2, &.s3 {
       background-color: #ff6f6f;
+    }
   }
 
   .details_button {

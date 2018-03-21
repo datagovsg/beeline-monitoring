@@ -131,85 +131,66 @@
 </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 form {
-    padding: 1em;
-    width: 100%;
-    border: solid 1px #888;
+  padding: 1em;
+  width: 100%;
+  border: solid 1px #888;
 }
 label select{
-    margin: 1em;
+  margin: 1em;
 }
 button.message-button {
-    padding: 10px 30px;
-    display: block;
-    margin: 10px auto;
-    width: 80%;
+  padding: 10px 30px;
+  display: block;
+  margin: 10px auto;
+  width: 80%;
 
-    border: solid 1px black;
-    background-color: #ccc;
+  border: solid 1px black;
+  background-color: #ccc;
 }
 table.arrivalInfo {
-    border-collapse: collapse;
-    border-spacing: 0px;
-}
+  border-collapse: collapse;
+  border-spacing: 0px;
 
-.arrivalInfo th {
+  th {
     background-color: #ebeff2;
-}
-.arrivalInfo th,
-.arrivalInfo td {
+  }
+
+  th,
+  td {
     min-width: 50px;
     border: solid 1px #CCCCCC;
     padding: 5px;
+  }
 }
 
 .passenger {
-    padding: 5px;
-}
-.passenger:nth-child(even) {
-  background-color: #FFF;
-}
-.passenger:nth-child(odd) {
-  background-color: #EEE;
-}
+  padding: 5px;
 
-.passenger.animate-hide {
-  max-height: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  transition: 0.1s linear all;
-  overflow: hidden;
-}
-.passenger:not(.animate-hide) {
-  max-height: 100px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  transition: 0.1s linear all;
-}
-
-h3.show-passengers::before {
-  content: "[ - ] ";
-}
-h3:not(.show-passengers)::before {
-  content: "[ + ] ";
+  &:nth-child(even) {
+    background-color: #FFF;
+  }
+  &:nth-child(odd) {
+    background-color: #EEE;
+  }
 }
 
 h3 {
-    background-color: #ebeff2;
-    margin: 1px 0 0 0;
-    padding: 5px;
-    font-size: 80%;
-    color: #888;
-    white-space: nowrap;
-    overflow-x: auto;
+  background-color: #ebeff2;
+  margin: 1px 0 0 0;
+  padding: 5px;
+  font-size: 80%;
+  color: #888;
+  white-space: nowrap;
+  overflow-x: auto;
 }
 
 td.boarding {
-    background-color: #19c3a5;
+  background-color: #19c3a5;
 }
 td.alighting:not(.boarding) {
-    background-color: #ff7070;
+  background-color: #ff7070;
 }
 
 .cancel-form {
