@@ -229,10 +229,10 @@ var authAjax = require('./login').authAjax;
 var Vue=require('vue');
 const _ = require('lodash')
 import MessageTemplates from './message-templates'
-import {watch} from './loading-overlay';
+import {watch} from './LoadingOverlay';
 import PollingQuery from './utils/PollingQuery'
 import RouteAnnouncementForm from './RouteAnnouncementForm.vue'
-import ServiceData from './service_data'
+import ServiceData from './ServiceDataStore'
 import {TRACKING_URL} from './env.json'
 
 module.exports = {

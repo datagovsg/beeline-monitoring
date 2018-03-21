@@ -38,7 +38,7 @@
         </div>
       </gmap-info-window>
 
-      <!-- <ping-line :pings="pings" :options="pingOptions" :sample-rate="5"></ping-line> -->
+      <!-- <PingLine :pings="pings" :options="pingOptions" :sample-rate="5"></PingLine> -->
 
       <!-- Start and end markers -->
       <template v-for="(driverPings, driverId) in otherPings">
@@ -50,9 +50,9 @@
           :icon="MapIcons.endPoint" title="End" :key="`end-${driverId}`">
         </gmap-marker>
 
-        <ping-line :pings="driverPings" :options="otherPingOptions" :sample-rate="5"
-          @selectPing="selectPing"  :key="`ping-line-${driverId}`">
-        </ping-line>
+        <PingLine :pings="driverPings" :options="otherPingOptions" :sample-rate="5"
+          @selectPing="selectPing"  :key="`PingLine-${driverId}`">
+        </PingLine>
       </template>
     </gmap-map>
   </div>
@@ -82,7 +82,7 @@
 </style>
 
 <script>
-import PingLine from './ping-line.vue'
+import PingLine from './PingLine.vue'
 import leftPad from 'left-pad'
 import Vue from 'vue'
 import PollingQuery from './utils/PollingQuery'
@@ -95,11 +95,11 @@ import {TRACKING_URL} from './env.json'
 import {authAjax, sharedData} from './login';
 import {
   watch
-} from './loading-overlay';
+} from './LoadingOverlay';
 
 module.exports = {
   components: {
-    'ping-line': PingLine,
+    'PingLine': PingLine,
   },
 
   data() {

@@ -58,8 +58,8 @@ var _ = require('lodash')
 var months = 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec'.split(',');
 var tzo = (new Date()).getTimezoneOffset() * 60000;
 import {authAjax, sharedData} from './login';
-import {watch} from './loading-overlay';
-const ServiceData = require('./service_data')
+import {watch} from './LoadingOverlay';
+const ServiceData = require('./ServiceDataStore')
 const Favourites = require('./favourites')
 import RouteRow from './RouteRow.vue'
 import RoutesDashboard from './RoutesDashboard.vue'

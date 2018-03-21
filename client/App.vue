@@ -42,8 +42,8 @@
       </keep-alive>
     </main>
 
-    <loading-overlay id="loading-overlay">
-    </loading-overlay>
+    <LoadingOverlay id="loading-overlay">
+    </LoadingOverlay>
   </div>
 </template>
 <style lang="scss">
@@ -100,7 +100,7 @@ export default {
   data () {
     return {
       Login: require('./login'),
-      ServiceData: require('./service_data')
+      ServiceData: require('./ServiceDataStore')
     }
   },
   computed: {

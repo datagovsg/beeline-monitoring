@@ -19,7 +19,7 @@
 }
 </style>
 <script>
-import * as LoadingOverlay from './loading-overlay.js'
+import * as LoadingOverlay from './LoadingOverlay.js'
 
 export default {
   data() {
