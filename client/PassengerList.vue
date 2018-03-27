@@ -323,10 +323,11 @@ module.exports = {
       handler (tripId) {
         if (!tripId) return
 
-        spinnerOn(Promise.all([
-          this.$poller && this.$poller.promise, // poller will fetch it every 30s
-          this.requeryTrips(),
-        ]))
+        if (this.$poller) {
+          spinnerOn(this.$poller.executeNow())
+        }
+
+        spinnerOn(this.requeryTrips())
       },
     },
 
@@ -348,6 +349,8 @@ module.exports = {
         ServiceData.fetch(),
       ])
     })
+    // Bring up spinner the first time it's loaded
+    spinnerOn(this.$poller.promise)
   },
 
   destroyed() {
