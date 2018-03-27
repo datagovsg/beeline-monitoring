@@ -1,62 +1,85 @@
 <template>
-<div class="contents-with-nav">
-  <navi :service="service"></navi>
-  <div class="map-view">
-    <div v-if="$route.query.time" class="filter-message">
-      Showing known positions between
-      {{formatTime(startTime)}} and
-      {{formatTime(endTime)}}.
+  <div class="contents-with-nav">
+    <navi :service="tripId"/>
+    <div class="map-view">
+      <div
+        v-if="$route.query.time"
+        class="filter-message">
+        Showing known positions between
+        {{ formatTime(startTime) }} and
+        {{ formatTime(endTime) }}.
 
-      <router-link :to="{path: '/map/' + service, query: {}}">
-        Clear Filter
-      </router-link>
+        <router-link :to="{path: '/map/' + tripId, query: {}}">
+          Clear Filter
+        </router-link>
+      </div>
+      <gmap-map
+        ref="gmap"
+        :center="{lng: 103.8, lat: 1.38}"
+        :zoom="12">
+
+        <gmap-marker
+          v-for="(stop, index) in uniqueStops"
+          :key="stop.id"
+          :position="stopPosition(stop) "
+          :icon="MapIcons.stopIcon(stop, index)"
+          @mouseover="selectStop(stop)"
+          @mouseout="closeWindow"/>
+
+        <gmap-info-window
+          v-if="selectedStop != null"
+          :opened="selectedStop != null"
+          :position="stopPosition(selectedStop) ">
+          Scheduled: {{ formatTime(selectedStop.time) }}
+          <div v-if="selectedStop.canBoard">
+            No. of Passengers: {{ selectedStop.passengers.length }}
+          </div>
+        </gmap-info-window>
+
+        <gmap-info-window
+          v-if="selectedPing != null"
+          :opened="selectedPing != null"
+          :position="coordinatesToLatLng(selectedPing.coordinates)">
+          <div>
+            {{ formatTime(selectedPing.time) }}
+          </div>
+          <div v-if="driversById && driversById[selectedPing.driverId]">
+            By: <b>{{ driversById[selectedPing.driverId].transportCompanies[0].driverCompany.name }}</b>
+          </div>
+          <div v-if="vehiclesById && vehiclesById[selectedPing.vehicleId]">
+            By: <b style="text-transform: uppercase">{{ vehiclesById[selectedPing.vehicleId].vehicleNumber }}</b>
+          </div>
+        </gmap-info-window>
+
+        <!-- <PingLine :pings="pings" :options="pingOptions" :sample-rate="5"></PingLine> -->
+
+        <!-- Start and end markers -->
+        <template v-for="(driverPings, driverId) in otherPings">
+          <gmap-marker
+            :key="`start-${driverId}`"
+            :position="firstPing(driverPings)"
+            :icon="MapIcons.startPoint"
+            title="Start"
+          />
+
+          <gmap-marker
+            :key="`end-${driverId}`"
+            :position="lastPing(driverPings)"
+            :icon="MapIcons.endPoint"
+            title="End"
+          />
+
+          <PingLine
+            :key="`ping-line-${driverId}`"
+            :pings="driverPings"
+            :options="otherPingOptions"
+            :sampleRate="5"
+            @selectPing="selectPing"
+          />
+        </template>
+      </gmap-map>
     </div>
-    <gmap-map ref="gmap" :center="{lng: 103.8, lat: 1.38}" :zoom="12">
-
-      <gmap-marker v-for="(stop, index) in uniqueStops"
-        :key="stop.id"
-        :position="stopPosition(stop) "
-        :icon="MapIcons.stopIcon(stop, index)" @mouseover='selectStop(stop)' @mouseout='closeWindow'>
-      </gmap-marker>
-
-      <gmap-info-window v-if="selectedStop != null" :opened='selectedStop != null' :position="stopPosition(selectedStop) ">
-        Scheduled: {{formatTime(selectedStop.time)}}
-        <div v-if="selectedStop.canBoard">
-          No. of Passengers: {{selectedStop.passengers.length}}
-        </div>
-      </gmap-info-window>
-
-      <gmap-info-window v-if="selectedPing != null" :opened="selectedPing != null" :position="coordinatesToLatLng(selectedPing.coordinates)">
-        <div>
-          {{formatTime(selectedPing.time)}}
-        </div>
-        <div v-if="driversById && driversById[selectedPing.driverId]">
-          By: <b>{{driversById[selectedPing.driverId].transportCompanies[0].driverCompany.name}}</b>
-        </div>
-        <div v-if="vehiclesById && vehiclesById[selectedPing.vehicleId]">
-          By: <b style="text-transform: uppercase">{{vehiclesById[selectedPing.vehicleId].vehicleNumber}}</b>
-        </div>
-      </gmap-info-window>
-
-      <!-- <ping-line :pings="pings" :options="pingOptions" :sample-rate="5"></ping-line> -->
-
-      <!-- Start and end markers -->
-      <template v-for="(driverPings, driverId) in otherPings">
-        <gmap-marker :position="firstPing(driverPings)"
-          :icon="MapIcons.startPoint" title="Start" :key="`start-${driverId}`">
-        </gmap-marker>
-
-        <gmap-marker :position="lastPing(driverPings)"
-          :icon="MapIcons.endPoint" title="End" :key="`end-${driverId}`">
-        </gmap-marker>
-
-        <ping-line :pings="driverPings" :options="otherPingOptions" :sample-rate="5"
-          @selectPing="selectPing"  :key="`ping-line-${driverId}`">
-        </ping-line>
-      </template>
-    </gmap-map>
   </div>
-</div>
 </template>
 
 <style lang="scss" scoped>
@@ -82,7 +105,7 @@
 </style>
 
 <script>
-import PingLine from './ping-line.vue'
+import PingLine from './PingLine.vue'
 import leftPad from 'left-pad'
 import Vue from 'vue'
 import PollingQuery from './utils/PollingQuery'
@@ -93,13 +116,13 @@ import querystring from 'querystring';
 
 import {TRACKING_URL} from './env.json'
 import {authAjax, sharedData} from './login';
-import {
-  watch
-} from './loading-overlay';
+import {spinnerOn} from './LoadingOverlay';
 
 module.exports = {
+  props: ['tripId'],
+
   components: {
-    'ping-line': PingLine,
+    PingLine,
   },
 
   data() {
@@ -147,9 +170,6 @@ module.exports = {
     vehiclesById () {
       return sharedData.vehiclesById
     },
-    service () {
-      return this.$route.params.svc;
-    },
     otherPingOptions() {
       return {
         polyline: {
@@ -180,12 +200,6 @@ module.exports = {
     uniqueStops() {
       return _.uniqBy(this.stops, 'stopId');
     },
-
-    requeryDependencies () {
-      return this.$route.name === 'map-view' && {
-        service: this.service,
-      }
-    }
   },
 
   watch: {
@@ -196,18 +210,18 @@ module.exports = {
         })
     },
 
-    requeryDependencies (n) {
-      if (n) {
-        this.$poller.executeNow()
-          .then(() => {
-            this.setBounds()
-          })
-
-        this.$nextTick(() => {
-          this.$gmapDefaultResizeBus.$emit('resize')
+    tripId () {
+      this.$poller.executeNow()
+        .then(() => {
+          this.setBounds()
         })
-      }
-    },
+    }
+  },
+
+  beforeRouteEnter (to, from, next) {
+    next(vm => vm.$nextTick(() => {
+      vm.$gmapDefaultResizeBus.$emit('resize')
+    }))
   },
 
   methods: {
@@ -216,7 +230,7 @@ module.exports = {
       // only if it had not been successfully fetched
       sharedData.fetchVehicles()
 
-      if (!this.service) return Promise.resolve(null)
+      if (!this.tripId) return Promise.resolve(null)
 
       var startTime = new Date();
       startTime.setHours(0, 0, 0, 0);
@@ -227,15 +241,15 @@ module.exports = {
         : { from: startTime.getTime(), limit: 800 }
 
       const pingsPromise = authAjax(
-        `/trips/${this.service}/pings?${querystring.stringify(queryParams)}`,
+        `/trips/${this.tripId}/pings?${querystring.stringify(queryParams)}`,
         { baseURL: TRACKING_URL }
       ).then((response) => {
         this.otherPings = _.groupBy(response.data, 'driverId');
       })
 
-      var tripPromise = authAjax(`/trips/${this.service}`)
+      var tripPromise = authAjax(`/trips/${this.tripId}`)
         .then(result => result.data);
-      var passengersPromise = authAjax(`/trips/${this.service}/passengers`)
+      var passengersPromise = authAjax(`/trips/${this.tripId}/passengers`)
         .then(result => result.data);
 
       Promise.all([tripPromise, passengersPromise])

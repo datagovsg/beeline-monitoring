@@ -1,7 +1,9 @@
 <template>
-    <div v-show="!hide" class="loading-overlay">
-      <img src="img/spinner.svg">
-    </div>
+  <div 
+    v-show="!hide" 
+    class="loading-overlay">
+    <img src="img/spinner.svg">
+  </div>
 </template>
 <style>
 .loading-overlay {
@@ -19,7 +21,7 @@
 }
 </style>
 <script>
-import * as LoadingOverlay from './loading-overlay.js'
+import * as LoadingOverlay from './LoadingOverlay.js'
 
 export default {
   data() {
@@ -27,16 +29,16 @@ export default {
       counter: null,
     }
   },
+  computed: {
+    hide() {
+      return !this.counter || this.counter.count == 0;
+    }
+  },
   created() {
     LoadingOverlay.registerOverlay(this)
   },
   destroyed() {
     LoadingOverlay.deregisterOverlay(this);
-  },
-  computed: {
-    hide() {
-      return !this.counter || this.counter.count == 0;
-    }
   },
   methods: {
     useCounter(counter) {

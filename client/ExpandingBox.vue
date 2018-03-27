@@ -11,14 +11,18 @@ However, when you focus on the <input> its width will become 100%
 <template>
   <div class="expanding-box">
 
-    <div class="expanding-box-main" :style="expectedWidthStyle" @focusout="blur" @focusin="focus">
-      <slot>
-      </slot>
+    <div
+      :style="expectedWidthStyle"
+      class="expanding-box-main"
+      @focusout="blur"
+      @focusin="focus">
+      <slot/>
     </div>
 
-    <div class="expanding-box-aux" :style="expectedWidthStyleAux">
-      <slot name="auxiliary">
-      </slot>
+    <div
+      :style="expectedWidthStyleAux"
+      class="expanding-box-aux">
+      <slot name="auxiliary"/>
     </div>
   </div>
 </template>
@@ -41,7 +45,12 @@ However, when you focus on the <input> its width will become 100%
 
 <script>
 export default {
-  props: ['auxWidth'],
+  props: {
+    auxWidth: {
+      type: String,
+      required: true,
+    }
+  },
 
   data () {
     return {

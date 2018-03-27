@@ -1,34 +1,44 @@
 <template>
   <div class="overview">
-    <ExpandingBox class="date-and-search" auxWidth="10.8em">
-      <input type="text" v-model="filter" placeholder="Search for Route" style="width: 100%"
+    <ExpandingBox
+      class="date-and-search"
+      auxWidth="10.8em">
+      <input
+        v-model="filter"
+        type="text"
+        placeholder="Search for Route"
+        style="width: 100%"
         class="form-control">
       <div slot="auxiliary">
-        <SeverityFilter :settings="visibilitySettings" @settingsChanged="visibilitySettings = $event" />
+        <SeverityFilter
+          :settings="visibilitySettings"
+          @settingsChanged="visibilitySettings = $event" />
       </div>
     </ExpandingBox>
 
     <table>
       <tr v-if="routesByHour.length == 0">
         <td colspan="3">
-            You have no bus services today.
-            You might not be authorized to view the bus service status.
-            Please contact the Beeline team if this is incorrect.
+          You have no bus services today.
+          You might not be authorized to view the bus service status.
+          Please contact the Beeline team if this is incorrect.
         </td>
       </tr>
 
       <RoutesDashboard
         v-for="[hour, routesInHour] of routesByHour"
         v-if="routesInHour.length"
+        ref="dashboards"
         :key="routesInHour.id"
         :routes="routesInHour"
         :header="dateformat(hour * 3600e3, 'h:MM TT', true)"
-        @visibilitySettingsChanged="visibilitySettings = ($event)"
         :visibilitySettings="visibilitySettings"
         :data-hour="hour"
         :expanded="numResults < 10"
-        ref="dashboards"
-        />
+        :selectedTripId="lastSelectedTripId"
+        @visibilitySettingsChanged="visibilitySettings = ($event)"
+        @routeSelected="lastSelectedTripId = $event.trip.tripId"
+      />
     </table>
 
   </div>
@@ -58,8 +68,8 @@ var _ = require('lodash')
 var months = 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec'.split(',');
 var tzo = (new Date()).getTimezoneOffset() * 60000;
 import {authAjax, sharedData} from './login';
-import {watch} from './loading-overlay';
-const ServiceData = require('./service_data')
+import {spinnerOn} from './LoadingOverlay';
+const ServiceData = require('./ServiceDataStore')
 const Favourites = require('./favourites')
 import RouteRow from './RouteRow.vue'
 import RoutesDashboard from './RoutesDashboard.vue'
@@ -68,6 +78,10 @@ import ExpandingBox from './ExpandingBox.vue'
 import {isServiceGood, isPingGood, isDistanceGood,
         isIgnorable, notYetTime, hasNoPassengers} from './serviceInterpretation'
 import dateformat from 'dateformat'
+
+import PollingQuery from './utils/PollingQuery'
+import ScrollBus from './utils/ScrollBus'
+
 import {TRACKING_URL} from './env.json'
 
 Date.prototype.localISO = function () {
@@ -80,6 +94,8 @@ module.exports = {
         servicesByRouteId: null,
         filter: '',
         actualFilter: '',
+        selectedRoute: null,
+        lastSelectedTripId: null,
         visibilitySettings:  {
           showOK: false,
           showBad: false,
@@ -190,25 +206,29 @@ module.exports = {
         }
       }
     },
+
     created () {
-      var queryAgain = () => {
-        this.$queryTimeout = null;
-        return this.requery()
-          .catch((err) => console.error(err))
-          .then(() => {
-            if (this.$queryTimeout === null) {
-              this.$queryTimeout = setTimeout(queryAgain, 20000);
-            }
-          })
-      };
-      watch(queryAgain());
-    },
-    destroyed() {
-      if (this.$queryTimeout) {
-        clearTimeout(this.$queryTimeout);
+      this.$poller = new PollingQuery(30000, () => this.requery())
+
+      if (!ServiceData.servicesByRouteId) { // first time fetching -- show spinner
+        spinnerOn(this.$poller.executeNow())
+      } else {
+        this.servicesByRouteId = ServiceData.servicesByRouteId
       }
-      this.$queryTimeout = false;
     },
+
+    beforeRouteEnter (to, from, next) {
+      next((vm) => {
+        if (from.params.tripId) {
+          ScrollBus.scrollToTripId = parseInt(from.params.tripId)
+        }
+      })
+    },
+
+    destroyed() {
+      this.$poller.stop()
+    },
+
     methods: {
       dateformat,
 
@@ -229,21 +249,14 @@ module.exports = {
           mapVue.service = svc;
       },
 
-      requery (timeout) {
-        return authAjax('/monitoring', { baseURL: TRACKING_URL })
-        .then((result) => {
-          // Convert the time fields
-          Object.keys(result.data).forEach(routeId => {
-            const service = result.data[routeId]
-            if (service.trip && service.trip.startTime) {
-              service.trip.startTime = new Date(service.trip.startTime)
-            }
+      requery () {
+        return ServiceData.fetch()
+          .then((result) => {
+            this.servicesByRouteId = result;
           })
-          ServiceData.servicesByRouteId = this.servicesByRouteId = result.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        })
+          .catch((err) => {
+            console.log(err);
+          })
       },
     },
 }

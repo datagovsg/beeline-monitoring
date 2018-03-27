@@ -1,22 +1,24 @@
 <template>
-<!-- Pings -->
-<div>
-  <template v-if="pings">
-    <gmap-marker
-      v-for="ping in everyN(pings) "
-      :key="ping.id"
-      :position="{
+  <!-- Pings -->
+  <div>
+    <template v-if="pings">
+      <gmap-marker
+        v-for="ping in everyN(pings) "
+        :key="ping.id"
+        :position="{
           lat: ping.coordinates.coordinates[1],
           lng: ping.coordinates.coordinates[0],
-      }"
-      :icon="pingPoint"
-      @mouseover="selectPing(ping)"
-      @click="selectPing(ping)" />
-  </template>
+        }"
+        :icon="pingPoint"
+        @mouseover="selectPing(ping)"
+        @click="selectPing(ping)" />
+    </template>
 
-  <gmap-polyline v-if="pings" :options="polylineOptions" :path="pingPath">
-  </gmap-polyline>
-</div>
+    <gmap-polyline
+      v-if="pings"
+      :options="polylineOptions"
+      :path="pingPath"/>
+  </div>
 </template>
 
 <script>
@@ -25,7 +27,20 @@ import Vue from 'vue'
 import _ from 'lodash'
 
 export default {
-  props: ['pings', 'options', 'sampleRate'],
+  props: {
+    pings: {
+      type: Array,
+      required: true,
+    },
+    options: {
+      type: Object,
+      default: () => ({}),
+    },
+    sampleRate: {
+      type: Number,
+      default: 3,
+    }
+  },
   data() {
     return {
       selectedPing: null,

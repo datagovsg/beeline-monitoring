@@ -17,7 +17,7 @@ export function deregisterOverlay(overlay) {
   overlays.splice(index, 1)
 }
 
-export function watch(promise) {
+export function spinnerOn(promise) {
   counter.count++;
 
   function clear() {

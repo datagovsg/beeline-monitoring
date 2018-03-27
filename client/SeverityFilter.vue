@@ -1,26 +1,29 @@
 <template>
   <div class="severity-filter">
-    <button :class="{selected: showOnlyFavourites}"
-        @click="toggleFavourites(!showOnlyFavourites)"
-        class="toggle-button">
+    <button
+      :class="{selected: showOnlyFavourites}"
+      class="toggle-button"
+      @click="toggleFavourites(!showOnlyFavourites)">
       <div class="glyphicon glyphicon-star favourite-button" />
     </button>
-    <button :class="{selected: showOK}"
-        @click="change('showOK', !showOK)"
-        :disabled="showOnlyFavourites"
-        class="toggle-button">
+    <button
+      :disabled="showOnlyFavourites"
+      :class="{selected: showOK}"
+      class="toggle-button"
+      @click="change('showOK', !showOK)">
       <RouteIndicator
         :upperIndicator="false"
         :lowerIndicator="false"
         :ignoreLower="false"
         :ignoreUpper="false"
         :noPassengers="false"
-        />
+      />
     </button>
-    <button :class="{selected: showBad}"
-        @click="change('showBad', !showBad)"
-        :disabled="showOnlyFavourites"
-        class="toggle-button">
+    <button
+      :disabled="showOnlyFavourites"
+      :class="{selected: showBad}"
+      class="toggle-button"
+      @click="change('showBad', !showBad)">
       <RouteIndicator
         :upperIndicator="true"
         :lowerIndicator="true"
@@ -28,10 +31,11 @@
         :ignoreUpper="false"
         :noPassengers="false" />
     </button>
-    <button :class="{selected: showNoPassengers}"
-        @click="change('showNoPassengers', !showNoPassengers)"
-        :disabled="showOnlyFavourites"
-        class="toggle-button">
+    <button
+      :disabled="showOnlyFavourites"
+      :class="{selected: showNoPassengers}"
+      class="toggle-button"
+      @click="change('showNoPassengers', !showNoPassengers)">
       <RouteIndicator
         :upperIndicator="false"
         :lowerIndicator="false"
@@ -118,9 +122,11 @@
 import RouteIndicator from './RouteIndicator.vue'
 
 export default {
-  props: ['settings'],
   components: {
     RouteIndicator,
+  },
+  props: {
+    settings: { type: Object, required: true },
   },
   computed: {
     showOK () { return this.settings.showOK },

@@ -6,30 +6,41 @@
     <label>
       Use template:
       <select v-model="message">
-        <option v-for="template in announcementTemplates" :value="template[1]">
+        <option
+          v-for="(template, index) in announcementTemplates"
+          :key="index"
+          :value="template[1]">
           {{ template[0] }}
         </option>
       </select>
     </label>
-    <span class="message-box" v-if="currentMessage">
-      {{currentMessage}}
+    <span
+      v-if="currentMessage"
+      class="message-box">
+      {{ currentMessage }}
 
-
-      <button class="message-button" type="button"
+      <button
+        class="message-button"
+        type="button"
         @click="clearMessage">Clear message</button>
     </span>
     <form @submit="updateRouteAnnouncements">
       <div>
         <label>
-          New message<br/>
+          New message<br>
         </label>
-        <textarea v-model="message"
-            style="display: block; width: 100%; height: 100px"
-            name="message"></textarea>
+        <textarea
+          v-model="message"
+          style="display: block; width: 100%; height: 100px"
+          name="message"/>
       </div>
       <div>
-        <button class="message-button" type="submit"
-          :disabled="!message">Submit</button>
+        <button
+          :disabled="!message"
+          class="message-button"
+          type="submit">
+          Submit
+        </button>
       </div>
     </form>
   </div>
@@ -53,7 +64,12 @@ const {authAjax} = require('./login');
 import AnnouncementTemplates from './announcement-templates'
 
 export default {
-  props: ['tripId'],
+  props: {
+    tripId: {
+      type: Number,
+      required: true,
+    }
+  },
 
   data() {
     return {
@@ -62,8 +78,10 @@ export default {
     }
   },
 
-  created () {
-    this.requery();
+  computed: {
+    announcementTemplates(){
+      return AnnouncementTemplates
+    }
   },
 
   watch: {
@@ -75,10 +93,8 @@ export default {
     }
   },
 
-  computed: {
-    announcementTemplates(){
-      return AnnouncementTemplates
-    }
+  created () {
+    this.requery();
   },
 
   methods: {

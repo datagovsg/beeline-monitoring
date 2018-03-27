@@ -7,18 +7,16 @@ import PassengerList from './PassengerList.vue';
 import VueRouter from 'vue-router';
 import VueResource from 'vue-resource';
 import * as VueGoogleMaps from 'vue2-google-maps'
-import LoadingOverlay from './loading-overlay.vue';
 import * as Login from './login';
 import 'mdi/scss/materialdesignicons.scss';
 
-const ServiceData = require('./service_data')
+const ServiceData = require('./ServiceDataStore')
 
 Vue.use(VueResource);
 
 Login.initAuth0();
 
-Vue.component('navi', Navi);
-Vue.component('loadingOverlay', LoadingOverlay);
+Vue.component('Navi', Navi);
 
 window.Login = Login;
 
@@ -37,14 +35,16 @@ window.addEventListener('DOMContentLoaded', function () {
           component: Overview,
         },
         {
-          path: '/map/:svc',
+          path: '/map/:tripId',
           name: 'map-view',
           component: MapView,
+          props: (route) => ({ tripId: parseInt(route.params.tripId) }),
         },
         {
-          path: '/passengers/:svc',
+          path: '/passengers/:tripId',
           name: 'passenger-list',
           component: PassengerList,
+          props: (route) => ({ tripId: parseInt(route.params.tripId) }),
         },
         { // If users saved the old bookmark, it would take them to #!/
           // which needs to be redirected to #/
@@ -55,7 +55,15 @@ window.addEventListener('DOMContentLoaded', function () {
             }
           },
         }
-      ]
+      ],
+
+      scrollBehavior (to, from, savedPosition) {
+        if (savedPosition) {
+          return savedPosition
+        } else {
+          return { x: 0, y: 0 }
+        }
+      }
     });
 
     Login.postLoginPromise.then(() => {

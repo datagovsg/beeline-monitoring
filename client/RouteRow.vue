@@ -1,106 +1,110 @@
 <template>
   <tbody>
-    <tr :class="{
-            emergency: service.trip.status === 'cancelled',
-            nobody: service.nobody && !service.notifyWhenEmpty,
-        }"
-        >
+    <tr
+      :class="{
+        emergency: service.trip.status === 'cancelled',
+        nobody: service.nobody && !service.notifyWhenEmpty,
+      }"
+      class="route-row"
+    >
       <td>
         <div class="service-description">
           <FavouriteButton
-            @click="setFavourite($event, service.trip.routeId)"
             :isFavourite="isFavourite"
             class="favourite-button"
+            @click="setFavourite($event, service.trip.routeId)"
           />
 
           <div class="label-and-description">
             <div class="service-name">
-              <big>{{service.trip.route.label}}</big>
-              ({{service.trip.routeId}})
-              {{takeTime(service.trip.startTime)}}
+              <big>{{ service.trip.route.label }}</big>
+              ({{ service.trip.routeId }})
+              {{ takeTime(service.trip.startTime) }}
             </div>
 
             <div class="from-and-to">
-              {{service.trip.route.from}}<br/>
-              {{service.trip.route.to}}
+              {{ service.trip.route.from }}<br>
+              {{ service.trip.route.to }}
             </div>
           </div>
         </div>
       </td>
       <td data-column="led">
-          <router-link
-            :to="{name: 'map-view', params: {svc: service.trip.tripId}}"
-            :class="{
-              led: true,
-              s0 : service.status.ping == 0,
-              s1 : service.status.ping == 1,
-              s2 : service.status.ping == 2,
-              s3 : service.status.ping >= 3,
-              sU : service.status.ping == -1,
-          }">
-              </span>
-              <template v-if="service.status.arrivalTime">
-                  (arrived)
-              </template>
-              <template v-else>
-                  <template v-if="service.lastPing">
-                    {{humanizeRelative(service.lastPing)}}
-                  </template>
-              </template>
-          </router-link>
+        <router-link
+          :to="{name: 'map-view', params: {tripId: service.trip.tripId}}"
+          :class="{
+            led: true,
+            s0 : service.status.ping == 0,
+            s1 : service.status.ping == 1,
+            s2 : service.status.ping == 2,
+            s3 : service.status.ping >= 3,
+            sU : service.status.ping == -1,
+          }"
+          @click.native="$emit('routeSelected', service)">
+          <template v-if="service.status.arrivalTime">
+            (arrived)
+          </template>
+          <template v-else>
+            <template v-if="service.lastPing">
+              {{ humanizeRelative(service.lastPing) }}
+            </template>
+          </template>
+        </router-link>
       </td>
       <td data-column="led">
-          <router-link
-            :to="{name: 'map-view', params: {svc: service.trip.tripId}}"
-            :class="{
-              led: true,
-              s0 : service.status.distance == 0,
-              s1 : service.status.distance == 1,
-              s2 : service.status.distance == 2,
-              s3 : service.status.distance >= 3,
-              sU : service.status.distance == -1,
-          }">
-            <template v-if="service.status.arrivalTime">
-                {{takeTime(service.status.arrivalTime)}} (arrived)
-            </template>
-            <template v-else>
-                {{takeTime(service.status.eta)}} (est)
-            </template>
-          </router-link>
+        <router-link
+          :to="{name: 'map-view', params: {tripId: service.trip.tripId}}"
+          :class="{
+            led: true,
+            s0 : service.status.distance == 0,
+            s1 : service.status.distance == 1,
+            s2 : service.status.distance == 2,
+            s3 : service.status.distance >= 3,
+            sU : service.status.distance == -1,
+          }"
+          @click.native="$emit('routeSelected', service)"
+        >
+          <template v-if="service.status.arrivalTime">
+            {{ takeTime(service.status.arrivalTime) }} (arrived)
+          </template>
+          <template v-else>
+            {{ takeTime(service.status.eta) }} (est)
+          </template>
+        </router-link>
       </td>
     </tr>
-</tbody>
+  </tbody>
 </template>
 
 <style lang="scss">
-  tr.emergency td {
+  tr {
+    .emergency td {
       background-color: #FFECEC;
-  }
+    }
 
-  tr.nobody td{
+    .nobody td {
       opacity: 0.3;
       background-color: #ccc;
+    }
   }
 
   th, td {
-      padding: 0.5em;
-  }
+    padding: 0.5em;
 
-  th[data-column="route"],
-  td[data-column="route"] {
+    &[data-column="route"] {
       min-width: 60px;
-  }
-  th[data-column="led"],
-  td[data-column="led"] {
+    }
+    &[data-column="led"] {
       width: 60px;
-  }
-  th[data-column="next"],
-  td[data-column="next"] {
+    }
+    &[data-column="next"] {
       width: 20px;
       position: relative;
-  }
-  td[data-column="next"]:hover {
-      background-color: #dddddd;
+
+      &:hover {
+        background-color: #dddddd;
+      }
+    }
   }
 
   .service-description {
@@ -123,11 +127,7 @@
         color: #666;
         font-size: 80%;
       }
-      .from-and-to {
-
-      }
     }
-
   }
 
   .led {
@@ -145,15 +145,16 @@
     padding-top: 0.4em;
   }
 
-  .led.sU {
+  .led {
+    &.sU {
       background-color: #c9c9c9;
-  }
-
-  .led.s0, .led.s1 {
+    }
+    &.s0, &.s1 {
       background-color: #14c3a6;
-  }
-  .led.s2, .led.s3 {
+    }
+    &.s2, &.s3 {
       background-color: #ff6f6f;
+    }
   }
 
   .details_button {
@@ -168,13 +169,45 @@
 
 <script>
 import FavouriteButton from './FavouriteButton.vue'
+import ScrollBus from './utils/ScrollBus'
 const Favourites = require('./favourites')
 
 export default {
-  props: ['service', 'isFavourite'],
   components: {
     FavouriteButton,
   },
+  props: {
+    service: {
+      type: Object,
+      required: true,
+    },
+    isFavourite: {
+      type: Boolean,
+      required: true,
+    }
+  },
+  mounted () {
+    // Note: this is rather inefficient, because it's an O(n), where n == number of rows
+    // But it shouldn't be a big problem
+    this.$unwatchScrollToTripId = ScrollBus.$watch('scrollToTripId', (tripId) => {
+      if (tripId !== null &&
+          tripId === this.service.trip.tripId) {
+        ScrollBus.scrollToTripId = null
+        // Need to wait for $nextTick in order to guarantee in-document
+        // https://vuejs.org/v2/api/#mounted
+        this.$nextTick(() => {
+          ScrollBus.scrollToEl(this.$el)
+        })
+      }
+    }, {immediate: true})
+  },
+
+  destroyed () {
+    if (this.$unwatchScrollToTripId) {
+      this.$unwatchScrollToTripId()
+    }
+  },
+
   methods: {
     setFavourite(isFav, routeId) {
       if (isFav) {
@@ -223,7 +256,7 @@ export default {
 
 
         return '';
-    }
-  }
+    },
+  },
 }
 </script>
