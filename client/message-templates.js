@@ -1,5 +1,13 @@
 export default [
     [
+      'Bus will be delayed for 10 minutes',
+      '(DO NOT REPLY) Attention: Service for today will be delayed for 10 mins. The bus is still on its way to your stop. Sorry for the inconvenience.'
+    ],
+    [
+      'Bus will be delayed for 15 minutes',
+      '(DO NOT REPLY) Attention: Service for today will be delayed for 15 mins. The bus is still on its way to your stop. Sorry for the inconvenience.'
+    ],
+    [
       'Bus is going to be more than 15 mins late',
       '(DO NOT REPLY) Attention: Service for today will be delayed. The bus is still on its way to your stop. Sorry for the inconvenience.'
     ],
