@@ -331,14 +331,17 @@ module.exports = {
       },
     },
 
-    routeId () {
-      // update route tags
-      this.routeId &&
-        authAjax(`/routes/${this.routeId}`)
-          .then(({data}) => data)
-          .then(route => {
-            this.routeTags = route.tags
-        })
+    routeId: {
+      immediate: true,
+      handler (routeId) {
+        // update route tags
+        routeId &&
+          authAjax(`/routes/${routeId}`)
+            .then(({data}) => data)
+            .then(route => {
+              this.routeTags = route.tags
+          })
+      }
     }
   },
 
