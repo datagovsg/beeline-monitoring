@@ -98,7 +98,7 @@ module.exports = {
         lastSelectedTripId: null,
         visibilitySettings:  {
           showOK: false,
-          showBad: false,
+          showBad: true,
           showNotYet: false,
           showNoPassengers: false,
           showOnlyFavourites: false,
