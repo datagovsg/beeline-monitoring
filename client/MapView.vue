@@ -16,7 +16,15 @@
       <gmap-map
         ref="gmap"
         :center="{lng: 103.8, lat: 1.38}"
-        :zoom="12">
+        :zoom="12"
+        :options="{
+          styles: [
+            {
+              featureType: 'poi',
+              stylers: [{visibility: 'off'}]
+            },
+          ]
+        }">
 
         <gmap-marker
           v-for="(stop, index) in uniqueStops"
@@ -39,6 +47,7 @@
         <gmap-info-window
           v-if="selectedPing != null"
           :opened="selectedPing != null"
+          @closeclick="selectedPing = null"
           :position="coordinatesToLatLng(selectedPing.coordinates)">
           <div>
             {{ formatTime(selectedPing.time) }}
