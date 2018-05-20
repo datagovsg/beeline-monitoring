@@ -3,71 +3,73 @@
     <navi :service="tripId"/>
     <div v-if="services && trip">
       <h2>Boarding stops</h2>
-      <table class="arrivalInfo">
-        <tr>
-          <th>Stop number</th>
-          <td
-            v-for="(tripStop, index) in arrivalInfo"
-            v-show="tripStop.canBoard"
-            :key="tripStop.id"
-            :class="{ boarding: tripStop.canBoard,
-                      alighting: tripStop.canAlight }"
-            :title="tripStop.description">
-            {{ index + 1 }}
-            {{ tripStop.canBoard ? '↗' : '↙' }}
-          </td>
-        </tr>
-        <tr>
-          <th>Pax boarding</th>
-          <td
-            v-for="tripStop in arrivalInfo"
-            v-show="tripStop.canBoard"
-            :key="tripStop.id">
-            <span v-if="tripStop.canBoard">
-              {{ tripStop.pax }}
-            </span>
-          </td>
-        </tr>
-        <tr>
-          <th>Scheduled</th>
-          <td
-            v-for="tripStop in arrivalInfo"
-            v-show="tripStop.canBoard"
-            :key="tripStop.id">
-            <router-link
-              v-if="tripStop.canBoard"
-              :to="{
-                path: '/map/' + tripId,
-                query: {time: tripStop.expectedTime}
-              }"
-            >
-              {{ takeLocalTime(tripStop.expectedTime) }}
-            </router-link>
-          </td>
-        </tr>
-        <tr>
-          <th>Actual</th>
-          <td
-            v-for="tripStop in arrivalInfo"
-            v-show="tripStop.canBoard"
-            :key="tripStop.id">
-            <span v-if="tripStop.canBoard">
-              {{ takeLocalTime(tripStop.actualTime || '') }}
-            </span>
-          </td>
-        </tr>
-        <tr>
-          <th>Diff (mins)</th>
-          <td
-            v-for="tripStop in arrivalInfo"
-            v-show="tripStop.canBoard"
-            :key="tripStop.id">
-            <span v-if="tripStop.canBoard">
-              {{ minsDiff(tripStop.actualTime || '', tripStop.expectedTime) }}
-            </span>
-          </td>
-        </tr>
-      </table>
+      <div class="scroll-pane">
+        <table class="arrivalInfo">
+          <tr>
+            <th>Stop number</th>
+            <td
+              v-for="(tripStop, index) in arrivalInfo"
+              v-show="tripStop.canBoard"
+              :key="tripStop.id"
+              :class="{ boarding: tripStop.canBoard,
+                        alighting: tripStop.canAlight }"
+              :title="tripStop.description">
+              {{ index + 1 }}
+              {{ tripStop.canBoard ? '↗' : '↙' }}
+            </td>
+          </tr>
+          <tr v-if="!isTrackingRoute">
+            <th>Pax boarding</th>
+            <td
+              v-for="tripStop in arrivalInfo"
+              v-show="tripStop.canBoard"
+              :key="tripStop.id">
+              <span v-if="tripStop.canBoard">
+                {{ tripStop.pax }}
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <th>Scheduled</th>
+            <td
+              v-for="tripStop in arrivalInfo"
+              v-show="tripStop.canBoard"
+              :key="tripStop.id">
+              <router-link
+                v-if="tripStop.canBoard"
+                :to="{
+                  path: '/map/' + tripId,
+                  query: {time: tripStop.expectedTime}
+                }"
+              >
+                {{ takeLocalTime(tripStop.expectedTime) }}
+              </router-link>
+            </td>
+          </tr>
+          <tr>
+            <th>Actual</th>
+            <td
+              v-for="tripStop in arrivalInfo"
+              v-show="tripStop.canBoard"
+              :key="tripStop.id">
+              <span v-if="tripStop.canBoard">
+                {{ takeLocalTime(tripStop.actualTime || '') }}
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <th>Diff (mins)</th>
+            <td
+              v-for="tripStop in arrivalInfo"
+              v-show="tripStop.canBoard"
+              :key="tripStop.id">
+              <span v-if="tripStop.canBoard">
+                {{ minsDiff(tripStop.actualTime || '', tripStop.expectedTime) }}
+              </span>
+            </td>
+          </tr>
+        </table>
+      </div>
 
       <template v-if="isPublicRoute">
         <h1>Passenger List</h1>
@@ -143,6 +145,18 @@
             type="submit">Submit</button>
         </form>
       </template>
+      <template v-else>
+        <!-- Just show the list of stops for all other routes -->
+        <h1>List of stops</h1>
+        <div
+          v-for="(stop, index) in arrivalInfo"
+          v-show="stop.canBoard"
+          :key="stop.id">
+          <h3>
+            ({{ formatTime(stop.expectedTime) }}) {{ index + 1 }}.   {{ stop.description }} - {{ stop.road }}
+          </h3>
+        </div>
+      </template>
 
       <template v-if="isTrackingRoute">
         <h1>Update Route Announcements</h1>
@@ -177,6 +191,10 @@ button.message-button {
 
   border: solid 1px black;
   background-color: #ccc;
+}
+.scroll-pane {
+  max-width: 100vw;
+  overflow: auto;
 }
 table.arrivalInfo {
   border-collapse: collapse;
