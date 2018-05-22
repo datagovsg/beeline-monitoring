@@ -17,15 +17,15 @@ export default new Vue({
         mapLoaded: true,
         startPoint: {
           url: 'img/routeStartMarker.png',
-          size: new google.maps.Size(50, 40),
+          size: new google.maps.Size(60, 40),
           origin: new google.maps.Point(0, 0),
-          anchor: new google.maps.Point(25, 40)
+          anchor: new google.maps.Point(30, 40)
         },
         endPoint: {
           url: 'img/routeEndMarker.png',
-          size: new google.maps.Size(50, 40),
+          size: new google.maps.Size(60, 40),
           origin: new google.maps.Point(0, 0),
-          anchor: new google.maps.Point(25, 40)
+          anchor: new google.maps.Point(30, 40)
         }
       })
     })
