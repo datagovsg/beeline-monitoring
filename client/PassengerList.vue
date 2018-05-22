@@ -460,7 +460,7 @@ module.exports = {
       })
       .then(result => result.data)
       .then(() => {
-        this.requery();
+        this.requeryPassengers();
         alert("Trip cancelled! The route list will be updated shortly.");
       })
       .then(null, (err) => {
