@@ -71,7 +71,22 @@
         </table>
       </div>
 
-      <template v-if="isPublicRoute">
+      <template v-if="isTrackingRoute">
+        <!-- Just show the list of stops for all other routes -->
+        <h1>List of stops</h1>
+        <div
+          v-for="(stop, index) in arrivalInfo"
+          v-show="stop.canBoard"
+          :key="stop.id">
+          <h3>
+            ({{ formatTime(stop.expectedTime) }}) {{ index + 1 }}.   {{ stop.description }} - {{ stop.road }}
+          </h3>
+        </div>
+
+        <h1>Update Route Announcements</h1>
+        <route-announcement-form :tripId="tripId" />
+      </template>
+      <template v-else>
         <h1>Passenger List</h1>
         <div
           v-for="(stop, index) in arrivalInfo"
@@ -144,23 +159,6 @@
             class="message-button"
             type="submit">Submit</button>
         </form>
-      </template>
-      <template v-else>
-        <!-- Just show the list of stops for all other routes -->
-        <h1>List of stops</h1>
-        <div
-          v-for="(stop, index) in arrivalInfo"
-          v-show="stop.canBoard"
-          :key="stop.id">
-          <h3>
-            ({{ formatTime(stop.expectedTime) }}) {{ index + 1 }}.   {{ stop.description }} - {{ stop.road }}
-          </h3>
-        </div>
-      </template>
-
-      <template v-if="isTrackingRoute">
-        <h1>Update Route Announcements</h1>
-        <RouteAnnouncementForm :tripId="tripId" />
       </template>
 
       <!-- space for the user to scroll down -->
