@@ -68,14 +68,14 @@
             :key="`start-${driverId}`"
             :position="firstPing(driverPings)"
             :icon="MapIcons.startPoint"
-            title="Start"
+            title="Start Position"
           />
 
           <gmap-marker
             :key="`end-${driverId}`"
             :position="lastPing(driverPings)"
             :icon="MapIcons.endPoint"
-            title="End"
+            title="Last Position"
           />
 
           <PingLine
