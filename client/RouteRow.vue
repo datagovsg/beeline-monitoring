@@ -2,7 +2,7 @@
   <tbody>
     <tr
       :class="{
-        emergency: service.trip.status === 'cancelled',
+        emergency: service.trip.cancelled,
         nobody: service.nobody && !service.notifyWhenEmpty,
       }"
       class="route-row"
