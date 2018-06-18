@@ -49,6 +49,7 @@
           <tr>
             <th>Actual</th>
             <td
+              :class="{ 'wrong-arrival-time': !tripStop.isBestArrivalTimeStop }"
               v-for="tripStop in arrivalInfo"
               v-show="tripStop.canBoard"
               :key="tripStop.id">
@@ -207,6 +208,10 @@ table.arrivalInfo {
     min-width: 50px;
     border: solid 1px #CCCCCC;
     padding: 5px;
+
+    &.wrong-arrival-time {
+      color: #CCC;
+    }
   }
 }
 
@@ -301,6 +306,26 @@ module.exports = {
 
       const stops = _.sortBy(this.trip.stops, s => s.time);
       const passengersByStops = _.groupBy(this.passengers, p => p.bsStopId)
+
+      // When stops repeat, it is possible for the arrival times
+      // to repeat. We want to indicate whether the indicated arrival time
+      // for a "trip stop" is "more likely" to indicate the arrival for another "trip stop"
+      //
+      // For all trip stops with the same (stop, actual arrival time)
+      // set isBestArrivalTimeStop = true if the difference to the scheduled
+      // time is least.
+      _.toPairs(_.groupBy(stops, stop => `${stop.stopId}:${stop.actualTime}`))
+      .forEach(([stopAndTime, stops]) => {
+        const bestStop = _.minBy(stops, s =>
+          Math.abs(
+            new Date(s.actualTime).getTime() - new Date(s.expectedTime).getTime()
+          )
+        )
+
+        for (let stop of stops) {
+          stop.isBestArrivalTimeStop = (stop === bestStop)
+        }
+      })
 
       let passengerIndex = 0
       return stops.map(s => ({
