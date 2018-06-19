@@ -1,9 +1,14 @@
 const axios = require('axios')
 const env = require('./env.json')
-const jwt_decode = require('jwt-decode');
+const jwt_decode = require('jwt-decode')
+const { Auth0Lock } = require('auth0-lock')
 const _ = require('lodash')
 
 import Vue from 'vue'
+
+const AUTH0_SCOPE = 'openid name email app_metadata user_id offline_access'
+
+export let lock
 
 /////////// Functions
 
@@ -35,12 +40,13 @@ export function refreshTokenIfNecessary() {
 
     return new Promise((resolve, reject) => {
       if (!localStorage.refresh_token) reject(new Error())
-      auth0.refreshToken(localStorage.refresh_token, (err, result) => {
-        if (err) return reject(err);
+      lock.checkSession({
+        scope: AUTH0_SCOPE,
+      }, (err, result) => {
+        if (err) return reject(err)
 
-        localStorage.id_token = localStorage.session_token = result.id_token;
-
-        resolve();
+        localStorage.id_token = localStorage.session_token = result.idToken
+        resolve(result)
       })
     })
   } catch (err) {
@@ -60,9 +66,6 @@ export async function checkLoggedIn() {
     login();
   }
 }
-
-export let lock;
-export let auth0;
 
 /* Use the reactivity features of Vue to detect when we need to reload data,
 e.g. vehicles */
@@ -96,14 +99,11 @@ let postLoginPromiseResolver
 export const postLoginPromise = new Promise((resolve) => postLoginPromiseResolver = resolve)
 
 export function initAuth0() {
-  auth0 = new Auth0({
-    clientID: env.AUTH0_CID,
-    domain: env.AUTH0_DOMAIN
-  });
   lock = new Auth0Lock(env.AUTH0_CID, env.AUTH0_DOMAIN, {
     auth: {
+      responseType: 'token id_token',
       params: {
-        scope: 'openid name email app_metadata user_id offline_access'
+        scope: AUTH0_SCOPE,
       }
     }
   });
@@ -111,15 +111,15 @@ export function initAuth0() {
   function authenticated(what) {
     localStorage.setItem('id_token', what.idToken);
     localStorage.setItem('session_token', what.idToken)
-    localStorage.setItem('refresh_token', what.refreshToken)
 
-    lock.getProfile(what.idToken, (err, profile) => {
+    lock.getUserInfo(what.accessToken, (err, profile) => {
       if (!err) {
         localStorage.setItem('profile', JSON.stringify(profile))
       }
     });
 
     sharedData.authData = what
+    lock.hide()
   }
 
   lock.on('authenticated', authenticated);

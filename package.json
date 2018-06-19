@@ -1,5 +1,5 @@
 {
-  "name": "beeline_operator",
+  "name": "beeline-monitoring",
   "version": "1.0.0",
   "scripts": {
     "webpack": "webpack",
@@ -10,6 +10,7 @@
     "lint": "eslint --ext .js,.vue client"
   },
   "dependencies": {
+    "auth0-lock": "^11.7.2",
     "axios": "^0.16.2",
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
