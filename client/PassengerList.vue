@@ -475,7 +475,7 @@ module.exports = {
         return;
       }
 
-      spinnerOn(authAjax(`/trips/${this.tripId}/statuses?messagePassengers=true`, {
+      spinnerOn(authAjax(`/trips/${this.tripId}/messages?messagePassengers=true`, {
         method: 'POST',
         data: {
           status: 'cancelled'
