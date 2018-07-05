@@ -100,10 +100,10 @@ export default {
   methods: {
     requery() {
       if (this.tripId) {
-        authAjax(`/trips/${this.tripId}/statuses`, {
+        authAjax(`/trips/${this.tripId}`, {
           method: 'GET',
         })
-        .then(r => r.data)
+        .then(r => r.data.messages)
         .then((result) => {
           // Get and show the one with the latest time
           if (result.length === 0)
@@ -121,7 +121,7 @@ export default {
     updateRouteAnnouncements($event) {
       event.preventDefault()
 
-      authAjax(`/trips/${this.tripId}/statuses`, {
+      authAjax(`/trips/${this.tripId}/messages`, {
           method: 'POST',
           data: {
             status: 'normal',
@@ -140,7 +140,7 @@ export default {
     clearMessage($event) {
       event.preventDefault();
 
-      authAjax(`/trips/${this.tripId}/statuses`, {
+      authAjax(`/trips/${this.tripId}/messages`, {
           method: 'POST',
           data: {
             status: 'normal',
