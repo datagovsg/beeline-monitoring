@@ -3,3 +3,5 @@ node_modules/
 npm-debug.log
 static/fonts
 client/env.json
+static/bundle.js
+static/img/material*.svg
