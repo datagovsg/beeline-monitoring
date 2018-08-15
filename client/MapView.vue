@@ -241,25 +241,31 @@ module.exports = {
 
       if (!this.tripId) return Promise.resolve(null)
 
-      var startTime = new Date();
-      startTime.setHours(0, 0, 0, 0);
+      const midnight = new Date();
+      midnight.setHours(0, 0, 0, 0);
+
+      const tripPromise = authAjax(`/trips/${this.tripId}`)
+        .then(result => result.data);
+      const passengersPromise = authAjax(`/trips/${this.tripId}/passengers`)
+        .then(result => result.data);
 
       // Pings of other drivers who also claimed this trip id
-      const queryParams = this.$route.query && this.$route.query.time
-        ? { from: this.startTime, to: this.endTime }
-        : { from: startTime.getTime(), limit: 800 }
-
-      const pingsPromise = authAjax(
-        `/trips/${this.tripId}/pings?${querystring.stringify(queryParams)}`,
-        { baseURL: TRACKING_URL }
-      ).then((response) => {
-        this.otherPings = _.groupBy(response.data, 'driverId');
+      const queryParamsPromise = tripPromise.then((trip) => {
+        const tripStartTime = new Date(_.minBy(trip.tripStops, 'time').time).getTime()
+        const tripEndTime = new Date(_.maxBy(trip.tripStops, 'time').time).getTime()
+        return this.$route.query && this.$route.query.time ? { from: this.startTime, to: this.endTime }
+          : (Date.now() < tripEndTime) ? { from: midnight, limit: 1200 }
+          : {from: tripStartTime - 30 * 60e3, to: tripEndTime + 60 * 60e3, limit: 1200}
       })
 
-      var tripPromise = authAjax(`/trips/${this.tripId}`)
-        .then(result => result.data);
-      var passengersPromise = authAjax(`/trips/${this.tripId}/passengers`)
-        .then(result => result.data);
+      const pingsPromise = queryParamsPromise.then((queryParams) =>
+        authAjax(
+          `/trips/${this.tripId}/pings?${querystring.stringify(queryParams)}`,
+          { baseURL: TRACKING_URL }
+        ).then((response) => {
+          this.otherPings = _.groupBy(response.data, 'driverId');
+        })
+      )
 
       Promise.all([tripPromise, passengersPromise])
         .then(([trip, passengerData]) => {
