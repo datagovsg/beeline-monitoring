@@ -22,9 +22,9 @@
       <button
         class="message-button"
         type="button"
-        @click="clearMessage">Clear message</button>
+        @click.prevent="clearMessage">Clear message</button>
     </span>
-    <form @submit="updateRouteAnnouncements">
+    <form @submit.prevent="updateRouteAnnouncements">
       <div>
         <label>
           New message<br>
@@ -62,6 +62,7 @@ label {
 <script>
 const {authAjax} = require('./login');
 import AnnouncementTemplates from './announcement-templates'
+import _ from 'lodash'
 
 export default {
   props: {
@@ -109,7 +110,7 @@ export default {
           if (result.length === 0)
             this.currentMessage = '';
           else
-            this.currentMessage = _.maxBy(result, 'createdAt').message;
+            this.currentMessage = _.maxBy(result, 'time').message;
         })
         .then(() => {
 
@@ -118,9 +119,7 @@ export default {
         this.currentMessage = null;
       }
     },
-    updateRouteAnnouncements($event) {
-      event.preventDefault()
-
+    updateRouteAnnouncements() {
       authAjax(`/trips/${this.tripId}/messages`, {
           method: 'POST',
           data: {
@@ -137,9 +136,7 @@ export default {
       })
       return false
     },
-    clearMessage($event) {
-      event.preventDefault();
-
+    clearMessage() {
       authAjax(`/trips/${this.tripId}/messages`, {
           method: 'POST',
           data: {
