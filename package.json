@@ -1,6 +1,8 @@
 {
   "name": "beeline-monitoring",
   "version": "1.0.0",
+  "license": "MIT",
+  "author": "Government Technology Agency of Singapore (https://www.tech.gov.sg)",
   "scripts": {
     "webpack": "webpack",
     "webpack-watch": "webpack --watch -d",
